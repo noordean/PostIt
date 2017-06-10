@@ -1,0 +1,15 @@
+
+.title    { 
+            font-size: 50px;
+          }
+.mainbox  { 
+            margin-top: 50px;
+          }
+.input-group  { 
+            margin-bottom: 25px;
+          }
+.from-group  { 
+            margin-top: 10px;
+          }
+.create-account { border-top: 1px solid#888; padding-top:15px; font-size:85% }
+footer      {clear: both;}

@@ -1,13 +1,15 @@
 $top: 50px;
+$bottom: 25px;
 
 .title                { 
                         font-size: 50px;
                       }
 .mainbox              { 
                         margin-top: $top;
+                        margin-bottom: $bottom * 6;
                       }
 .input-group          { 
-                        margin-bottom: 25px;
+                        margin-bottom: $bottom;
                       }
 .from-group           { 
                         margin-top: $top;
@@ -19,4 +21,15 @@ $top: 50px;
                       }
 footer                {
                         clear: both;
+                      }
+.box                  {
+                        background-color:#fff;
+                        min-height:200px;
+                        box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.2), 0 1px 5px 0   rgba(0,0,0,.12);
+                        border-radius: 2px;
+                        padding: 3px;
+                        margin-bottom: $bottom;
+                      }
+.cards                {
+                        margin-bottom: $bottom * 3;
                       }

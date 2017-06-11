@@ -33,3 +33,33 @@ footer                {
 .cards                {
                         margin-bottom: $bottom * 3;
                       }
+.message-wrap         {
+                        box-shadow: 0 0 3px #ddd;
+                        padding: 0px;
+                        margin-bottom: $bottom * 3;
+                      }
+.msg                  {
+                        padding: 5px;
+                        margin: 0px;
+                      }
+.msg-wrap             {
+                        padding: 10px;
+                        overflow: auto;
+                      }
+
+.time                 {
+                        color:#bfbfbf;
+                      }
+textarea.post-msg     {
+                        height: 400px;
+                      }
+.msg-post             {
+                        margin-bottom: $bottom * 2;
+                      }
+textarea              {
+                        resize: none;
+                      }
+a.title               {
+                        font-weight: bold;
+                      }
+    

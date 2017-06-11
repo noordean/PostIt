@@ -30,4 +30,32 @@ footer {
 .cards {
   margin-bottom: 75px; }
 
+.message-wrap {
+  box-shadow: 0 0 3px #ddd;
+  padding: 0px;
+  margin-bottom: 75px; }
+
+.msg {
+  padding: 5px;
+  margin: 0px; }
+
+.msg-wrap {
+  padding: 10px;
+  overflow: auto; }
+
+.time {
+  color: #bfbfbf; }
+
+textarea.post-msg {
+  height: 400px; }
+
+.msg-post {
+  margin-bottom: 50px; }
+
+textarea {
+  resize: none; }
+
+a.title {
+  font-weight: bold; }
+
 /*# sourceMappingURL=style.css.map */

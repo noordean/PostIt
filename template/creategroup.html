@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>PostIt</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand title" href="#">PostIt</a>
+    </div>
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="">Create group</a></li>
+      <li><a href="">noordean</a></li>
+      <li><a href="#">Sign out</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="create-group col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+  <form class="form" role="form">
+  <div class="form-group">
+    <input class="form-control" id="name" name="name" placeholder="Group Name" type="text" required autofocus />
+  </div>
+  <textarea class="form-control create-group" id="message" name="message" placeholder="Description" rows="3"></textarea>
+  <br/>
+  <button class="btn btn-primary" type="submit">Create Group</button>
+  </form>
+</div>
+
+<footer>
+  <div class="panel-footer text-center"> noordean © 2017.</div>
+</footer>
+</body>
+</html>

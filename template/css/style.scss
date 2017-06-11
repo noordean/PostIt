@@ -1,0 +1,22 @@
+$top: 50px;
+
+.title                { 
+                        font-size: 50px;
+                      }
+.mainbox              { 
+                        margin-top: $top;
+                      }
+.input-group          { 
+                        margin-bottom: 25px;
+                      }
+.from-group           { 
+                        margin-top: $top;
+                      }
+.create-account       { 
+                        border-top: 1px solid#888; 
+                        padding-top:15px; 
+                        font-size:85% 
+                      }
+footer                {
+                        clear: both;
+                      }

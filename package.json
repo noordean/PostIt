@@ -15,5 +15,14 @@
   "bugs": {
     "url": "https://github.com/noordean/PostIt/issues"
   },
-  "homepage": "https://github.com/noordean/PostIt#readme"
+  "homepage": "https://github.com/noordean/PostIt#readme",
+  "dependencies": {
+    "babel": "^6.23.0",
+    "babel-preset-es2015": "^6.24.1",
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-nodemon": "^2.2.1"
+  }
 }

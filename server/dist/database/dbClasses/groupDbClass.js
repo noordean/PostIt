@@ -40,8 +40,8 @@ var GroupClass = function () {
     }
   }, {
     key: 'getGroup',
-    value: function getGroup(done) {
-      this.group.findAll({ where: { groupname: 'July Fellow' } }).then(function (group) {
+    value: function getGroup(groupName, done) {
+      this.group.findAll({ where: { groupname: groupName } }).then(function (group) {
         done(group);
       });
     }

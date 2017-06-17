@@ -45,24 +45,13 @@ var EndpointsValidation = function () {
   }, {
     key: 'signIn',
     value: function signIn(username, password) {
+      var response = {};
       if (username === undefined || password === undefined) {
-        return { message: 'You need to provide username, password' };
+        response.message = 'You need to provide username and password';
       } else if (username === '' || password === '') {
-        return { message: 'Username, password cannot be empty' };
-      } else {
-        userDbInstance.getUser(username, function (user) {
-          console.log(user);
-          if (user.length === 0) {
-            console.log('invalid');
-            return { message: 'Invalid user!' };
-          } else {
-            if (user[0].password === password) {
-              console.log('logged in ');
-              return { message: 'You are now logged in' };
-            }
-          }
-        });
+        response.message = 'Username, password cannot be empty';
       }
+      return response;
     }
   }, {
     key: 'createGroup',

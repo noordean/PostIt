@@ -6,7 +6,7 @@ const sequelize = new Sequelize('postgres://ybblqxvs:GCYNSQW0othmnzhzmvPmm4kTgaO
 sequelize.authenticate().then(() => {
   console.log('connected');
 }).catch((err) => {
-  console.log('error');
+  console.log('errorrr');
 });
 
 export default sequelize;

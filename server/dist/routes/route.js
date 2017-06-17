@@ -8,25 +8,85 @@ var _express = require('express');
 
 var _express2 = _interopRequireDefault(_express);
 
-var _endpointsValidation = require('../validation/endpointsValidation');
+var _connection = require('../database/dbconnection/connection');
 
-var _endpointsValidation2 = _interopRequireDefault(_endpointsValidation);
+var _connection2 = _interopRequireDefault(_connection);
+
+var _userDbClass = require('../database/dbClasses/userDbClass');
+
+var _userDbClass2 = _interopRequireDefault(_userDbClass);
+
+var _groupDbClass = require('../database/dbClasses/groupDbClass');
+
+var _groupDbClass2 = _interopRequireDefault(_groupDbClass);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var router = _express2.default.Router();
-var validationInstance = new _endpointsValidation2.default();
+
+var userDbInstance = new _userDbClass2.default(_connection2.default);
+var groupDbInstance = new _groupDbClass2.default(_connection2.default);
 
 router.post('/api/user/signup', function (req, res) {
-  res.json(validationInstance.signUp(req.body.username, req.body.password, req.body.email));
+  var username = req.body.username;
+  var password = req.body.password;
+  var email = req.body.email;
+  if (username === undefined || password === undefined || email === undefined) {
+    res.json({ message: 'You need to provide username, password and email' });
+  } else if (username === '' || password === '' || email === '') {
+    res.json({ message: 'Username, password or email cannot be empty' });
+  } else {
+    userDbInstance.getUser(username, function (user) {
+      if (user.length === 0) {
+        userDbInstance.saveUser(username, password, email);
+        res.json({ message: 'Rgistration successful' });
+      } else {
+        res.json({ message: 'You already have an existing account. Kindly go and login' });
+      }
+    });
+  }
 });
 
 router.post('/api/user/signin', function (req, res) {
-  res.json(validationInstance.signIn(req.body.username, req.body.password));
+  var username = req.body.username;
+  var password = req.body.password;
+  if (username === undefined || password === undefined) {
+    res.json({ message: 'You need to provide username, password' });
+  } else if (username === '' || password === '') {
+    res.json({ message: 'Username, password cannot be empty' });
+  } else {
+    userDbInstance.getUser(username, function (user) {
+      if (user.length === 0) {
+        res.json({ message: 'Invalid user!' });
+      } else {
+        if (user[0].password === password) {
+          res.json({ message: 'You are now logged in' });
+        } else {
+          res.json({ message: 'Incorrect password' });
+        }
+      }
+    });
+  }
 });
 
 router.post('/api/group', function (req, res) {
-  res.json(validationInstance.createGroup(req.body.groupname, req.body.createdby));
+  var groupName = req.body.groupname;
+  var createdBy = req.body.createdby;
+  if (groupName === undefined || createdBy === undefined) {
+    res.json({ message: 'You need to provide the group-name and the creator\'s username' });
+  } else if (groupName === '' || createdBy === '') {
+    res.json({ message: 'group-name and the creator\'s username cannot be empty' });
+  } else {
+    groupDbInstance.getGroup(groupName, function (group) {
+      console.log(group);
+      if (group.length === 0) {
+        groupDbInstance.createGroup(groupName, createdBy);
+        res.json({ message: 'Group successfully created' });
+      } else {
+        res.json({ message: 'The selected group name is unavailable' });
+      }
+    });
+  }
 });
 
 router.post('/api/group/:groupID/user', function (req, res) {

@@ -16,7 +16,7 @@ var sequelize = new _sequelize2.default('postgres://ybblqxvs:GCYNSQW0othmnzhzmvP
 sequelize.authenticate().then(function () {
   console.log('connected');
 }).catch(function (err) {
-  console.log('error');
+  console.log('errorrr');
 });
 
 exports.default = sequelize;

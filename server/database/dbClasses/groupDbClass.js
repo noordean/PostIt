@@ -19,8 +19,8 @@ class GroupClass {
     });
   }
 
-  getGroup(done) {
-    this.group.findAll({ where: { groupname: 'July Fellow' } }).then((group) => {
+  getGroup(groupName, done) {
+    this.group.findAll({ where: { groupname: groupName } }).then((group) => {
       done(group);
     });
   }

@@ -1,0 +1,22 @@
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _sequelize = require('sequelize');
+
+var _sequelize2 = _interopRequireDefault(_sequelize);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// connect to an online postgreSQL database
+var sequelize = new _sequelize2.default('postgres://ybblqxvs:GCYNSQW0othmnzhzmvPmm4kTgaODqW1j@stampy.db.elephantsql.com:5432/ybblqxvs', { query: { raw: true } });
+
+sequelize.authenticate().then(function () {
+  console.log('connected');
+}).catch(function (err) {
+  console.log('error');
+});
+
+exports.default = sequelize;

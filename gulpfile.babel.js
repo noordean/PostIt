@@ -4,7 +4,7 @@ import nodemon from 'gulp-nodemon';
 import path from 'path';
 
 gulp.task('transpile', () =>
-  gulp.src(['server/*.js'])
+  gulp.src(['server/**/*.js', '!server/dist/**'])
     .pipe(babel())
     .pipe(gulp.dest('server/dist'))
 );

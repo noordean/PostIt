@@ -8,7 +8,7 @@ var _bodyParser = require('body-parser');
 
 var _bodyParser2 = _interopRequireDefault(_bodyParser);
 
-var _route = require('./route');
+var _route = require('./routes/route');
 
 var _route2 = _interopRequireDefault(_route);
 

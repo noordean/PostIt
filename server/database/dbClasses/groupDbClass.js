@@ -7,7 +7,7 @@ class GroupClass {
   }
 
   createGroup(groupname, createdby) {
-    const groupmembers = [];
+    const groupmembers = [createdby];
     this.group.sync().then(() => {
       return this.group.create({
         groupname,
@@ -19,9 +19,26 @@ class GroupClass {
     });
   }
 
-  getGroup(groupName, done) {
+  getGroupByName(groupName, done) {
     this.group.findAll({ where: { groupname: groupName } }).then((group) => {
       done(group);
+    });
+  }
+
+  getGroupById(groupId, done) {
+    this.group.findAll({ where: { id: groupId } }).then((group) => {
+      done(group);
+    });
+  }
+
+  addUserToGroup(groupId, username) {
+    this.group.find({ where: { id: groupId } }).then((group) => {
+      const newMembers = group.groupmembers;
+      if (newMembers.indexOf(username) === -1) {
+        newMembers.push(username);
+      }
+      this.group.update({ groupmembers: newMembers },
+        { where: { id: groupId } });
     });
   }
 }

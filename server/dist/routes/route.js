@@ -24,6 +24,10 @@ var _groupDbClass = require('../database/dbClasses/groupDbClass');
 
 var _groupDbClass2 = _interopRequireDefault(_groupDbClass);
 
+var _messageDbClass = require('../database/dbClasses/messageDbClass');
+
+var _messageDbClass2 = _interopRequireDefault(_messageDbClass);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var router = _express2.default.Router();
@@ -31,6 +35,7 @@ var salt = _bcrypt2.default.genSaltSync(10);
 
 var userDbInstance = new _userDbClass2.default(_connection2.default);
 var groupDbInstance = new _groupDbClass2.default(_connection2.default);
+var messageDbInstance = new _messageDbClass2.default(_connection2.default);
 
 router.post('/api/user/signup', function (req, res) {
   var username = req.body.username;
@@ -57,9 +62,9 @@ router.post('/api/user/signin', function (req, res) {
   var username = req.body.username;
   var password = req.body.password;
   if (username === undefined || password === undefined) {
-    res.json({ message: 'You need to provide username, password' });
+    res.json({ message: 'You need to provide username and password' });
   } else if (username === '' || password === '') {
-    res.json({ message: 'Username, password cannot be empty' });
+    res.json({ message: 'Username and password cannot be empty' });
   } else {
     userDbInstance.getUser(username, function (user) {
       if (user.length === 0) {
@@ -83,7 +88,7 @@ router.post('/api/group', function (req, res) {
   } else if (groupName === '' || createdBy === '') {
     res.json({ message: 'group-name and the creator\'s username cannot be empty' });
   } else {
-    groupDbInstance.getGroup(groupName, function (group) {
+    groupDbInstance.getGroupByName(groupName, function (group) {
       if (group.length === 0) {
         groupDbInstance.createGroup(groupName, createdBy);
         res.json({ message: 'Group successfully created' });
@@ -95,15 +100,41 @@ router.post('/api/group', function (req, res) {
 });
 
 router.post('/api/group/:groupID/user', function (req, res) {
-  res.json({ message: 'This is to add a user to a group with id ' + req.params.groupID });
+  if (req.params.groupID === undefined || req.body.username === undefined) {
+    res.json({ message: 'You need to provide the group-id and the username' });
+  } else if (req.params.groupID === '' || req.body.username === '') {
+    res.json({ message: 'group-id and username cannot be empty' });
+  } else {
+    var id = req.params.groupID;
+    var username = req.body.username;
+    groupDbInstance.addUserToGroup(id, username);
+    res.json({ message: 'user successfully added' });
+  }
 });
 
 router.post('/api/group/:groupID/message', function (req, res) {
-  res.json({ message: 'This is to post message to a group with id ' + req.params.groupID });
+  var groupID = req.params.groupID;
+  var postedBy = req.body.postedby;
+  var message = req.body.message;
+  if (groupID === undefined || postedBy === undefined || message === undefined) {
+    res.json({ message: 'You need to provide the group-id, postedby and message' });
+  } else if (groupID === '' || postedBy === '' || message === '') {
+    res.json({ message: 'group-id, user or message cannot be empty' });
+  } else {
+    messageDbInstance.postMessage(groupID, postedBy, message);
+    res.json({ message: 'Message posted successfully' });
+  }
 });
 
 router.get('/api/group/:groupID/messages', function (req, res) {
-  res.json({ message: 'This is to retrieve messages from a group with ' + req.params.groupID });
+  var groupID = req.params.groupID;
+  if (groupID === undefined || groupID === '') {
+    res.json({ message: 'group-id must be provided' });
+  } else {
+    messageDbInstance.getMessages(groupID, function (messages) {
+      res.json(messages);
+    });
+  }
 });
 
 router.get('/', function (req, res) {

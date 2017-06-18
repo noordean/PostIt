@@ -27,7 +27,7 @@ var GroupClass = function () {
     value: function createGroup(groupname, createdby) {
       var _this = this;
 
-      var groupmembers = [];
+      var groupmembers = [createdby];
       this.group.sync().then(function () {
         return _this.group.create({
           groupname: groupname,
@@ -39,10 +39,30 @@ var GroupClass = function () {
       });
     }
   }, {
-    key: 'getGroup',
-    value: function getGroup(groupName, done) {
+    key: 'getGroupByName',
+    value: function getGroupByName(groupName, done) {
       this.group.findAll({ where: { groupname: groupName } }).then(function (group) {
         done(group);
+      });
+    }
+  }, {
+    key: 'getGroupById',
+    value: function getGroupById(groupId, done) {
+      this.group.findAll({ where: { id: groupId } }).then(function (group) {
+        done(group);
+      });
+    }
+  }, {
+    key: 'addUserToGroup',
+    value: function addUserToGroup(groupId, username) {
+      var _this2 = this;
+
+      this.group.find({ where: { id: groupId } }).then(function (group) {
+        var newMembers = group.groupmembers;
+        if (newMembers.indexOf(username) === -1) {
+          newMembers.push(username);
+        }
+        _this2.group.update({ groupmembers: newMembers }, { where: { id: groupId } });
       });
     }
   }]);

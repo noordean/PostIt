@@ -3,12 +3,14 @@ import bcrypt from 'bcrypt';
 import sequelize from '../database/dbconnection/connection';
 import userDbClass from '../database/dbClasses/userDbClass';
 import groupDbClass from '../database/dbClasses/groupDbClass';
+import messageDbClass from '../database/dbClasses/messageDbClass';
 
 const router = express.Router();
 const salt = bcrypt.genSaltSync(10);
 
 const userDbInstance = new userDbClass(sequelize);
 const groupDbInstance = new groupDbClass(sequelize);
+const messageDbInstance = new messageDbClass(sequelize);
 
 router.post('/api/user/signup', (req, res) => {
   const username = req.body.username;
@@ -35,9 +37,9 @@ router.post('/api/user/signin', (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
   if (username === undefined || password === undefined) {
-    res.json({ message: 'You need to provide username, password' });
+    res.json({ message: 'You need to provide username and password' });
   } else if (username === '' || password === '') {
-    res.json({ message: 'Username, password cannot be empty' });
+    res.json({ message: 'Username and password cannot be empty' });
   } else {
     userDbInstance.getUser(username, (user) => {
       if (user.length === 0) {
@@ -61,7 +63,7 @@ router.post('/api/group', (req, res) => {
   } else if (groupName === '' || createdBy === '') {
     res.json({ message: 'group-name and the creator\'s username cannot be empty' });
   } else {
-    groupDbInstance.getGroup(groupName, (group) => {
+    groupDbInstance.getGroupByName(groupName, (group) => {
       if (group.length === 0) {
         groupDbInstance.createGroup(groupName, createdBy);
         res.json({ message: 'Group successfully created' });
@@ -73,15 +75,41 @@ router.post('/api/group', (req, res) => {
 });
 
 router.post('/api/group/:groupID/user', (req, res) => {
-  res.json({ message: 'This is to add a user to a group with id ' + req.params.groupID });
+  if (req.params.groupID === undefined || req.body.username === undefined) {
+    res.json({ message: 'You need to provide the group-id and the username' });
+  } else if (req.params.groupID === '' || req.body.username === '') {
+    res.json({ message: 'group-id and username cannot be empty' });
+  } else {
+    const id = req.params.groupID;
+    const username = req.body.username;
+    groupDbInstance.addUserToGroup(id, username);
+    res.json({ message: 'user successfully added' });
+  }
 });
 
 router.post('/api/group/:groupID/message', (req, res) => {
-  res.json({ message: 'This is to post message to a group with id ' + req.params.groupID });
+  const groupID = req.params.groupID;
+  const postedBy = req.body.postedby;
+  const message = req.body.message;
+  if (groupID === undefined || postedBy === undefined || message === undefined) {
+    res.json({ message: 'You need to provide the group-id, postedby and message' });
+  } else if (groupID === '' || postedBy === '' || message === '') {
+    res.json({ message: 'group-id, user or message cannot be empty' });
+  } else {
+    messageDbInstance.postMessage(groupID, postedBy, message);
+    res.json({ message: 'Message posted successfully' });
+  }
 });
 
 router.get('/api/group/:groupID/messages', (req, res) => {
-  res.json({ message: 'This is to retrieve messages from a group with ' + req.params.groupID });
+  const groupID = req.params.groupID;
+  if (groupID === undefined || groupID === '') {
+    res.json({ message: 'group-id must be provided' });
+  } else {
+    messageDbInstance.getMessages(groupID, (messages) => {
+      res.json(messages);
+    });
+  }
 });
 
 router.get('/', (req, res) => {

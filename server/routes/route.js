@@ -1,9 +1,11 @@
 import express from 'express';
+import bcrypt from 'bcrypt';
 import sequelize from '../database/dbconnection/connection';
 import userDbClass from '../database/dbClasses/userDbClass';
 import groupDbClass from '../database/dbClasses/groupDbClass';
 
 const router = express.Router();
+const salt = bcrypt.genSaltSync(10);
 
 const userDbInstance = new userDbClass(sequelize);
 const groupDbInstance = new groupDbClass(sequelize);
@@ -19,7 +21,8 @@ router.post('/api/user/signup', (req, res) => {
   } else {
     userDbInstance.getUser(username, (user) => {
       if (user.length === 0) {
-        userDbInstance.saveUser(username, password, email);
+        const hashedPassword = bcrypt.hashSync(password, salt);
+        userDbInstance.saveUser(username, hashedPassword, email);
         res.json({ message: 'Rgistration successful' });
       } else {
         res.json({ message: 'You already have an existing account. Kindly go and login' });
@@ -40,7 +43,7 @@ router.post('/api/user/signin', (req, res) => {
       if (user.length === 0) {
         res.json({ message: 'Invalid user!' });
       } else {
-        if (user[0].password === password) {
+        if (bcrypt.compareSync(password, user[0].password)) {
           res.json({ message: 'You are now logged in' });
         } else {
           res.json({ message: 'Incorrect password' });
@@ -59,7 +62,6 @@ router.post('/api/group', (req, res) => {
     res.json({ message: 'group-name and the creator\'s username cannot be empty' });
   } else {
     groupDbInstance.getGroup(groupName, (group) => {
-      console.log(group);
       if (group.length === 0) {
         groupDbInstance.createGroup(groupName, createdBy);
         res.json({ message: 'Group successfully created' });

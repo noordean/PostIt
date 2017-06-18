@@ -8,6 +8,10 @@ var _express = require('express');
 
 var _express2 = _interopRequireDefault(_express);
 
+var _bcrypt = require('bcrypt');
+
+var _bcrypt2 = _interopRequireDefault(_bcrypt);
+
 var _connection = require('../database/dbconnection/connection');
 
 var _connection2 = _interopRequireDefault(_connection);
@@ -23,6 +27,7 @@ var _groupDbClass2 = _interopRequireDefault(_groupDbClass);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var router = _express2.default.Router();
+var salt = _bcrypt2.default.genSaltSync(10);
 
 var userDbInstance = new _userDbClass2.default(_connection2.default);
 var groupDbInstance = new _groupDbClass2.default(_connection2.default);
@@ -38,7 +43,8 @@ router.post('/api/user/signup', function (req, res) {
   } else {
     userDbInstance.getUser(username, function (user) {
       if (user.length === 0) {
-        userDbInstance.saveUser(username, password, email);
+        var hashedPassword = _bcrypt2.default.hashSync(password, salt);
+        userDbInstance.saveUser(username, hashedPassword, email);
         res.json({ message: 'Rgistration successful' });
       } else {
         res.json({ message: 'You already have an existing account. Kindly go and login' });
@@ -59,7 +65,7 @@ router.post('/api/user/signin', function (req, res) {
       if (user.length === 0) {
         res.json({ message: 'Invalid user!' });
       } else {
-        if (user[0].password === password) {
+        if (_bcrypt2.default.compareSync(password, user[0].password)) {
           res.json({ message: 'You are now logged in' });
         } else {
           res.json({ message: 'Incorrect password' });
@@ -78,7 +84,6 @@ router.post('/api/group', function (req, res) {
     res.json({ message: 'group-name and the creator\'s username cannot be empty' });
   } else {
     groupDbInstance.getGroup(groupName, function (group) {
-      console.log(group);
       if (group.length === 0) {
         groupDbInstance.createGroup(groupName, createdBy);
         res.json({ message: 'Group successfully created' });

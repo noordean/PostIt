@@ -46,6 +46,11 @@ var UserClass = function () {
         throw new Error(err);
       });
     }
+  }, {
+    key: 'deleteUser',
+    value: function deleteUser(userName) {
+      this.user.destroy({ where: { username: userName } });
+    }
   }]);
 
   return UserClass;

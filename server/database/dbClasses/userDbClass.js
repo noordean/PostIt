@@ -25,6 +25,10 @@ class UserClass {
       throw new Error(err);
     });
   }
+
+  deleteUser(userName) {
+    this.user.destroy({ where: { username: userName } });
+  }
 }
 
 export default UserClass;

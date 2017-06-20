@@ -1,5 +1,9 @@
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 var _express = require('express');
 
 var _express2 = _interopRequireDefault(_express);
@@ -29,3 +33,5 @@ app.use(function (req, res, next) {
 });
 
 app.use('/', _route2.default);
+
+exports.default = app;

@@ -10,10 +10,17 @@ describe('signup endpoint', () => {
   const password = 'ibro12345';
   const email = 'ebro90@gmail.com';
 
-  // run this query 1 second less than the jasmine default value
-  beforeEach(() => {
+  // save this user to database before every spec
+  beforeEach((done) => {
     userDbInstance.saveUser(username, password, email);
-  }, 1000);
+    done();
+  });
+
+  // delete this user from database after every spec
+  afterEach((done) => {
+    userDbInstance.deleteUser(username);
+    done();
+  });
 
   it('should return an error message if username is undefined', (done) => {
     supertest(app)
@@ -111,5 +118,5 @@ describe('signup endpoint', () => {
           done();
         }
       });
-  }, 10000);
+  }, jasmine.DEFAULT_TIMEOUT_INTERVAL + 5000);
 });

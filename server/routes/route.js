@@ -12,6 +12,7 @@ const userDbInstance = new userDbClass(sequelize);
 const groupDbInstance = new groupDbClass(sequelize);
 const messageDbInstance = new messageDbClass(sequelize);
 
+userDbInstance.deleteUser('noordean');
 router.post('/api/user/signup', (req, res) => {
   const username = req.body.username;
   const password = req.body.password;

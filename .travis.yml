@@ -6,5 +6,7 @@ before_script:
     - npm install
 script: 
     - gulp run-tests
+after_success:
+    - gulp coverage
 env:
     - DATABASE_URL="postgres://ybblqxvs:GCYNSQW0othmnzhzmvPmm4kTgaODqW1j@stampy.db.elephantsql.com:5432/ybblqxvs"

@@ -21,6 +21,7 @@ gulp.task('serve', ['transpile'], () => {
 gulp.task('run-tests', ['transpile'], () => {
   gulp.src(path.join('server', 'dist', 'tests', 'route-test.js'))
   .pipe(jasmine())
+  .pipe(exit());
 });
 
 

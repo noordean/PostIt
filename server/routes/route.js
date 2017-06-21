@@ -1,5 +1,5 @@
 import express from 'express';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import sequelize from '../database/dbconnection/connection';
 import userDbClass from '../database/dbClasses/userDbClass';
 import groupDbClass from '../database/dbClasses/groupDbClass';

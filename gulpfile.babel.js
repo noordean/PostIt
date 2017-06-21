@@ -11,17 +11,18 @@ gulp.task('transpile', () =>
     .pipe(gulp.dest('server/dist'))
 );
 
-gulp.task('run-tests', ['transpile'], () => {
-  gulp.src(path.join('server', 'dist', 'tests', 'route-test.js'))
-  .pipe(jasmine())
-  .pipe(exit());
-});
-
-gulp.task('serve', ['run-tests'], () => {
+gulp.task('serve', ['transpile'], () => {
   nodemon({
     script: path.join('server', 'dist', 'server.js'),
     ext: 'js'
   });
 });
 
-gulp.task('default', ['serve']);
+gulp.task('run-tests', ['transpile'], () => {
+  gulp.src(path.join('server', 'dist', 'tests', 'route-test.js'))
+  .pipe(jasmine())
+});
+
+
+
+gulp.task('default', ['run-tests']);

@@ -26,6 +26,14 @@ class UserClass {
     });
   }
 
+  getAllUsers(done) {
+    this.user.findAll({}).then((data) => {
+      done(data)
+    }).catch((err) => {
+      throw new Error(err);
+    });
+  }
+
   deleteUser(userName) {
     this.user.destroy({ where: { username: userName } });
   }

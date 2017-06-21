@@ -37,7 +37,7 @@ var userDbInstance = new _userDbClass2.default(_connection2.default);
 var groupDbInstance = new _groupDbClass2.default(_connection2.default);
 var messageDbInstance = new _messageDbClass2.default(_connection2.default);
 
-userDbInstance.deleteUser('noordean');
+// userDbInstance.deleteUser('jasmineTest2');
 router.post('/api/user/signup', function (req, res) {
   var username = req.body.username;
   var password = req.body.password;
@@ -51,7 +51,7 @@ router.post('/api/user/signup', function (req, res) {
       if (user.length === 0) {
         var hashedPassword = _bcrypt2.default.hashSync(password, salt);
         userDbInstance.saveUser(username, hashedPassword, email);
-        res.json({ message: 'Rgistration successful' });
+        res.json({ message: 'Registration successful' });
       } else {
         res.json({ message: 'You already have an existing account. Kindly go and login' });
       }

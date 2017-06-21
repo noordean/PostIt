@@ -12,7 +12,7 @@ const userDbInstance = new userDbClass(sequelize);
 const groupDbInstance = new groupDbClass(sequelize);
 const messageDbInstance = new messageDbClass(sequelize);
 
-userDbInstance.deleteUser('noordean');
+// userDbInstance.deleteUser('jasmineTest2');
 router.post('/api/user/signup', (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
@@ -26,7 +26,7 @@ router.post('/api/user/signup', (req, res) => {
       if (user.length === 0) {
         const hashedPassword = bcrypt.hashSync(password, salt);
         userDbInstance.saveUser(username, hashedPassword, email);
-        res.json({ message: 'Rgistration successful' });
+        res.json({ message: 'Registration successful' });
       } else {
         res.json({ message: 'You already have an existing account. Kindly go and login' });
       }

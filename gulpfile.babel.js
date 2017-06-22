@@ -53,4 +53,3 @@ gulp.task('codeclimate', ['coverage'], () => {
   ;
 });
 
-gulp.task('default', ['run-tests']);

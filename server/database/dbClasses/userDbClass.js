@@ -62,6 +62,7 @@ class UserClass {
 
   /**
  * @description: delete a user using the username
+ * @param {String} userName
  * @return {Object} deletedData
  */
   deleteUser(userName) {

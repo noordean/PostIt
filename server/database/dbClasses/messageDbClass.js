@@ -34,7 +34,7 @@ class MessageClass {
   }
 
   /**
- * @description: retrieves message from a group of id groupid
+ * @description: retrieves message from a group of id 'groupid'
  * @param {Number} groupID
  * @param {Function} done
  * @return {Object} retrievedData

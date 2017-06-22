@@ -34,7 +34,7 @@ class GroupClass {
   }
 
   /**
- * @description: retrieves group using groupname
+ * @description: retrieves group using groupName
  * @param {String} groupName
  * @param {Function} done
  * @return {Object} retrievedData

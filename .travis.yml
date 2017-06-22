@@ -8,5 +8,7 @@ script:
     - gulp run-tests
 after_success:
     - gulp codeclimate
+    - npm install -g codeclimate-test-reporter
+    - codeclimate-test-reporter < lcov.info
 env:
     - DATABASE_URL="postgres://ybblqxvs:GCYNSQW0othmnzhzmvPmm4kTgaODqW1j@stampy.db.elephantsql.com:5432/ybblqxvs"

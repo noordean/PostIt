@@ -10,3 +10,4 @@ after_success:
     - gulp coverage
 env:
     - DATABASE_URL="postgres://ybblqxvs:GCYNSQW0othmnzhzmvPmm4kTgaODqW1j@stampy.db.elephantsql.com:5432/ybblqxvs"
+    - CODECLIMATE_REPO_TOKEN=eb9f0a3bdade3871cef63708ca5a14fb047e289d207d0d391b15d40c47b25541

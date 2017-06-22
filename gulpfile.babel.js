@@ -6,6 +6,7 @@ import exit from 'gulp-exit';
 import path from 'path';
 import istanbul from 'gulp-istanbul';
 import coveralls from 'gulp-coveralls';
+import reporter from 'gulp-codeclimate-reporter';
 
 gulp.task('transpile', () =>
   gulp.src(['server/**/*.js', '!server/dist/**'])
@@ -43,6 +44,13 @@ gulp.task('coverage', ['test'], () => {
   gulp.src('coverage/**/lcov.info')
     .pipe(coveralls())
     .pipe(exit());
+});
+
+gulp.task('codeclimate', ['coverage'], () => {
+  return gulp
+    .src(['coverage/**/lcov.info'], {read: false} )
+    .pipe(reporter({ token: 'eb9f0a3bdade3871cef63708ca5a14fb047e289d207d0d391b15d40c47b25541' }))
+  ;
 });
 
 gulp.task('default', ['run-tests']);

@@ -25,6 +25,7 @@
     "express": "^4.15.3",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
+    "gulp-codeclimate-reporter": "^1.2.0",
     "gulp-coveralls": "^0.1.4",
     "gulp-exit": "0.0.2",
     "gulp-istanbul": "^1.1.2",

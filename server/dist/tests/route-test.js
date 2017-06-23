@@ -294,7 +294,7 @@ describe('endpoint: add user to group', function () {
     groupDbInstance.deleteGroup(groupSuccess);
   });*/
   it('should return an error message if username is undefined', function (done) {
-    (0, _supertest2.default)(_server2.default).post('/api/group/:groupID/user').send({}).expect({ message: 'You need to provide the group-id and the username' }).end(function (err) {
+    (0, _supertest2.default)(_server2.default).post('/api/group/:groupID/user').send({ username: undefined }).expect({ message: 'You need to provide the group-id and the username' }).end(function (err) {
       if (err) {
         done.fail(err);
       } else {

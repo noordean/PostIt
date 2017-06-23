@@ -360,7 +360,7 @@ describe('endpoint: add user to group', () => {
   it('should return an error message if username is undefined', (done) => {
     supertest(app)
       .post('/api/group/:groupID/user')
-      .send({})
+      .send({ username: undefined })
       .expect({ message: 'You need to provide the group-id and the username' })
       .end((err) => {
         if (err) {

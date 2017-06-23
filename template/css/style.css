@@ -1,0 +1,61 @@
+.title {
+  font-size: 50px; }
+
+.mainbox {
+  margin-top: 50px;
+  margin-bottom: 150px; }
+
+.input-group {
+  margin-bottom: 25px; }
+
+.from-group {
+  margin-top: 50px; }
+
+.create-account {
+  border-top: 1px solid #888;
+  padding-top: 15px;
+  font-size: 85%; }
+
+footer {
+  clear: both; }
+
+.box {
+  background-color: #fff;
+  min-height: 200px;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  border-radius: 2px;
+  padding: 3px;
+  margin-bottom: 25px; }
+
+.cards {
+  margin-bottom: 75px; }
+
+.message-wrap {
+  box-shadow: 0 0 3px #ddd;
+  padding: 0px;
+  margin-bottom: 75px; }
+
+.msg {
+  padding: 5px;
+  margin: 0px; }
+
+.msg-wrap {
+  padding: 10px;
+  overflow: auto; }
+
+.time {
+  color: #bfbfbf; }
+
+textarea.post-msg {
+  height: 400px; }
+
+.msg-post {
+  margin-bottom: 50px; }
+
+textarea {
+  resize: none; }
+
+a.title {
+  font-weight: bold; }
+
+/*# sourceMappingURL=style.css.map */

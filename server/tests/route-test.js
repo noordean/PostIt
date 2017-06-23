@@ -255,7 +255,7 @@ describe('endpoint: create-group', () => {
   });
 
   // delete this user from database after test suite
-  afterAll(() => {
+  afterEach(() => {
     groupDbInstance.deleteGroup(groupSuccess);
   });
   it('should return an error message if groupName is undefined', (done) => {

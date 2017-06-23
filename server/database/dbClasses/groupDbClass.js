@@ -58,6 +58,16 @@ class GroupClass {
   }
 
   /**
+ * @description: get all groups
+ * @param {Function} done
+ * @return {Object} retrievedData
+ */
+  getAllGroups(done) {
+    this.group.findAll({}).then((group) => {
+      done(group);
+    });
+  }
+  /**
  * @description: adds user to a group of id 'groupId'
  * @param {String} groupId
  * @param {String} username
@@ -72,6 +82,15 @@ class GroupClass {
       this.group.update({ groupmembers: newMembers },
         { where: { id: groupId } });
     });
+  }
+
+  /**
+ * @description: delete a group using the username
+ * @param {String} groupName
+ * @return {Object} deletedData
+ */
+  deleteGroup(groupName) {
+    this.group.destroy({ where: { groupname: groupName } });
   }
 }
 

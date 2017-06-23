@@ -37,7 +37,11 @@ var userDbInstance = new _userDbClass2.default(_connection2.default);
 var groupDbInstance = new _groupDbClass2.default(_connection2.default);
 var messageDbInstance = new _messageDbClass2.default(_connection2.default);
 
-// userDbInstance.deleteUser('jasmineTest2');
+groupDbInstance.getAllGroups(function (group) {
+  console.log(group);
+});
+
+// user signup
 router.post('/api/user/signup', function (req, res) {
   var username = req.body.username;
   var password = req.body.password;
@@ -59,6 +63,7 @@ router.post('/api/user/signup', function (req, res) {
   }
 });
 
+// user signin
 router.post('/api/user/signin', function (req, res) {
   var username = req.body.username;
   var password = req.body.password;
@@ -81,6 +86,7 @@ router.post('/api/user/signin', function (req, res) {
   }
 });
 
+// creates group
 router.post('/api/group', function (req, res) {
   var groupName = req.body.groupname;
   var createdBy = req.body.createdby;
@@ -100,6 +106,7 @@ router.post('/api/group', function (req, res) {
   }
 });
 
+// adds user to group
 router.post('/api/group/:groupID/user', function (req, res) {
   if (req.params.groupID === undefined || req.body.username === undefined) {
     res.json({ message: 'You need to provide the group-id and the username' });

@@ -14,13 +14,30 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+/**
+ * Message class
+ * @class
+ */
 var UserClass = function () {
+  /**
+   * @description: having the model 'user' as an object property
+   * @param {object} sequelize
+   * @constructor
+   */
   function UserClass(sequelize) {
     _classCallCheck(this, UserClass);
 
-    // create model for user
     this.user = (0, _userModel2.default)(sequelize);
   }
+
+  /**
+  * @description: saves user to database
+  * @param {String} username
+  * @param {String} password
+  * @param {String} email
+  * @return {Object} savedData
+  */
+
 
   _createClass(UserClass, [{
     key: 'saveUser',
@@ -37,6 +54,14 @@ var UserClass = function () {
         });
       });
     }
+
+    /**
+    * @description: retrieves user using the username
+    * @param {String} userName
+    * @param {Function} done
+    * @return {Object} retrievedData
+    */
+
   }, {
     key: 'getUser',
     value: function getUser(userName, done) {
@@ -46,6 +71,13 @@ var UserClass = function () {
         throw new Error(err);
       });
     }
+
+    /**
+    * @description: retrieves all users
+    * @param {Function} done
+    * @return {Object} retrievedData
+    */
+
   }, {
     key: 'getAllUsers',
     value: function getAllUsers(done) {
@@ -55,6 +87,13 @@ var UserClass = function () {
         throw new Error(err);
       });
     }
+
+    /**
+    * @description: delete a user using the username
+    * @param {String} userName
+    * @return {Object} deletedData
+    */
+
   }, {
     key: 'deleteUser',
     value: function deleteUser(userName) {

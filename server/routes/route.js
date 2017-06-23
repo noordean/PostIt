@@ -12,7 +12,11 @@ const userDbInstance = new userDbClass(sequelize);
 const groupDbInstance = new groupDbClass(sequelize);
 const messageDbInstance = new messageDbClass(sequelize);
 
-// userDbInstance.deleteUser('jasmineTest2');
+groupDbInstance.getAllGroups((group) => {
+  console.log(group);
+});
+
+// user signup
 router.post('/api/user/signup', (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
@@ -34,6 +38,7 @@ router.post('/api/user/signup', (req, res) => {
   }
 });
 
+// user signin
 router.post('/api/user/signin', (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
@@ -56,6 +61,7 @@ router.post('/api/user/signin', (req, res) => {
   }
 });
 
+// creates group
 router.post('/api/group', (req, res) => {
   const groupName = req.body.groupname;
   const createdBy = req.body.createdby;
@@ -75,6 +81,7 @@ router.post('/api/group', (req, res) => {
   }
 });
 
+// adds user to group
 router.post('/api/group/:groupID/user', (req, res) => {
   if (req.params.groupID === undefined || req.body.username === undefined) {
     res.json({ message: 'You need to provide the group-id and the username' });

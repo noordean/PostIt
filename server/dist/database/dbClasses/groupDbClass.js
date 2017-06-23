@@ -14,13 +14,29 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+/**
+ * Group class
+ * @class
+ */
 var GroupClass = function () {
+  /**
+   * @description: having the model 'group' as an object property
+   * @param {object} sequelize
+   * @constructor
+   */
   function GroupClass(sequelize) {
     _classCallCheck(this, GroupClass);
 
-    // create model for group
     this.group = (0, _groupModel2.default)(sequelize);
   }
+
+  /**
+  * @description: creates group
+  * @param {String} groupname
+  * @param {String} createdby
+  * @return {Object} insertedData
+  */
+
 
   _createClass(GroupClass, [{
     key: 'createGroup',
@@ -38,6 +54,14 @@ var GroupClass = function () {
         });
       });
     }
+
+    /**
+    * @description: retrieves group using groupName
+    * @param {String} groupName
+    * @param {Function} done
+    * @return {Object} retrievedData
+    */
+
   }, {
     key: 'getGroupByName',
     value: function getGroupByName(groupName, done) {
@@ -45,6 +69,14 @@ var GroupClass = function () {
         done(group);
       });
     }
+
+    /**
+    * @description: retrieves group using group id
+    * @param {String} groupId
+    * @param {Function} done
+    * @return {Object} retrievedData
+    */
+
   }, {
     key: 'getGroupById',
     value: function getGroupById(groupId, done) {
@@ -52,6 +84,27 @@ var GroupClass = function () {
         done(group);
       });
     }
+
+    /**
+    * @description: get all groups
+    * @param {Function} done
+    * @return {Object} retrievedData
+    */
+
+  }, {
+    key: 'getAllGroups',
+    value: function getAllGroups(done) {
+      this.group.findAll({}).then(function (group) {
+        done(group);
+      });
+    }
+    /**
+    * @description: adds user to a group of id 'groupId'
+    * @param {String} groupId
+    * @param {String} username
+    * @return {Object} updatedData
+    */
+
   }, {
     key: 'addUserToGroup',
     value: function addUserToGroup(groupId, username) {
@@ -64,6 +117,18 @@ var GroupClass = function () {
         }
         _this2.group.update({ groupmembers: newMembers }, { where: { id: groupId } });
       });
+    }
+
+    /**
+    * @description: delete a group using the username
+    * @param {String} groupName
+    * @return {Object} deletedData
+    */
+
+  }, {
+    key: 'deleteGroup',
+    value: function deleteGroup(groupName) {
+      this.group.destroy({ where: { groupname: groupName } });
     }
   }]);
 

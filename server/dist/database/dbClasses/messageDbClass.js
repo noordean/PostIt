@@ -14,13 +14,30 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+/**
+ * Message class
+ * @class
+ */
 var MessageClass = function () {
+  /**
+   * @description: having the model 'message' as an object property
+   * @param {object} sequelize
+   * @constructor
+   */
   function MessageClass(sequelize) {
     _classCallCheck(this, MessageClass);
 
-    // create model for message
     this.message = (0, _messageModel2.default)(sequelize);
   }
+
+  /**
+  * @description: posts message to a group of id groupid
+  * @param {Number} groupid
+  * @param {String} postedby
+  * @param {String} message
+  * @return {Object} postedData
+  */
+
 
   _createClass(MessageClass, [{
     key: 'postMessage',
@@ -37,6 +54,14 @@ var MessageClass = function () {
         });
       });
     }
+
+    /**
+    * @description: retrieves message from a group of id 'groupid'
+    * @param {Number} groupID
+    * @param {Function} done
+    * @return {Object} retrievedData
+    */
+
   }, {
     key: 'getMessages',
     value: function getMessages(groupID, done) {

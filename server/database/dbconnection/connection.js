@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 // connect to an online postgreSQL database
-const sequelize = new Sequelize(process.env.DATABASE_URL, { query: { raw: true } });
+const sequelize = new Sequelize('postgres://ybblqxvs:GCYNSQW0othmnzhzmvPmm4kTgaODqW1j@stampy.db.elephantsql.com:5432/ybblqxvs', { query: { raw: true } });
 
 sequelize.authenticate().then(() => {
   console.log('connected');

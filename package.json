@@ -4,8 +4,8 @@
   "description": "an app that allows creation of groups for notifications",
   "main": "server.js",
   "scripts": {
-    "start": "gulp serve",
-    "test": "gulp run-tests"
+    "test": "gulp run-tests",
+    "start": "gulp serve"
   },
   "repository": {
     "type": "git",

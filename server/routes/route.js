@@ -12,10 +12,6 @@ const userDbInstance = new userDbClass(sequelize);
 const groupDbInstance = new groupDbClass(sequelize);
 const messageDbInstance = new messageDbClass(sequelize);
 
-groupDbInstance.getAllGroups((group) => {
-  console.log(group);
-});
-
 // user signup
 router.post('/api/user/signup', (req, res) => {
   const username = req.body.username;

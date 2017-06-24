@@ -120,6 +120,25 @@ var GroupClass = function () {
     }
 
     /**
+    * @description: removes user from a group of id 'groupId'
+    * @param {String} groupId
+    * @param {String} username
+    * @return {Object} updatedData
+    */
+
+  }, {
+    key: 'removeUserFromGroup',
+    value: function removeUserFromGroup(groupId, username) {
+      var _this3 = this;
+
+      this.group.find({ where: { id: groupId } }).then(function (group) {
+        var newMembers = group.groupmembers.filter(function (element) {
+          return element !== username;
+        });
+        _this3.group.update({ groupmembers: newMembers }, { where: { id: groupId } });
+      });
+    }
+    /**
     * @description: delete a group using the username
     * @param {String} groupName
     * @return {Object} deletedData

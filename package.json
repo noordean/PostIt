@@ -2,8 +2,9 @@
   "name": "postit",
   "version": "0.0.1",
   "description": "an app that allows creation of groups for notifications",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
+    "start": "gulp serve",
     "test": "gulp run-tests"
   },
   "repository": {

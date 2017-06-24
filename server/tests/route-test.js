@@ -10,7 +10,7 @@ dotenv.config();
 const userDbInstance = new userDbClass(sequelize);
 const groupDbInstance = new groupDbClass(sequelize);
 
-describe('endpoint: signup', () => {
+describe('Endpoint: signup', () => {
   const username = 'jasmineTest1';
   const anotherUser = 'jasmineTest2';
   const thirdUser = 'jasmineTest3';
@@ -141,7 +141,7 @@ describe('endpoint: signup', () => {
   }, jasmine.DEFAULT_TIMEOUT_INTERVAL + 10000);
 });
 
-describe('endpoint: signin', () => {
+describe('Endpoint: signin', () => {
   const username = 'jasmineTest1';
   const password = 'ibro12345';
 
@@ -244,17 +244,17 @@ describe('endpoint: signin', () => {
   }, jasmine.DEFAULT_TIMEOUT_INTERVAL + 10000);
 });
 
-describe('endpoint: create-group', () => {
+describe('Endpoint: create-group', () => {
   const groupname = 'Cohort-22';
   const createdby = 'Ibrahim';
   const groupSuccess = 'Group-Testing';
   const userSuccess = 'anonymous';
   // create this group into database before test suite
-  beforeAll(() => {
+  beforeEach(() => {
     groupDbInstance.createGroup(groupSuccess, userSuccess);
   });
 
-  // delete this user from database after test suite
+  // delete this group from database after each spec
   afterEach(() => {
     groupDbInstance.deleteGroup(groupSuccess);
   });
@@ -343,20 +343,7 @@ describe('endpoint: create-group', () => {
   }, jasmine.DEFAULT_TIMEOUT_INTERVAL + 10000);
 });
 
-describe('endpoint: add user to group', () => {
-  /*const groupname = 'Cohort-22';
-  const createdby = 'Ibrahim';
-  const groupSuccess = 'Group-Testing';
-  const userSuccess = 'anonymous'
-  // create this group into database before test suite
-  beforeAll(() => {
-    groupDbInstance.createGroup(groupSuccess, userSuccess);
-  });
-
-  // delete this user from database after test suite
-  afterAll(() => {
-    groupDbInstance.deleteGroup(groupSuccess);
-  });*/
+describe('Endpoint: add user to group', () => {
   it('should return an error message if username is undefined', (done) => {
     supertest(app)
       .post('/api/group/:groupID/user')
@@ -384,4 +371,108 @@ describe('endpoint: add user to group', () => {
         }
       });
   });
+
+  it('should return a success message if both username and groupID are supplied', (done) => {
+    supertest(app)
+      .post('/api/group/2/user')
+      .send({ username: 'anotherAnonymous' })
+      .expect({ message: 'user successfully added' })
+      .end((err) => {
+        if (err) {
+          done.fail(err);
+        } else {
+          done();
+        }
+      });
+  });
 });
+
+describe('Endpoint: post message to group', () => {
+  const message = 'This is an announcement';
+  const postedby = 'noordean';
+
+  it('should return an error message if postedby is undefined', (done) => {
+    supertest(app)
+      .post('/api/group/:groupID/message')
+      .send({ message })
+      .expect({ message: 'You need to provide the group-id, postedby and message' })
+      .end((err) => {
+        if (err) {
+          done.fail(err);
+        } else {
+          done();
+        }
+      });
+  });
+
+  it('should return an error message if message is undefined', (done) => {
+    supertest(app)
+      .post('/api/group/:groupID/message')
+      .send({ postedby })
+      .expect({ message: 'You need to provide the group-id, postedby and message' })
+      .end((err) => {
+        if (err) {
+          done.fail(err);
+        } else {
+          done();
+        }
+      });
+  });
+
+  it('should return an error message if postedby is empty', (done) => {
+    supertest(app)
+      .post('/api/group/:groupID/message')
+      .send({ message, postedby: '' })
+      .expect({ message: 'group-id, user or message cannot be empty' })
+      .end((err) => {
+        if (err) {
+          done.fail(err);
+        } else {
+          done();
+        }
+      });
+  });
+
+  it('should return an error message if message is empty', (done) => {
+    supertest(app)
+      .post('/api/group/:groupID/message')
+      .send({ message: '', postedby })
+      .expect({ message: 'group-id, user or message cannot be empty' })
+      .end((err) => {
+        if (err) {
+          done.fail(err);
+        } else {
+          done();
+        }
+      });
+  });
+
+  it('should return a success message if groupID, message and postedby are supplied', (done) => {
+    supertest(app)
+      .post('/api/group/27/message')
+      .send({ message, postedby })
+      .expect({ message: 'Message posted successfully' })
+      .end((err) => {
+        if (err) {
+          done.fail(err);
+        } else {
+          done();
+        }
+      });
+  });
+});
+
+describe('Endpoint: get messages from group', () => {
+  it('should return messages of a group if correct groupID is supplied', (done) => {
+    supertest(app)
+      .get('/api/group/1/messages')
+      .send({})
+      .end((err, res) => {
+        expect(res.status).toEqual(200);
+        expect(JSON.parse(res.text)[0].postedby).toEqual('noordean');
+        expect(JSON.parse(res.text)[0].message).toEqual('This is my number guyz');
+        done();
+      });
+  });
+});
+

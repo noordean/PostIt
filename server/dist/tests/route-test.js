@@ -31,7 +31,7 @@ _dotenv2.default.config();
 var userDbInstance = new _userDbClass2.default(_connection2.default);
 var groupDbInstance = new _groupDbClass2.default(_connection2.default);
 
-describe('endpoint: signup', function () {
+describe('Endpoint: signup', function () {
   var username = 'jasmineTest1';
   var anotherUser = 'jasmineTest2';
   var thirdUser = 'jasmineTest3';
@@ -130,7 +130,7 @@ describe('endpoint: signup', function () {
   }, jasmine.DEFAULT_TIMEOUT_INTERVAL + 10000);
 });
 
-describe('endpoint: signin', function () {
+describe('Endpoint: signin', function () {
   var username = 'jasmineTest1';
   var password = 'ibro12345';
 
@@ -205,17 +205,17 @@ describe('endpoint: signin', function () {
   }, jasmine.DEFAULT_TIMEOUT_INTERVAL + 10000);
 });
 
-describe('endpoint: create-group', function () {
+describe('Endpoint: create-group', function () {
   var groupname = 'Cohort-22';
   var createdby = 'Ibrahim';
   var groupSuccess = 'Group-Testing';
   var userSuccess = 'anonymous';
   // create this group into database before test suite
-  beforeAll(function () {
+  beforeEach(function () {
     groupDbInstance.createGroup(groupSuccess, userSuccess);
   });
 
-  // delete this user from database after test suite
+  // delete this group from database after each spec
   afterEach(function () {
     groupDbInstance.deleteGroup(groupSuccess);
   });
@@ -280,19 +280,7 @@ describe('endpoint: create-group', function () {
   }, jasmine.DEFAULT_TIMEOUT_INTERVAL + 10000);
 });
 
-describe('endpoint: add user to group', function () {
-  /*const groupname = 'Cohort-22';
-  const createdby = 'Ibrahim';
-  const groupSuccess = 'Group-Testing';
-  const userSuccess = 'anonymous'
-  // create this group into database before test suite
-  beforeAll(() => {
-    groupDbInstance.createGroup(groupSuccess, userSuccess);
-  });
-   // delete this user from database after test suite
-  afterAll(() => {
-    groupDbInstance.deleteGroup(groupSuccess);
-  });*/
+describe('Endpoint: add user to group', function () {
   it('should return an error message if username is undefined', function (done) {
     (0, _supertest2.default)(_server2.default).post('/api/group/:groupID/user').send({ username: undefined }).expect({ message: 'You need to provide the group-id and the username' }).end(function (err) {
       if (err) {
@@ -310,6 +298,82 @@ describe('endpoint: add user to group', function () {
       } else {
         done();
       }
+    });
+  });
+
+  it('should return a success message if both username and groupID are supplied', function (done) {
+    (0, _supertest2.default)(_server2.default).post('/api/group/2/user').send({ username: 'anotherAnonymous' }).expect({ message: 'user successfully added' }).end(function (err) {
+      if (err) {
+        done.fail(err);
+      } else {
+        done();
+      }
+    });
+  });
+});
+
+describe('Endpoint: post message to group', function () {
+  var message = 'This is an announcement';
+  var postedby = 'noordean';
+
+  it('should return an error message if postedby is undefined', function (done) {
+    (0, _supertest2.default)(_server2.default).post('/api/group/:groupID/message').send({ message: message }).expect({ message: 'You need to provide the group-id, postedby and message' }).end(function (err) {
+      if (err) {
+        done.fail(err);
+      } else {
+        done();
+      }
+    });
+  });
+
+  it('should return an error message if message is undefined', function (done) {
+    (0, _supertest2.default)(_server2.default).post('/api/group/:groupID/message').send({ postedby: postedby }).expect({ message: 'You need to provide the group-id, postedby and message' }).end(function (err) {
+      if (err) {
+        done.fail(err);
+      } else {
+        done();
+      }
+    });
+  });
+
+  it('should return an error message if postedby is empty', function (done) {
+    (0, _supertest2.default)(_server2.default).post('/api/group/:groupID/message').send({ message: message, postedby: '' }).expect({ message: 'group-id, user or message cannot be empty' }).end(function (err) {
+      if (err) {
+        done.fail(err);
+      } else {
+        done();
+      }
+    });
+  });
+
+  it('should return an error message if message is empty', function (done) {
+    (0, _supertest2.default)(_server2.default).post('/api/group/:groupID/message').send({ message: '', postedby: postedby }).expect({ message: 'group-id, user or message cannot be empty' }).end(function (err) {
+      if (err) {
+        done.fail(err);
+      } else {
+        done();
+      }
+    });
+  });
+
+  it('should return a success message if groupID, message and postedby are supplied', function (done) {
+    (0, _supertest2.default)(_server2.default).post('/api/group/27/message').send({ message: message, postedby: postedby }).expect({ message: 'Message posted successfully' }).end(function (err) {
+      if (err) {
+        done.fail(err);
+      } else {
+        done();
+      }
+    });
+  });
+});
+
+describe('Endpoint: get messages from group', function () {
+  it('should return messages of a group if correct groupID is supplied', function (done) {
+    (0, _supertest2.default)(_server2.default).get('/api/group/1/messages').send({}).end(function (err, res) {
+      expect(res.status).toEqual(200);
+      expect(JSON.parse(res.text)[0].postedby).toEqual('noordean');
+      expect(JSON.parse(res.text)[0].message).toEqual('This is my number guyz');
+      done();
     });
   });
 });

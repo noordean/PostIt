@@ -85,6 +85,21 @@ class GroupClass {
   }
 
   /**
+ * @description: removes user from a group of id 'groupId'
+ * @param {String} groupId
+ * @param {String} username
+ * @return {Object} updatedData
+ */
+  removeUserFromGroup(groupId, username) {
+    this.group.find({ where: { id: groupId } }).then((group) => {
+      const newMembers = group.groupmembers.filter((element) => {
+        return element !== username;
+      });
+      this.group.update({ groupmembers: newMembers },
+        { where: { id: groupId } });
+    });
+  }
+  /**
  * @description: delete a group using the username
  * @param {String} groupName
  * @return {Object} deletedData

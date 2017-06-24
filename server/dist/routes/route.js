@@ -37,10 +37,6 @@ var userDbInstance = new _userDbClass2.default(_connection2.default);
 var groupDbInstance = new _groupDbClass2.default(_connection2.default);
 var messageDbInstance = new _messageDbClass2.default(_connection2.default);
 
-groupDbInstance.getAllGroups(function (group) {
-  console.log(group);
-});
-
 // user signup
 router.post('/api/user/signup', function (req, res) {
   var username = req.body.username;

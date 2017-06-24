@@ -250,7 +250,7 @@ describe('Endpoint: create-group', () => {
   const groupSuccess = 'Group-Testing';
   const userSuccess = 'anonymous';
   // create this group into database before test suite
-  beforeEach(() => {
+  beforeAll(() => {
     groupDbInstance.createGroup(groupSuccess, userSuccess);
   });
 

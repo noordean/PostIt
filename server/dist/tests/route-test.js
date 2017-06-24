@@ -211,7 +211,7 @@ describe('Endpoint: create-group', function () {
   var groupSuccess = 'Group-Testing';
   var userSuccess = 'anonymous';
   // create this group into database before test suite
-  beforeEach(function () {
+  beforeAll(function () {
     groupDbInstance.createGroup(groupSuccess, userSuccess);
   });
 

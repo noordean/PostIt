@@ -56,3 +56,8 @@ gulp.task('codeclimate', ['coverage'], () => {
   ;
 });
 
+gulp.task('transpile-template', () =>
+  gulp.src(['template/js/style.js'])
+    .pipe(babel())
+    .pipe(gulp.dest('template/js/dist'))
+);

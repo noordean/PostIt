@@ -6,7 +6,10 @@ const BUILD_DIR = path.resolve(__dirname, 'client/dist');
 const APP_DIR = path.resolve(__dirname, 'client');
 
 module.exports = {
-  entry: APP_DIR,
+  entry: {
+    'bundle': APP_DIR+'/index.js', 
+    'style': APP_DIR+'/dist/public/js/style.js'
+  },
   module: {
     loaders: [
       { test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/,
@@ -22,7 +25,7 @@ module.exports = {
   },
     output: {
     path: BUILD_DIR,
-    filename: 'bundle.js'
+    filename: "[name].js"
   },
     plugins: [
         new ExtractTextPlugin('bundle.css')

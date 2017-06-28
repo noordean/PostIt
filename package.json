@@ -4,7 +4,6 @@
   "description": "an app that allows creation of groups for notifications",
   "main": "server/server.js",
   "scripts": {
-    "dev": "webpack-dev-server --content-base client/src --inline --hot",
     "test": "gulp run-tests",
     "start": "gulp serve"
   },

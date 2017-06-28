@@ -16,7 +16,7 @@ Since this application is broken into two parts, server(API) and client(reactjs)
 
 ### Step 2.
 - Open another command prompt, make and navigate into a new directory 'client' with ```mkdir client```, then ```cd client```
-- Clone this repository to have this app with ```git clone https://github.com/noordean/react-contact-app.git```
+- Clone this repository to have this app with ```git clone https://github.com/noordean/PostIt.git```
 - Change directory to the app's root with ```cd PostIt```
 - Pull the client branch to have the client part of the app with ```git pull origin client```
 - Then run ```npm install```  to install the dependencies

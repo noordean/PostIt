@@ -2,13 +2,13 @@ const webpack = require('webpack');
 const path = require('path');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
-const BUILD_DIR = path.resolve(__dirname, 'client/dist');
+const BUILD_DIR = path.resolve(__dirname, 'client/src');
 const APP_DIR = path.resolve(__dirname, 'client');
 
 module.exports = {
   entry: {
     'bundle': APP_DIR+'/index.js', 
-    'style': APP_DIR+'/dist/public/js/style.js'
+    'style': APP_DIR+'/src/public/js/style.js'
   },
   module: {
     loaders: [

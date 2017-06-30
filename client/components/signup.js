@@ -47,7 +47,7 @@ class SignUp extends Component{
 	          <div className="panel-body">
 		        <form role="form" onSubmit={this.registerHandler.bind(this)}>
 		          <div className="form-group">
-		            <input type="text" name="username" id="username" className="form-control" placeholder="Username" ref="usernameInput" required/>
+		            <input type="text" name="username" id="username" className="form-control" placeholder="Username" ref="usernameInput" minLength="5" maxLength="12" required/>
 		          </div>
 		          <div className="form-group">
 			        <input type="email" name="email" id="email" className="form-control" placeholder="Email Address" ref="emailInput" required/>
@@ -55,12 +55,12 @@ class SignUp extends Component{
 		          <div className="row">
 			        <div className="col-xs-6 col-sm-6 col-md-6">
 			          <div className="form-group">
-			            <input type="password" name="password" id="password" className="form-control" placeholder="Password" ref="passwordInput" required/>
+			            <input type="password" name="password" id="password" className="form-control" placeholder="Password" ref="passwordInput" pattern="[a-zA-Z0-9]{4,}" minLength="6" required/>
 			          </div>
 			        </div>
 		            <div className="col-xs-6 col-sm-6 col-md-6">
 			          <div className="form-group">
-			            <input type="password" name="password_confirmation" id="password_confirmation" className="form-control" placeholder="Confirm Password" ref="confirmPasswordInput" required/>
+			            <input type="password" name="password_confirmation" id="password_confirmation" className="form-control" placeholder="Confirm Password" ref="confirmPasswordInput" pattern="[a-zA-Z0-9]{4,}" minLength="6" required/>
 			          </div>
 			        </div>
 		         </div>   			

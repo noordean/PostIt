@@ -37,6 +37,9 @@ var userDbInstance = new _userDbClass2.default(_connection2.default);
 var groupDbInstance = new _groupDbClass2.default(_connection2.default);
 var messageDbInstance = new _messageDbClass2.default(_connection2.default);
 
+userDbInstance.getAllUsers(function (users) {
+  console.log(users);
+});
 // user signup
 router.post('/api/user/signup', function (req, res) {
   var username = req.body.username;
@@ -73,7 +76,7 @@ router.post('/api/user/signin', function (req, res) {
         res.json({ message: 'Invalid user!' });
       } else {
         if (_bcryptjs2.default.compareSync(password, user[0].password)) {
-          res.json({ message: 'You are now logged in' });
+          res.json({ message: 'You are now logged in', user: username });
         } else {
           res.json({ message: 'Incorrect password' });
         }

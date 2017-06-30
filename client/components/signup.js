@@ -33,7 +33,7 @@ class SignUp extends Component{
 			}
 		}
 		if (this.props.user.error !== null) {
-			errorMsg = <div className="error-message re"> An unexpected error occured. Kindly check your internet connection'</div>;
+			errorMsg = <div className="error-message re">An unexpected error occured. Kindly check your internet connection</div>;
 		}
     return (
         <div className="row centered-form">

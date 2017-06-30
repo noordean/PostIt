@@ -8,7 +8,7 @@ class User extends React.Component{
     this.props.fetchUsers(); 
   }
   render(){
-    console.log(this.props.user)
+    console.log(this.props.user.regStatus)
     if (this.props.user.fetched === false) {
       return <div>Loading...</div>
     }

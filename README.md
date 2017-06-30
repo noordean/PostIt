@@ -11,6 +11,7 @@ The frontend was built using reactJs with redux framework.
 ## Installation
 - Clone this repository to have the app on your machine with ```git clone https://github.com/noordean/PostIt.git```
 - Change directory to the app's root with ```cd PostIt```
+- Pull the develop branch with ```git pull origin develop```
 - Then run ```npm install```  to install the dependencies
 - Tranpile, bundle the neccessary files and start the app with ```npm run dev```
 - Then visit ```http://localhost:8080``` to view the app.

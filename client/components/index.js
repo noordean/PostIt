@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import React, {Component} from "react";
 import Header from './header';
 import Footer from './footer';

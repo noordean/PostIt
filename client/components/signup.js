@@ -2,8 +2,9 @@ import 'babel-polyfill';
 import React, {Component} from "react";
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import registerUsers from '../actions/usersAction';
+import {registerUser} from '../actions/usersAction';
 import {Link} from 'react-router';
+
 class SignUp extends Component{
 
 	registerHandler(event) {
@@ -16,23 +17,23 @@ class SignUp extends Component{
 			this.refs.clientError.innerHTML = 'The two passwords did not match';
 		} else {
 			this.refs.clientError.innerHTML = '';
-		this.props.registerUsers(username, email, password);
+		this.props.registerUser(username, email, password);
 		}
 	}
 
 	render() {
 		let errorMsg = <div></div>;
-		if (this.props.user.inserting) {
+		if (this.props.user.regProcessing) {
 			errorMsg = <div className="error-message">Registering user...</div>;
 		}
-		if (this.props.user.inserted) {
+		if (this.props.user.regProcessed) {
 			if (this.props.user.regStatus.message === 'Registration successful') {
 			  errorMsg = <div className="error-message gr">{this.props.user.regStatus.message}, Click <Link to="/login"> here </Link> to login</div>;
 			} else {
 			  errorMsg = <div className="error-message re">{this.props.user.regStatus.message}</div>;
 			}
 		}
-		if (this.props.user.error !== null) {
+		if (this.props.user.regError !== null) {
 			errorMsg = <div className="error-message re">An unexpected error occured. Kindly check your internet connection</div>;
 		}
     return (
@@ -74,14 +75,14 @@ class SignUp extends Component{
   }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
   return {
     user: state.user
   };
 }
 
-function matchDispatchToProps(dispatch) {
-  return bindActionCreators({ registerUsers: registerUsers}, dispatch);
+const matchDispatchToProps = (dispatch) => {
+  return bindActionCreators({ registerUser: registerUser}, dispatch);
 }
 
 export default connect(mapStateToProps, matchDispatchToProps)(SignUp);

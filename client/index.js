@@ -7,6 +7,7 @@ import Inndex from './components/index';
 import Home from './components/home';
 import Signup from './components/signup';
 import Signin from './components/signin';
+import Dashboard from './components/dashboard';
 
 import {Router, Route, IndexRoute, browserHistory} from 'react-router';
 
@@ -16,6 +17,7 @@ ReactDOM.render(<Provider store={store}>
      <IndexRoute component={Home}/>
      <Route path="signup" component={Signup}/>
      <Route path="login" component={Signin}/>
+     <Route path="dashboard" component={Dashboard}/>
    </Route>  
  </Router>
 </Provider>,

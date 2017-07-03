@@ -1,10 +1,36 @@
 import React, {Component} from "react";
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 import {Link} from 'react-router';
+import {loginUser} from '../actions/usersAction';
 
-export default class SignIn extends Component{
-  render(){
+class SignIn extends Component{
+ 
+  loginHandler(event) {
+    event.preventDefault();
+    const username = this.refs.usernameInput.value;
+    const password = this.refs.passwordInput.value;
+    this.props.loginUser(username, password);
+  }
+
+  render() {
+		let errorMsg = <div></div>;
+		if (this.props.user.loginProcessing) {
+			errorMsg = <div className="error-message">Processing user for login...</div>;
+		}
+		if (this.props.user.loginProcessed) {
+			if (this.props.user.regStatus.message === 'You are now logged in') {
+			  errorMsg = <div className="error-message gr">{this.props.user.loginStatus.message}</div>;
+			} else {
+			  errorMsg = <div className="error-message re">{this.props.user.loginStatus.message}</div>;
+			}
+		}
+		if (this.props.user.loginError !== null) {
+			errorMsg = <div className="error-message re">An unexpected error occured. Kindly check your internet connection</div>;
+		}
     return (
-      <div className="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">                    
+      <div className="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">    
+        {errorMsg}                
         <div className="panel panel-info" >
           <div className="panel-heading">
             <div className="panel-title">Login</div>
@@ -13,15 +39,15 @@ export default class SignIn extends Component{
            <form id="loginform" className="form-horizontal" role="form">        
              <div className="input-group">
                <span className="input-group-addon"><i className="glyphicon glyphicon-user"></i></span>
-                 <input id="login-username" type="text" className="form-control" name="username" value="" placeholder="username"/>
+                 <input id="login-username" type="text" className="form-control" name="username" placeholder="username" ref="usernameInput" required/>
              </div>
              <div className="input-group">
                <span className="input-group-addon"><i className="glyphicon glyphicon-lock"></i></span>
-                 <input id="login-password" type="password" className="form-control" name="password" placeholder="password"/>
+                 <input id="login-password" type="password" className="form-control" name="password" placeholder="password" ref="passwordInput" required/>
              </div>    
              <div className="form-group">
                <div className="col-sm-12 controls">
-                 <a id="btn-login" href="#" className="btn btn-success">Login </a>
+                 <a id="btn-login" href="#" className="btn btn-success" onClick={this.loginHandler.bind(this)}>Login </a>
                  <a id="btn-fblogin" href="#" className="btn btn-primary">Login with Google</a>
                </div>
              </div>
@@ -37,3 +63,15 @@ export default class SignIn extends Component{
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    user: state.user
+  };
+}
+
+const matchDispatchToProps = (dispatch) => {
+  return bindActionCreators({ loginUser: loginUser}, dispatch);
+}
+
+export default connect(mapStateToProps, matchDispatchToProps)(SignIn);

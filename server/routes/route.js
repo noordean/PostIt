@@ -12,9 +12,7 @@ const userDbInstance = new userDbClass(sequelize);
 const groupDbInstance = new groupDbClass(sequelize);
 const messageDbInstance = new messageDbClass(sequelize);
 
-userDbInstance.getAllUsers((users) => {
-  console.log(users);
-});
+// groupDbInstance.deleteGroup('Group-Testing');
 // user signup
 router.post('/api/user/signup', (req, res) => {
   const username = req.body.username;

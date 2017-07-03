@@ -185,7 +185,7 @@ describe('Endpoint: signin', function () {
   }, jasmine.DEFAULT_TIMEOUT_INTERVAL + 10000);
 
   it('should return a success message for a valid user', function (done) {
-    (0, _supertest2.default)(_server2.default).post('/api/user/signin').send({ username: 'success', password: process.env.SUCCESS_PASSWORD }).expect({ message: 'You are now logged in' }).end(function (err) {
+    (0, _supertest2.default)(_server2.default).post('/api/user/signin').send({ username: 'success', password: process.env.SUCCESS_PASSWORD }).expect({ message: 'You are now logged in', user: 'success' }).end(function (err) {
       if (err) {
         done.fail(err);
       } else {

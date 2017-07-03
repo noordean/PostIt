@@ -1,0 +1,17 @@
+language: node_js
+node_js:
+    - "5"
+before_script:
+    - npm install gulp -g
+    - npm install
+script: 
+    - gulp run-tests
+after_success:
+    - gulp codeclimate
+    - npm install -g codeclimate-test-reporter
+    - codeclimate-test-reporter < coverage/lcov.info
+env:
+  global:
+    - DATABASE_URL="postgres://ybblqxvs:GCYNSQW0othmnzhzmvPmm4kTgaODqW1j@stampy.db.elephantsql.com:5432/ybblqxvs"
+    - CODECLIMATE_REPO_TOKEN="eb9f0a3bdade3871cef63708ca5a14fb047e289d207d0d391b15d40c47b25541"
+    - SUCCESS_PASSWORD=success12345

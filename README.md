@@ -23,5 +23,16 @@ The frontend was built using reactJs with redux framework.
 
 It is also hosted on heroku at <a href="https://postit-api.herokuapp.com/" target="_blank">PostIt API</a>.
 
+The API contains different endpoints with their respective payloads as stated below:
+
+| Endpoints                    | Functions                                                               | Payloads                 | Request Methods |
+|------------------------------|-------------------------------------------------------------------------|--------------------------|-----------------|
+| /api/user/signup             | It allows users to register                                             | username and password    | POST            |
+| /api/user/signin             | It gives users access to login                                          | username and password    | POST            |
+| /api/group                   | It allows users to create group for notifications                       | groupname and createdby | POST            |
+| /api/group/:groupID/user     | It allows users to add another user to a created group of id groupID    | username                 | POST            |
+| /api/group/:groupID/message  | It allows users to post message to a created group of id groupID        | message and postedBy     | POST            |
+| /api/group/:groupID/messages | It allows users to retrieve messages from a created group of id groupID | No payload               | GET             |
+
 ## Note:
 - The client side is yet to be hosted, and many features are yet to be implemented

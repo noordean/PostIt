@@ -24,6 +24,7 @@ The frontend was built using reactJs with redux framework.
 It is also hosted on heroku at <a href="https://postit-api.herokuapp.com/" target="_blank">PostIt API</a>.
 
 The API contains different endpoints with their respective payloads as stated below:
+
 | Endpoints                    | Functions                                                               | Payloads                 | Request Methods |
 |------------------------------|-------------------------------------------------------------------------|--------------------------|-----------------|
 | /api/user/signup             | It allows users to register                                             | username and password    | POST            |

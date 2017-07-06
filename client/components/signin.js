@@ -5,14 +5,14 @@ import {Link} from 'react-router';
 import {loginUser} from '../actions/usersAction';
 
 class SignIn extends Component{
- 
+
   loginHandler(event) {
     event.preventDefault();
     const username = this.refs.usernameInput.value;
     const password = this.refs.passwordInput.value;
     this.props.loginUser(username, password);
   }
-
+  
   render() {
 		let errorMsg = <div></div>;
 		if (this.props.user.loginProcessing) {
@@ -34,7 +34,7 @@ class SignIn extends Component{
         <div className="panel panel-info" >
           <div className="panel-heading">
             <div className="panel-title">Login</div>
-         </div>     
+          </div>     
          <div className="panel-body" >
            <form id="loginform" className="form-horizontal" role="form">        
              <div className="input-group">

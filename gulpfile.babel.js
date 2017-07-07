@@ -26,8 +26,8 @@ gulp.task('serve', ['transpile'], () => {
 
 gulp.task('run-tests', ['transpile'], () => {
   gulp.src(path.join('server', 'dist', 'tests', 'route-test.js'))
-  .pipe(jasmine())
-  .pipe(exit());
+    .pipe(jasmine())
+    .pipe(exit());
 });
 
 // the coverage task depends on 'pre-test' and 'test' to give coverage report
@@ -51,7 +51,7 @@ gulp.task('coverage', ['test'], () => {
 
 gulp.task('codeclimate', ['coverage'], () => {
   return gulp
-    .src(['coverage/**/lcov.info'], {read: false} )
+    .src(['coverage/**/lcov.info'], { read: false })
     .pipe(reporter({ token: process.env.CODECLIMATE_REPO_TOKEN }))
   ;
 });

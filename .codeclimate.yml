@@ -6,16 +6,16 @@ engines:
      - javascript:
    checks:
      Similar code:
-       enabled: false
+       enabled: true
  eslint:
    enabled: true
    checks:
      import/extensions:
        enabled: false
      no-multiple-empty-lines:
-       enabled: false
+       enabled: true
      linebreak-style:
-       enabled: false
+       enabled: true
 exclude_paths:
 - "template/"
 - "client/"

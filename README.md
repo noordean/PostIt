@@ -27,7 +27,7 @@ The API contains different endpoints with their respective payloads as stated be
 
 | Endpoints                    | Functions                                                               | Payloads                 | Request Methods |
 |------------------------------|-------------------------------------------------------------------------|--------------------------|-----------------|
-| /api/user/signup             | It allows users to register                                             | username and password    | POST            |
+| /api/user/signup             | It allows users to register                                             | username, email and password    | POST            |
 | /api/user/signin             | It gives users access to login                                          | username and password    | POST            |
 | /api/group                   | It allows users to create group for notifications                       | groupname and createdby | POST            |
 | /api/group/:groupID/user     | It allows users to add another user to a created group of id groupID    | username                 | POST            |

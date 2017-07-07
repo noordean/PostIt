@@ -19,6 +19,8 @@ engines:
 exclude_paths:
 - "template/"
 - "client/"
+- "server/dist"
+- "server/tests"
 ratings:
   paths:
   - "server/**/*"

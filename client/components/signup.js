@@ -17,8 +17,16 @@ class SignUp extends Component{
 			this.refs.clientError.innerHTML = 'The two passwords did not match';
 		} else {
 			this.refs.clientError.innerHTML = '';
-		this.props.registerUser(username, email, password);
+		  this.props.registerUser(username, email, password);
 		}
+	}
+  
+	componentWillUnmount() {
+		// return the state to their initial values
+		this.props.user.regStatus = {};
+		this.props.user.regError = null;
+		this.props.user.regProcessed = false;
+		this.props.user.regProcessing = false;
 	}
 
 	render() {

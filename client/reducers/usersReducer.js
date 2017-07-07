@@ -20,6 +20,8 @@ export default (state = {
       return Object.assign({}, state, {loginProcessing: true});
     case 'LOGIN_SUCCESSFUL':
       return Object.assign({}, state, {loginStatus: action.payload, loginProcessed: true});
+    case 'LOGIN_UNSUCCESSFUL':
+      return Object.assign({}, state, {loginStatus: action.payload, loginProcessed: true});
     case 'LOGIN_REJECTED':
       return Object.assign({}, state, {loginError: action.payload});
     default:

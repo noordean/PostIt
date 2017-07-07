@@ -1,4 +1,5 @@
 import axios from "axios";
+import {browserHistory} from 'react-router';
 
 export const registerUser = (username, email, password) => {
   return (dispatch) => {
@@ -25,7 +26,11 @@ export const loginUser = (username, password) => {
       password
     })
     .then((response) => {
-      dispatch({ type:'LOGIN_SUCCESSFUL', payload: response.data });
+      if (response.data.message === "You are now logged in") {
+        dispatch({ type:'LOGIN_SUCCESSFUL', payload: response.data });
+        browserHistory.push('/dashboard');
+      }
+      dispatch({ type:'LOGIN_UNSUCCESSFUL', payload: response.data });
     })
     .catch((err) => {
       dispatch({ type:'LOGIN_REJECTED', payload:err })

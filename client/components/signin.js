@@ -10,16 +10,22 @@ class SignIn extends Component{
     event.preventDefault();
     const username = this.refs.usernameInput.value;
     const password = this.refs.passwordInput.value;
-    this.props.loginUser(username, password);
+    this.props.loginUser(username, password);  
   }
   
+  componentWillUnmount() {
+    this.props.user.loginStatus = {};
+    this.props.user.loginError = null;
+    this.props.user.loginProcessed = false;
+    this.props.user.loginProcessing = false;
+  }
   render() {
 		let errorMsg = <div></div>;
 		if (this.props.user.loginProcessing) {
 			errorMsg = <div className="error-message">Processing user for login...</div>;
 		}
 		if (this.props.user.loginProcessed) {
-			if (this.props.user.regStatus.message === 'You are now logged in') {
+			if (this.props.user.loginStatus.message === 'You are now logged in') {
 			  errorMsg = <div className="error-message gr">{this.props.user.loginStatus.message}</div>;
 			} else {
 			  errorMsg = <div className="error-message re">{this.props.user.loginStatus.message}</div>;
@@ -28,6 +34,7 @@ class SignIn extends Component{
 		if (this.props.user.loginError !== null) {
 			errorMsg = <div className="error-message re">An unexpected error occured. Kindly check your internet connection</div>;
 		}
+
     return (
       <div className="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">    
         {errorMsg}                

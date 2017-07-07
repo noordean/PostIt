@@ -12,6 +12,7 @@ const userDbInstance = new userDbClass(sequelize);
 const groupDbInstance = new groupDbClass(sequelize);
 const messageDbInstance = new messageDbClass(sequelize);
 
+// groupDbInstance.deleteGroup('Group-Testing');
 // user signup
 router.post('/api/user/signup', (req, res) => {
   const username = req.body.username;
@@ -48,7 +49,7 @@ router.post('/api/user/signin', (req, res) => {
         res.json({ message: 'Invalid user!' });
       } else {
         if (bcrypt.compareSync(password, user[0].password)) {
-          res.json({ message: 'You are now logged in' });
+          res.json({ message: 'You are now logged in', user: username });
         } else {
           res.json({ message: 'Incorrect password' });
         }

@@ -219,7 +219,7 @@ describe('Endpoint: signin', () => {
     supertest(app)
       .post('/api/user/signin')
       .send({ username: 'success', password: process.env.SUCCESS_PASSWORD })
-      .expect({ message: 'You are now logged in' })
+      .expect({ message: 'You are now logged in', user: 'success' })
       .end((err) => {
         if (err) {
           done.fail(err);

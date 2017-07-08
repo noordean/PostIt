@@ -71,6 +71,18 @@ var MessageClass = function () {
         throw new Error(err);
       });
     }
+
+    /**
+    * @description: delete a message using postedby
+    * @param {String} userName
+    * @return {Object} deletedData
+    */
+
+  }, {
+    key: 'deleteMessage',
+    value: function deleteMessage(userName) {
+      this.message.destroy({ where: { postedby: userName } });
+    }
   }]);
 
   return MessageClass;

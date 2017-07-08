@@ -331,10 +331,31 @@ describe('Endpoint: create-group', () => {
   });
 
   it('should return an error message if the user has not logged in', (done) => {
+<<<<<<< HEAD
     supertest(app)
       .post('/api/group')
       .send({ groupName: 'something', createdBy: 'noordean' })
       .expect({ message: 'Access denied!. Kindly login before creating group' })
+=======
+    supertest(app)
+      .post('/api/group')
+      .send({ groupName: 'something', createdBy: 'noordean' })
+      .expect({ message: 'Access denied!. Kindly login before creating group' })
+      .end((err) => {
+        if (err) {
+          done.fail(err);
+        } else {
+          done();
+        }
+      });
+  });
+
+  it('should return a success message if valid groupname and createdby(username) are provided', (done) => {
+    supertest(app)
+      .post('/api/group')
+      .send({ groupName: groupSuccess, createdBy: userSuccess })
+      .expect({ message: 'Group successfully created' })
+>>>>>>> Protect the exposed routes
       .end((err) => {
         if (err) {
           done.fail(err);

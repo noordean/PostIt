@@ -24,12 +24,17 @@ var _groupDbClass = require('../database/dbClasses/groupDbClass');
 
 var _groupDbClass2 = _interopRequireDefault(_groupDbClass);
 
+var _messageDbClass = require('../database/dbClasses/messageDbClass');
+
+var _messageDbClass2 = _interopRequireDefault(_messageDbClass);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 _dotenv2.default.config();
 
 var userDbInstance = new _userDbClass2.default(_connection2.default);
 var groupDbInstance = new _groupDbClass2.default(_connection2.default);
+var messageDbInstance = new _messageDbClass2.default(_connection2.default);
 
 describe('Endpoint: signup', function () {
   var username = 'jasmineTest1';
@@ -206,10 +211,10 @@ describe('Endpoint: signin', function () {
 });
 
 describe('Endpoint: create-group', function () {
-  var groupname = 'Cohort-22';
-  var createdby = 'Ibrahim';
+  var groupName = 'Cohort-22';
+  var createdBy = 'Ibrahim';
   var groupSuccess = 'Group-Testing';
-  var userSuccess = 'anonymous';
+  var userSuccess = 'success';
   // create this group into database before test suite
   beforeAll(function () {
     groupDbInstance.createGroup(groupSuccess, userSuccess);
@@ -220,7 +225,7 @@ describe('Endpoint: create-group', function () {
     groupDbInstance.deleteGroup(groupSuccess);
   });
   it('should return an error message if groupName is undefined', function (done) {
-    (0, _supertest2.default)(_server2.default).post('/api/group').send({ groupname: groupname }).expect({ message: 'You need to provide the group-name and the creator\'s username' }).end(function (err) {
+    (0, _supertest2.default)(_server2.default).post('/api/group').send({ groupName: groupName }).expect({ message: 'You need to provide the group-name and the creator\'s username' }).end(function (err) {
       if (err) {
         done.fail(err);
       } else {
@@ -230,7 +235,7 @@ describe('Endpoint: create-group', function () {
   });
 
   it('should return an error message if createdBy is undefined', function (done) {
-    (0, _supertest2.default)(_server2.default).post('/api/group').send({ createdby: createdby }).expect({ message: 'You need to provide the group-name and the creator\'s username' }).end(function (err) {
+    (0, _supertest2.default)(_server2.default).post('/api/group').send({ createdBy: createdBy }).expect({ message: 'You need to provide the group-name and the creator\'s username' }).end(function (err) {
       if (err) {
         done.fail(err);
       } else {
@@ -240,7 +245,7 @@ describe('Endpoint: create-group', function () {
   });
 
   it('should return an error message if groupName is empty', function (done) {
-    (0, _supertest2.default)(_server2.default).post('/api/group').send({ groupname: '', createdby: createdby }).expect({ message: 'group-name and the creator\'s username cannot be empty' }).end(function (err) {
+    (0, _supertest2.default)(_server2.default).post('/api/group').send({ groupName: '', createdBy: createdBy }).expect({ message: 'group-name and the creator\'s username cannot be empty' }).end(function (err) {
       if (err) {
         done.fail(err);
       } else {
@@ -250,7 +255,7 @@ describe('Endpoint: create-group', function () {
   });
 
   it('should return an error message if createdBy is empty', function (done) {
-    (0, _supertest2.default)(_server2.default).post('/api/group').send({ groupname: groupname, createdby: '' }).expect({ message: 'group-name and the creator\'s username cannot be empty' }).end(function (err) {
+    (0, _supertest2.default)(_server2.default).post('/api/group').send({ groupName: groupName, createdBy: '' }).expect({ message: 'group-name and the creator\'s username cannot be empty' }).end(function (err) {
       if (err) {
         done.fail(err);
       } else {
@@ -260,7 +265,17 @@ describe('Endpoint: create-group', function () {
   });
 
   it('should return an error message if the group is already existing', function (done) {
-    (0, _supertest2.default)(_server2.default).post('/api/group').send({ groupname: groupname, createdby: createdby }).expect({ message: 'The selected group name is unavailable' }).end(function (err) {
+    (0, _supertest2.default)(_server2.default).post('/api/group').send({ groupName: groupName, createdBy: createdBy }).expect({ message: 'The selected group name is unavailable' }).end(function (err) {
+      if (err) {
+        done.fail(err);
+      } else {
+        done();
+      }
+    });
+  });
+
+  it('should return an error message if the user has not logged in', function (done) {
+    (0, _supertest2.default)(_server2.default).post('/api/group').send({ groupName: 'something', createdBy: 'noordean' }).expect({ message: 'Access denied!. Kindly login before creating group' }).end(function (err) {
       if (err) {
         done.fail(err);
       } else {
@@ -270,14 +285,12 @@ describe('Endpoint: create-group', function () {
   });
 
   it('should return a success message if valid groupname and createdby(username) are provided', function (done) {
-    (0, _supertest2.default)(_server2.default).post('/api/group').send({ groupname: groupSuccess, createdby: userSuccess }).expect({ message: 'Group successfully created' }).end(function (err) {
-      if (err) {
-        done.fail(err);
-      } else {
-        done();
-      }
+    (0, _supertest2.default)(_server2.default).get('/api/group').send({ groupName: groupSuccess, createdBy: userSuccess }).end(function (err, res) {
+      expect(res.status).toEqual(200);
+      expect(JSON.parse(res.text)[0].message).toEqual('Group successfully created');
+      done();
     });
-  }, jasmine.DEFAULT_TIMEOUT_INTERVAL + 10000);
+  });
 });
 
 describe('Endpoint: add user to group', function () {
@@ -301,8 +314,18 @@ describe('Endpoint: add user to group', function () {
     });
   });
 
-  it('should return a success message if both username and groupID are supplied', function (done) {
-    (0, _supertest2.default)(_server2.default).post('/api/group/2/user').send({ username: 'anotherAnonymous' }).expect({ message: 'user successfully added' }).end(function (err) {
+  it('should return invalid group id if an invalid id is supplied ', function (done) {
+    (0, _supertest2.default)(_server2.default).post('/api/group/5156531/user').send({ username: 'noordean' }).expect({ message: 'Invalid group id' }).end(function (err) {
+      if (err) {
+        done.fail(err);
+      } else {
+        done();
+      }
+    });
+  });
+
+  it('should return an error message if user has not logged in ', function (done) {
+    (0, _supertest2.default)(_server2.default).post('/api/group/3/user').send({ username: 'noordean' }).expect({ message: 'Access denied!. Kindly login before adding user' }).end(function (err) {
       if (err) {
         done.fail(err);
       } else {
@@ -314,10 +337,14 @@ describe('Endpoint: add user to group', function () {
 
 describe('Endpoint: post message to group', function () {
   var message = 'This is an announcement';
-  var postedby = 'noordean';
+  var postedBy = 'noordean';
 
+  // delete this message after every spec
+  afterEach(function () {
+    messageDbInstance.deleteMessage(postedBy);
+  });
   it('should return an error message if postedby is undefined', function (done) {
-    (0, _supertest2.default)(_server2.default).post('/api/group/:groupID/message').send({ message: message }).expect({ message: 'You need to provide the group-id, postedby and message' }).end(function (err) {
+    (0, _supertest2.default)(_server2.default).post('/api/group/:groupID/message').send({ message: message }).expect({ message: 'You need to provide the group-id, postedBy and message' }).end(function (err) {
       if (err) {
         done.fail(err);
       } else {
@@ -327,7 +354,7 @@ describe('Endpoint: post message to group', function () {
   });
 
   it('should return an error message if message is undefined', function (done) {
-    (0, _supertest2.default)(_server2.default).post('/api/group/:groupID/message').send({ postedby: postedby }).expect({ message: 'You need to provide the group-id, postedby and message' }).end(function (err) {
+    (0, _supertest2.default)(_server2.default).post('/api/group/:groupID/message').send({ postedBy: postedBy }).expect({ message: 'You need to provide the group-id, postedBy and message' }).end(function (err) {
       if (err) {
         done.fail(err);
       } else {
@@ -337,7 +364,7 @@ describe('Endpoint: post message to group', function () {
   });
 
   it('should return an error message if postedby is empty', function (done) {
-    (0, _supertest2.default)(_server2.default).post('/api/group/:groupID/message').send({ message: message, postedby: '' }).expect({ message: 'group-id, user or message cannot be empty' }).end(function (err) {
+    (0, _supertest2.default)(_server2.default).post('/api/group/:groupID/message').send({ message: message, postedBy: '' }).expect({ message: 'group-id, user or message cannot be empty' }).end(function (err) {
       if (err) {
         done.fail(err);
       } else {
@@ -347,7 +374,17 @@ describe('Endpoint: post message to group', function () {
   });
 
   it('should return an error message if message is empty', function (done) {
-    (0, _supertest2.default)(_server2.default).post('/api/group/:groupID/message').send({ message: '', postedby: postedby }).expect({ message: 'group-id, user or message cannot be empty' }).end(function (err) {
+    (0, _supertest2.default)(_server2.default).post('/api/group/:groupID/message').send({ message: '', postedBy: postedBy }).expect({ message: 'group-id, user or message cannot be empty' }).end(function (err) {
+      if (err) {
+        done.fail(err);
+      } else {
+        done();
+      }
+    });
+  });
+
+  it('should return an error message if user has not logged in', function (done) {
+    (0, _supertest2.default)(_server2.default).post('/api/group/:groupID/message').send({ message: 'something', postedBy: 'noordean' }).expect({ message: 'Access denied!. Kindly login before posting message' }).end(function (err) {
       if (err) {
         done.fail(err);
       } else {
@@ -357,7 +394,7 @@ describe('Endpoint: post message to group', function () {
   });
 
   it('should return a success message if groupID, message and postedby are supplied', function (done) {
-    (0, _supertest2.default)(_server2.default).post('/api/group/27/message').send({ message: message, postedby: postedby }).expect({ message: 'Message posted successfully' }).end(function (err) {
+    (0, _supertest2.default)(_server2.default).post('/api/group/27/message').send({ message: message, postedBy: 'success' }).expect({ message: 'Message posted successfully' }).end(function (err) {
       if (err) {
         done.fail(err);
       } else {
@@ -371,8 +408,8 @@ describe('Endpoint: get messages from group', function () {
   it('should return messages of a group if correct groupID is supplied', function (done) {
     (0, _supertest2.default)(_server2.default).get('/api/group/1/messages').send({}).end(function (err, res) {
       expect(res.status).toEqual(200);
-      expect(JSON.parse(res.text)[0].postedby).toEqual('noordean');
-      expect(JSON.parse(res.text)[0].message).toEqual('This is my number guyz');
+      expect(JSON.parse(res.text)[0].postedby).toEqual('Testing');
+      expect(JSON.parse(res.text)[0].message).toEqual('This is for testing');
       done();
     });
   });

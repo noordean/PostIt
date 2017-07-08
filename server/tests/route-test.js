@@ -4,11 +4,13 @@ import app from '../server';
 import sequelize from '../database/dbconnection/connection';
 import userDbClass from '../database/dbClasses/userDbClass';
 import groupDbClass from '../database/dbClasses/groupDbClass';
+import messageDbClass from '../database/dbClasses/messageDbClass';
 
 dotenv.config();
 
 const userDbInstance = new userDbClass(sequelize);
 const groupDbInstance = new groupDbClass(sequelize);
+const messageDbInstance = new messageDbClass(sequelize);
 
 describe('Endpoint: signup', () => {
   const username = 'jasmineTest1';
@@ -245,10 +247,10 @@ describe('Endpoint: signin', () => {
 });
 
 describe('Endpoint: create-group', () => {
-  const groupname = 'Cohort-22';
-  const createdby = 'Ibrahim';
+  const groupName = 'Cohort-22';
+  const createdBy = 'Ibrahim';
   const groupSuccess = 'Group-Testing';
-  const userSuccess = 'anonymous';
+  const userSuccess = 'success';
   // create this group into database before test suite
   beforeAll(() => {
     groupDbInstance.createGroup(groupSuccess, userSuccess);
@@ -261,7 +263,7 @@ describe('Endpoint: create-group', () => {
   it('should return an error message if groupName is undefined', (done) => {
     supertest(app)
       .post('/api/group')
-      .send({ groupname })
+      .send({ groupName })
       .expect({ message: 'You need to provide the group-name and the creator\'s username' })
       .end((err) => {
         if (err) {
@@ -275,7 +277,7 @@ describe('Endpoint: create-group', () => {
   it('should return an error message if createdBy is undefined', (done) => {
     supertest(app)
       .post('/api/group')
-      .send({ createdby })
+      .send({ createdBy })
       .expect({ message: 'You need to provide the group-name and the creator\'s username' })
       .end((err) => {
         if (err) {
@@ -289,7 +291,7 @@ describe('Endpoint: create-group', () => {
   it('should return an error message if groupName is empty', (done) => {
     supertest(app)
       .post('/api/group')
-      .send({ groupname: '', createdby })
+      .send({ groupName: '', createdBy })
       .expect({ message: 'group-name and the creator\'s username cannot be empty' })
       .end((err) => {
         if (err) {
@@ -303,7 +305,7 @@ describe('Endpoint: create-group', () => {
   it('should return an error message if createdBy is empty', (done) => {
     supertest(app)
       .post('/api/group')
-      .send({ groupname, createdby: '' })
+      .send({ groupName, createdBy: '' })
       .expect({ message: 'group-name and the creator\'s username cannot be empty' })
       .end((err) => {
         if (err) {
@@ -317,7 +319,7 @@ describe('Endpoint: create-group', () => {
   it('should return an error message if the group is already existing', (done) => {
     supertest(app)
       .post('/api/group')
-      .send({ groupname, createdby })
+      .send({ groupName, createdBy })
       .expect({ message: 'The selected group name is unavailable' })
       .end((err) => {
         if (err) {
@@ -328,11 +330,11 @@ describe('Endpoint: create-group', () => {
       });
   });
 
-  it('should return a success message if valid groupname and createdby(username) are provided', (done) => {
+  it('should return an error message if the user has not logged in', (done) => {
     supertest(app)
       .post('/api/group')
-      .send({ groupname: groupSuccess, createdby: userSuccess })
-      .expect({ message: 'Group successfully created' })
+      .send({ groupName: 'something', createdBy: 'noordean' })
+      .expect({ message: 'Access denied!. Kindly login before creating group' })
       .end((err) => {
         if (err) {
           done.fail(err);
@@ -340,7 +342,7 @@ describe('Endpoint: create-group', () => {
           done();
         }
       });
-  }, jasmine.DEFAULT_TIMEOUT_INTERVAL + 10000);
+  });
 });
 
 describe('Endpoint: add user to group', () => {
@@ -372,11 +374,25 @@ describe('Endpoint: add user to group', () => {
       });
   });
 
-  it('should return a success message if both username and groupID are supplied', (done) => {
+  it('should return invalid group id if an invalid id is supplied ', (done) => {
     supertest(app)
-      .post('/api/group/2/user')
-      .send({ username: 'anotherAnonymous' })
-      .expect({ message: 'user successfully added' })
+      .post('/api/group/5156531/user')
+      .send({ username: 'noordean' })
+      .expect({ message: 'Invalid group id' })
+      .end((err) => {
+        if (err) {
+          done.fail(err);
+        } else {
+          done();
+        }
+      });
+  });
+
+  it('should return an error message if user has not logged in ', (done) => {
+    supertest(app)
+      .post('/api/group/3/user')
+      .send({ username: 'noordean' })
+      .expect({ message: 'Access denied!. Kindly login before adding user' })
       .end((err) => {
         if (err) {
           done.fail(err);
@@ -389,13 +405,17 @@ describe('Endpoint: add user to group', () => {
 
 describe('Endpoint: post message to group', () => {
   const message = 'This is an announcement';
-  const postedby = 'noordean';
+  const postedBy = 'noordean';
 
+  // delete this message after every spec
+  afterEach(() => {
+    messageDbInstance.deleteMessage(postedBy);
+  });
   it('should return an error message if postedby is undefined', (done) => {
     supertest(app)
       .post('/api/group/:groupID/message')
       .send({ message })
-      .expect({ message: 'You need to provide the group-id, postedby and message' })
+      .expect({ message: 'You need to provide the group-id, postedBy and message' })
       .end((err) => {
         if (err) {
           done.fail(err);
@@ -408,8 +428,8 @@ describe('Endpoint: post message to group', () => {
   it('should return an error message if message is undefined', (done) => {
     supertest(app)
       .post('/api/group/:groupID/message')
-      .send({ postedby })
-      .expect({ message: 'You need to provide the group-id, postedby and message' })
+      .send({ postedBy })
+      .expect({ message: 'You need to provide the group-id, postedBy and message' })
       .end((err) => {
         if (err) {
           done.fail(err);
@@ -422,7 +442,7 @@ describe('Endpoint: post message to group', () => {
   it('should return an error message if postedby is empty', (done) => {
     supertest(app)
       .post('/api/group/:groupID/message')
-      .send({ message, postedby: '' })
+      .send({ message, postedBy: '' })
       .expect({ message: 'group-id, user or message cannot be empty' })
       .end((err) => {
         if (err) {
@@ -436,8 +456,22 @@ describe('Endpoint: post message to group', () => {
   it('should return an error message if message is empty', (done) => {
     supertest(app)
       .post('/api/group/:groupID/message')
-      .send({ message: '', postedby })
+      .send({ message: '', postedBy })
       .expect({ message: 'group-id, user or message cannot be empty' })
+      .end((err) => {
+        if (err) {
+          done.fail(err);
+        } else {
+          done();
+        }
+      });
+  });
+
+  it('should return an error message if user has not logged in', (done) => {
+    supertest(app)
+      .post('/api/group/:groupID/message')
+      .send({ message: 'something', postedBy: 'noordean' })
+      .expect({ message: 'Access denied!. Kindly login before posting message' })
       .end((err) => {
         if (err) {
           done.fail(err);
@@ -450,7 +484,7 @@ describe('Endpoint: post message to group', () => {
   it('should return a success message if groupID, message and postedby are supplied', (done) => {
     supertest(app)
       .post('/api/group/27/message')
-      .send({ message, postedby })
+      .send({ message, postedBy: 'success' })
       .expect({ message: 'Message posted successfully' })
       .end((err) => {
         if (err) {
@@ -469,10 +503,9 @@ describe('Endpoint: get messages from group', () => {
       .send({})
       .end((err, res) => {
         expect(res.status).toEqual(200);
-        expect(JSON.parse(res.text)[0].postedby).toEqual('noordean');
-        expect(JSON.parse(res.text)[0].message).toEqual('This is my number guyz');
+        expect(JSON.parse(res.text)[0].postedby).toEqual('Testing');
+        expect(JSON.parse(res.text)[0].message).toEqual('This is for testing');
         done();
       });
   });
 });
-

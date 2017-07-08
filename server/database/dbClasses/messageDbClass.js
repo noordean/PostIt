@@ -46,6 +46,15 @@ class MessageClass {
       throw new Error(err);
     });
   }
+
+  /**
+ * @description: delete a message using postedby
+ * @param {String} userName
+ * @return {Object} deletedData
+ */
+  deleteMessage(userName) {
+    this.message.destroy({ where: { postedby: userName } });
+  }
 }
 
 export default MessageClass;

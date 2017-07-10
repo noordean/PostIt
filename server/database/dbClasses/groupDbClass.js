@@ -18,6 +18,7 @@ class GroupClass {
  * @description: creates group
  * @param {String} groupname
  * @param {String} createdby
+ * @param {Function} done
  * @return {Object} insertedData
  */
   createGroup(groupname, createdby, done) {

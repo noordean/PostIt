@@ -34,6 +34,7 @@ var GroupClass = function () {
   * @description: creates group
   * @param {String} groupname
   * @param {String} createdby
+  * @param {Function} done
   * @return {Object} insertedData
   */
 

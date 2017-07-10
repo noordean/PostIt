@@ -105,8 +105,9 @@ router.post('/api/group', function (req, res) {
         _jsonwebtoken2.default.verify(token, 'nuruuuuuuu', function (err, decode) {
           if (decode !== undefined) {
             if (decode.username === createdBy) {
-              groupDbInstance.createGroup(groupName, createdBy);
-              res.json({ message: 'Group successfully created' });
+              groupDbInstance.createGroup(groupName, createdBy, function (groups) {
+                res.json({ data: groups.dataValues, message: 'Group successfully created' });
+              });
             } else {
               res.json({ message: 'Access denied!. Kindly login before creating group' });
             }

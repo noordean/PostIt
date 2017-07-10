@@ -18,15 +18,18 @@ class GroupClass {
  * @description: creates group
  * @param {String} groupname
  * @param {String} createdby
+ * @param {Function} done
  * @return {Object} insertedData
  */
-  createGroup(groupname, createdby) {
+  createGroup(groupname, createdby, done) {
     const groupmembers = [createdby];
-    this.group.sync().then(() => {
-      return this.group.create({
+    return this.group.sync().then(() => {
+      this.group.create({
         groupname,
         createdby,
         groupmembers
+      }).then((group) => {
+        done(group);
       }).catch((err) => {
         throw new Error(err);
       });

@@ -283,16 +283,6 @@ describe('Endpoint: create-group', function () {
       }
     });
   });
-
-  it('should return a success message if valid groupname and createdby(username) are provided', function (done) {
-    (0, _supertest2.default)(_server2.default).post('/api/group').send({ groupName: groupSuccess, createdBy: userSuccess }).expect({ message: 'Group successfully created' }).end(function (err) {
-      if (err) {
-        done.fail(err);
-      } else {
-        done();
-      }
-    });
-  }, jasmine.DEFAULT_TIMEOUT_INTERVAL + 10000);
 });
 
 describe('Endpoint: add user to group', function () {
@@ -327,7 +317,7 @@ describe('Endpoint: add user to group', function () {
   });
 
   it('should return an error message if user has not logged in ', function (done) {
-    (0, _supertest2.default)(_server2.default).post('/api/group/503/user').send({ username: 'noordean' }).expect({ message: 'Access denied!. Kindly login before adding user' }).end(function (err) {
+    (0, _supertest2.default)(_server2.default).post('/api/group/3/user').send({ username: 'noordean' }).expect({ message: 'Access denied!. Kindly login before adding user' }).end(function (err) {
       if (err) {
         done.fail(err);
       } else {

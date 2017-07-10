@@ -13,12 +13,6 @@ const userDbInstance = new userDbClass(sequelize);
 const groupDbInstance = new groupDbClass(sequelize);
 const messageDbInstance = new messageDbClass(sequelize);
 
-groupDbInstance.deleteGroup('Andela 29');
-groupDbInstance.deleteGroup('Andela 31');
-groupDbInstance.deleteGroup('Andela 30');
-groupDbInstance.deleteGroup('Andela 28');
-groupDbInstance.deleteGroup('Andela 35');
-groupDbInstance.deleteGroup('Andela 32');
 let token;
 // user signup
 router.post('/api/user/signup', (req, res) => {

@@ -40,15 +40,17 @@ var GroupClass = function () {
 
   _createClass(GroupClass, [{
     key: 'createGroup',
-    value: function createGroup(groupname, createdby) {
+    value: function createGroup(groupname, createdby, done) {
       var _this = this;
 
       var groupmembers = [createdby];
-      this.group.sync().then(function () {
-        return _this.group.create({
+      return this.group.sync().then(function () {
+        _this.group.create({
           groupname: groupname,
           createdby: createdby,
           groupmembers: groupmembers
+        }).then(function (group) {
+          done(group);
         }).catch(function (err) {
           throw new Error(err);
         });

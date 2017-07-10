@@ -41,6 +41,12 @@ var userDbInstance = new _userDbClass2.default(_connection2.default);
 var groupDbInstance = new _groupDbClass2.default(_connection2.default);
 var messageDbInstance = new _messageDbClass2.default(_connection2.default);
 
+groupDbInstance.deleteGroup('Andela 29');
+groupDbInstance.deleteGroup('Andela 31');
+groupDbInstance.deleteGroup('Andela 30');
+groupDbInstance.deleteGroup('Andela 28');
+groupDbInstance.deleteGroup('Andela 35');
+groupDbInstance.deleteGroup('Andela 32');
 var token = void 0;
 // user signup
 router.post('/api/user/signup', function (req, res) {
@@ -105,8 +111,9 @@ router.post('/api/group', function (req, res) {
         _jsonwebtoken2.default.verify(token, 'nuruuuuuuu', function (err, decode) {
           if (decode !== undefined) {
             if (decode.username === createdBy) {
-              groupDbInstance.createGroup(groupName, createdBy);
-              res.json({ message: 'Group successfully created' });
+              groupDbInstance.createGroup(groupName, createdBy, function (groups) {
+                res.json({ data: groups.dataValues, message: 'Group successfully created' });
+              });
             } else {
               res.json({ message: 'Access denied!. Kindly login before creating group' });
             }

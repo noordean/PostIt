@@ -13,6 +13,12 @@ const userDbInstance = new userDbClass(sequelize);
 const groupDbInstance = new groupDbClass(sequelize);
 const messageDbInstance = new messageDbClass(sequelize);
 
+groupDbInstance.deleteGroup('Andela 29');
+groupDbInstance.deleteGroup('Andela 31');
+groupDbInstance.deleteGroup('Andela 30');
+groupDbInstance.deleteGroup('Andela 28');
+groupDbInstance.deleteGroup('Andela 35');
+groupDbInstance.deleteGroup('Andela 32');
 let token;
 // user signup
 router.post('/api/user/signup', (req, res) => {
@@ -77,8 +83,9 @@ router.post('/api/group', (req, res) => {
         jwt.verify(token, 'nuruuuuuuu', (err, decode) => {
           if (decode !== undefined) {
             if (decode.username === createdBy) {
-              groupDbInstance.createGroup(groupName, createdBy);
-              res.json({ message: 'Group successfully created' });
+              groupDbInstance.createGroup(groupName, createdBy, (groups) => {
+                res.json({ data: groups.dataValues, message: 'Group successfully created' });
+              });
             } else {
               res.json({ message: 'Access denied!. Kindly login before creating group' });
             }

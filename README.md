@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/noordean/PostIt.svg?branch=client)](https://travis-ci.org/noordean/PostIt)
+[![Build Status](https://travis-ci.org/noordean/PostIt.svg?branch=server)](https://travis-ci.org/noordean/PostIt)
 [![Coverage Status](https://coveralls.io/repos/github/noordean/PostIt/badge.svg?branch=server)](https://coveralls.io/github/noordean/PostIt?branch=server)
 [![Code Climate](https://codeclimate.com/github/noordean/PostIt/badges/gpa.svg)](https://codeclimate.com/github/noordean/PostIt)
 # PostIt

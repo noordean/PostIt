@@ -283,14 +283,6 @@ describe('Endpoint: create-group', function () {
       }
     });
   });
-
-  it('should return a success message if valid groupname and createdby(username) are provided', function (done) {
-    (0, _supertest2.default)(_server2.default).get('/api/group').send({ groupName: groupSuccess, createdBy: userSuccess }).end(function (err, res) {
-      expect(res.status).toEqual(200);
-      expect(JSON.parse(res.text)[0].message).toEqual('Group successfully created');
-      done();
-    });
-  });
 });
 
 describe('Endpoint: add user to group', function () {

@@ -128,10 +128,10 @@ export default class Controller {
 
   postMessageToGroup(req, res) {
     const groupID = req.params.groupID;
-    const postedBy = req.body.postedby;
+    const postedBy = req.body.postedBy;
     const message = req.body.message;
     if (groupID === undefined || postedBy === undefined || message === undefined) {
-      res.status(401).json({ message: 'You need to provide the group-id, postedby and message' });
+      res.status(401).json({ message: 'You need to provide the group-id, postedBy and message' });
     } else if (groupID === '' || postedBy === '' || message === '') {
       res.status(401).json({ message: 'group-id, user or message cannot be empty' });
     } else {

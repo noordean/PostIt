@@ -332,7 +332,7 @@ describe('Endpoint: post message to group', function () {
   var postedBy = 'noordean';
 
   // delete this message after every spec
-  afterEach(function () {
+  afterAll(function () {
     messageDbInstance.deleteMessage(postedBy);
   });
   it('should return an error message if postedby is undefined', function (done) {

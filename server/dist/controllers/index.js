@@ -167,10 +167,10 @@ var Controller = function () {
     key: 'postMessageToGroup',
     value: function postMessageToGroup(req, res) {
       var groupID = req.params.groupID;
-      var postedBy = req.body.postedby;
+      var postedBy = req.body.postedBy;
       var message = req.body.message;
       if (groupID === undefined || postedBy === undefined || message === undefined) {
-        res.status(401).json({ message: 'You need to provide the group-id, postedby and message' });
+        res.status(401).json({ message: 'You need to provide the group-id, postedBy and message' });
       } else if (groupID === '' || postedBy === '' || message === '') {
         res.status(401).json({ message: 'group-id, user or message cannot be empty' });
       } else {

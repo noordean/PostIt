@@ -408,7 +408,7 @@ describe('Endpoint: post message to group', () => {
   const postedBy = 'noordean';
 
   // delete this message after every spec
-  afterEach(() => {
+  afterAll(() => {
     messageDbInstance.deleteMessage(postedBy);
   });
   it('should return an error message if postedby is undefined', (done) => {

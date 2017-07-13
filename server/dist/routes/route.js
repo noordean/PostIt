@@ -17,20 +17,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var router = _express2.default.Router();
 var controller = new _controllers2.default();
 
-// user signup
 router.post('/api/user/signup', controller.signUp);
-
-// user signin
 router.post('/api/user/signin', controller.signIn);
-
-// creates group
 router.post('/api/group', controller.createGroup);
-
-// adds user to group
 router.post('/api/group/:groupID/user', controller.addUserToGroup);
-
 router.post('/api/group/:groupID/message', controller.postMessageToGroup);
-
 router.get('/api/group/:groupID/messages', controller.getMessageFromGroup);
 
 router.get('/', function (req, res) {

@@ -12,9 +12,25 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.default = function (sequelizeObject) {
   var User = sequelizeObject.define('users', {
-    username: _sequelize2.default.STRING,
-    password: _sequelize2.default.STRING,
-    email: _sequelize2.default.STRING
+    username: {
+      type: _sequelize2.default.STRING,
+      allowNull: false
+    },
+    password: {
+      type: _sequelize2.default.STRING,
+      allowNull: false
+    },
+    email: {
+      type: _sequelize2.default.STRING,
+      allowNull: false
+    }
+  }, {
+    classMethods: {
+      associate: function associate(models) {
+        User.hasMany(models.Group);
+        User.hasMany(models.Message);
+      }
+    }
   });
   return User;
 };

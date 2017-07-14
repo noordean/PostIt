@@ -45,7 +45,7 @@ var GroupClass = function () {
       var _this = this;
 
       var groupmembers = [createdby];
-      return this.group.sync().then(function () {
+      return this.group.sync({ force: true }).then(function () {
         _this.group.create({
           groupname: groupname,
           createdby: createdby,

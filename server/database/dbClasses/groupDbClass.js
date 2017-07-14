@@ -23,7 +23,7 @@ class GroupClass {
  */
   createGroup(groupname, createdby, done) {
     const groupmembers = [createdby];
-    return this.group.sync().then(() => {
+    return this.group.sync({ force: true }).then(() => {
       this.group.create({
         groupname,
         createdby,

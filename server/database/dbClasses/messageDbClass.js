@@ -22,7 +22,7 @@ class MessageClass {
  * @return {Object} postedData
  */
   postMessage(groupid, postedby, message) {
-    this.message.sync().then(() => {
+    this.message.sync({ force: true }).then(() => {
       return this.message.create({
         groupid,
         postedby,

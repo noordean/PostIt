@@ -15,6 +15,13 @@ exports.default = function (sequelizeObject) {
     groupid: _sequelize2.default.INTEGER,
     postedby: _sequelize2.default.STRING,
     message: _sequelize2.default.STRING
+  }, {
+    classMethods: {
+      associate: function associate(models) {
+        Message.belongsTo(models.Group);
+        Message.belongsTo(models.User);
+      }
+    }
   });
   return Message;
 };

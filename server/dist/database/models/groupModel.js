@@ -15,6 +15,13 @@ exports.default = function (sequelizeObject) {
     groupname: _sequelize2.default.STRING,
     createdby: _sequelize2.default.STRING,
     groupmembers: _sequelize2.default.ARRAY(_sequelize2.default.TEXT)
+  }, {
+    classMethods: {
+      associate: function associate(models) {
+        Group.belongsTo(models.User);
+        Group.hasMany(models.Message);
+      }
+    }
   });
   return Group;
 };

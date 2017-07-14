@@ -5,6 +5,15 @@ export default (sequelizeObject) => {
     groupid: Sequelize.INTEGER,
     postedby: Sequelize.STRING,
     message: Sequelize.STRING
-  });
+  },
+  {
+    classMethods: {
+      associate: (models) => {
+        Message.belongsTo(models.Group);
+        Message.belongsTo(models.User);
+      }
+    }
+  }
+  );
   return Message;
 };

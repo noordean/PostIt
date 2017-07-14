@@ -14,8 +14,8 @@ var _controllers2 = _interopRequireDefault(_controllers);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var router = _express2.default.Router();
 var controller = new _controllers2.default();
+var router = _express2.default.Router();
 
 router.post('/api/user/signup', controller.signUp);
 router.post('/api/user/signin', controller.signIn);

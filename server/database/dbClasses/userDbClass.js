@@ -22,7 +22,7 @@ class UserClass {
  * @return {Object} savedData
  */
   saveUser(username, password, email) {
-    this.user.sync({ force: true }).then(() => {
+    this.user.sync().then(() => {
       return this.user.create({
         username,
         password,

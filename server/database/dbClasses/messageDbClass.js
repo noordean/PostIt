@@ -22,7 +22,7 @@ class MessageClass {
  * @return {Object} postedData
  */
   postMessage(groupid, postedby, message) {
-    this.message.sync({ force: true }).then(() => {
+    this.message.sync().then(() => {
       return this.message.create({
         groupid,
         postedby,
@@ -41,7 +41,7 @@ class MessageClass {
  */
   getMessages(groupID, done) {
     this.message.findAll({ where: { groupid: groupID } }).then((data) => {
-      done(data)
+      done(data);
     }).catch((err) => {
       throw new Error(err);
     });

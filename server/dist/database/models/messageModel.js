@@ -10,11 +10,24 @@ var _sequelize2 = _interopRequireDefault(_sequelize);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+/**
+ * @param {Object} sequelizeObject
+ * @return {Object} message model
+ */
 exports.default = function (sequelizeObject) {
   var Message = sequelizeObject.define('messages', {
-    groupid: _sequelize2.default.INTEGER,
-    postedby: _sequelize2.default.STRING,
-    message: _sequelize2.default.STRING
+    groupid: {
+      type: _sequelize2.default.INTEGER,
+      allowNull: false
+    },
+    postedby: {
+      type: _sequelize2.default.STRING,
+      allowNull: false
+    },
+    message: {
+      type: _sequelize2.default.STRING,
+      allowNull: false
+    }
   }, {
     classMethods: {
       associate: function associate(models) {

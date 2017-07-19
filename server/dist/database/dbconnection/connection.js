@@ -15,12 +15,19 @@ var _dotenv2 = _interopRequireDefault(_dotenv);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 _dotenv2.default.config();
-// connect to an online postgreSQL database
+
+/**
+ * connect to an online postgreSQL database
+ */
 var sequelize = new _sequelize2.default(process.env.DATABASE_URL, { query: { raw: true } });
 
+/**
+ * Check if successfully connected
+ */
 sequelize.authenticate().then(function () {
   console.log('connected');
 }).catch(function (err) {
+  console.log(err);
   console.log('errorrr');
 });
 

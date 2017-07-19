@@ -44,7 +44,7 @@ var UserClass = function () {
     value: function saveUser(username, password, email) {
       var _this = this;
 
-      this.user.sync({ force: true }).then(function () {
+      this.user.sync().then(function () {
         return _this.user.create({
           username: username,
           password: password,

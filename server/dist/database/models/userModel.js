@@ -10,6 +10,10 @@ var _sequelize2 = _interopRequireDefault(_sequelize);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+/**
+ * @param {Object} sequelizeObject
+ * @return {Object} user model
+ */
 exports.default = function (sequelizeObject) {
   var User = sequelizeObject.define('users', {
     username: {

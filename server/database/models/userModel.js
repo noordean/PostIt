@@ -1,5 +1,9 @@
 import Sequelize from 'sequelize';
 
+/**
+ * @param {Object} sequelizeObject
+ * @return {Object} user model
+ */
 export default (sequelizeObject) => {
   const User = sequelizeObject.define('users', {
     username: {

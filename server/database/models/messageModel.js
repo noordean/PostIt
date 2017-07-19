@@ -1,10 +1,23 @@
 import Sequelize from 'sequelize';
 
+/**
+ * @param {Object} sequelizeObject
+ * @return {Object} message model
+ */
 export default (sequelizeObject) => {
   const Message = sequelizeObject.define('messages', {
-    groupid: Sequelize.INTEGER,
-    postedby: Sequelize.STRING,
-    message: Sequelize.STRING
+    groupid: {
+      type: Sequelize.INTEGER,
+      allowNull: false
+    },
+    postedby: {
+      type: Sequelize.STRING,
+      allowNull: false
+    },
+    message: {
+      type: Sequelize.STRING,
+      allowNull: false
+    }
   },
   {
     classMethods: {

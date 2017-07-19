@@ -4,41 +4,64 @@
   <title>PostIt</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster&effect=brick-sign">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<nav class="navbar navbar-inverse">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand title" href="#">PostIt</a>
-    </div>
-    <ul class="nav navbar-nav navbar-right">
-      <li><a href="">Create group</a></li>
-      <li><a href="">noordean</a></li>
-      <li><a href="#">Sign out</a></li>
+
+<ul id="dropdown" class="dropdown-content">
+  <li><a href="#!">Profile</a></li>
+  <li class="divider"></li>
+  <li><a href="#!">Log out</a></li>
+</ul>
+<nav>
+  <div class="nav-wrapper red darken-4">
+    <a  id="navLogo" href="#!" class="brand-logo left">PostIt</a>
+    <ul class="right">
+      <li>
+        <form>
+          <input id="searchInput" type="text" placeholder="Search"/>
+        </form>
+      </li>
+      <li><a href="#">Create group</a></li>
+      <!-- Dropdown Trigger -->
+      <li><a class="dropdown-button" href="#!" data-activates="dropdown">noordean<i class="material-icons right">arrow_drop_down</i></a></li>
     </ul>
   </div>
 </nav>
 
-<div class="create-group col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
-  <form class="form" role="form">
-  <div class="form-group">
-    <input class="form-control" id="name" name="name" placeholder="Group Name" type="text" required autofocus />
+<div class="container">
+  <div id="group-page" class="row">
+    <div class="col s12 z-depth-4 card-panel">
+      <form class="group-form">
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="password" type="text">
+            <label for="password">Group Name</label>
+          </div>
+        </div>
+         <div class="row">
+          <div class="input-field col s12">
+          <textarea id="textarea1" class="materialize-textarea white"></textarea>
+            <label for="password">Description</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <a href="#" class="btn waves-effect waves-light col s12">Create</a>
+          </div>
+        </div>
+      </form>
+    </div>
   </div>
-  <textarea class="form-control create-group" id="message" name="message" placeholder="Description" rows="3"></textarea>
-  <br/>
-  <button class="btn btn-primary" type="submit">Create Group</button>
-  </form>
 </div>
 
-<footer>
-  <div class="panel-footer text-center"> noordean © 2017.</div>
-</footer>
-
+<div class="footer-copyright">
+    © 2017 Copyright noordean
+</div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js"></script>
 <script src="js/dist/style.js"></script>
 </body>

@@ -35,12 +35,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var salt = _bcryptjs2.default.genSaltSync(10);
-
+var token = '';
 var userDbInstance = new _userDbClass2.default(_connection2.default);
 var groupDbInstance = new _groupDbClass2.default(_connection2.default);
 var messageDbInstance = new _messageDbClass2.default(_connection2.default);
 
-var token = '';
+/**
+ * Controller class that protects the routes
+ * @class
+ */
 
 var Controller = function () {
   function Controller() {
@@ -48,6 +51,18 @@ var Controller = function () {
   }
 
   _createClass(Controller, [{
+    key: 'checkForWhiteSpace',
+    value: function checkForWhiteSpace(string) {
+      return string.trim().length;
+    }
+    /**
+    * @description: protects api/user/signup
+    * @param {Object} req
+    * @param {Object} res
+    * @return {Object} response
+    */
+
+  }, {
     key: 'signUp',
     value: function signUp(req, res) {
       var username = req.body.username;
@@ -55,8 +70,11 @@ var Controller = function () {
       var email = req.body.email;
       if (username === undefined || password === undefined || email === undefined) {
         res.json({ message: 'You need to provide username, password and email' });
-      } else if (username === '' || password === '' || email === '') {
+      } else if (username.trim().length === 0 || password.trim().length === 0 || email.trim().length === 0) {
         res.json({ message: 'Username, password or email cannot be empty' });
+        console.log(/\S+@\S+\.\S+/.test(email));
+      } else if (/\S+@\S+\.\S+/.test(email) === false) {
+        res.status(401).json({ message: 'Kindly supply a valid email' });
       } else {
         userDbInstance.getUser(username, function (user) {
           if (user.length === 0) {
@@ -69,6 +87,14 @@ var Controller = function () {
         });
       }
     }
+
+    /**
+    * @description: protects api/user/signin
+    * @param {Object} req
+    * @param {Object} res
+    * @return {Object} response
+    */
+
   }, {
     key: 'signIn',
     value: function signIn(req, res) {
@@ -76,7 +102,7 @@ var Controller = function () {
       var password = req.body.password;
       if (username === undefined || password === undefined) {
         res.status(401).json({ message: 'You need to provide username and password' });
-      } else if (username === '' || password === '') {
+      } else if (username.trim().length === 0 || password.trim().length === 0) {
         res.status(401).json({ message: 'Username and password cannot be empty' });
       } else {
         userDbInstance.getUser(username, function (user) {
@@ -96,6 +122,14 @@ var Controller = function () {
         });
       }
     }
+
+    /**
+    * @description: protects api/group
+    * @param {Object} req
+    * @param {Object} res
+    * @return {Object} response
+    */
+
   }, {
     key: 'createGroup',
     value: function createGroup(req, res) {
@@ -103,7 +137,7 @@ var Controller = function () {
       var createdBy = req.body.createdBy;
       if (groupName === undefined || createdBy === undefined) {
         res.status(401).json({ message: 'You need to provide the group-name and the creator\'s username' });
-      } else if (groupName === '' || createdBy === '') {
+      } else if (groupName.trim().length === 0 || createdBy.trim().length === 0) {
         res.status(401).json({ message: 'group-name and the creator\'s username cannot be empty' });
       } else {
         groupDbInstance.getGroupByName(groupName, function (group) {
@@ -127,6 +161,14 @@ var Controller = function () {
         });
       }
     }
+
+    /**
+    * @description: protects api/group/:groupID/user
+    * @param {Object} req
+    * @param {Object} res
+    * @return {Object} response
+    */
+
   }, {
     key: 'addUserToGroup',
     value: function addUserToGroup(req, res) {
@@ -134,8 +176,10 @@ var Controller = function () {
       var username = req.body.username;
       if (req.params.groupID === undefined || req.body.username === undefined) {
         res.status(401).json({ message: 'You need to provide the group-id and the username' });
-      } else if (req.params.groupID === '' || req.body.username === '') {
+      } else if (id.trim().length === 0 || username.trim().length === 0) {
         res.status(401).json({ message: 'group-id and username cannot be empty' });
+      } else if (isNaN(id)) {
+        res.status(401).json({ message: 'The supplied id must be an integer' });
       } else {
         groupDbInstance.getGroupById(id, function (group) {
           if (group.length === 0) {
@@ -163,6 +207,14 @@ var Controller = function () {
         });
       }
     }
+
+    /**
+    * @description: protects api/group/:groupID/message
+    * @param {Object} req
+    * @param {Object} res
+    * @return {Object} response
+    */
+
   }, {
     key: 'postMessageToGroup',
     value: function postMessageToGroup(req, res) {
@@ -171,8 +223,10 @@ var Controller = function () {
       var message = req.body.message;
       if (groupID === undefined || postedBy === undefined || message === undefined) {
         res.status(401).json({ message: 'You need to provide the group-id, postedBy and message' });
-      } else if (groupID === '' || postedBy === '' || message === '') {
+      } else if (groupID.trim().length === 0 || postedBy.trim().length === 0 || message.trim().length === 0) {
         res.status(401).json({ message: 'group-id, user or message cannot be empty' });
+      } else if (isNaN(groupID)) {
+        res.status(401).json({ message: 'The supplied id must be an integer' });
       } else {
         _jsonwebtoken2.default.verify(token, 'nuruuuuuuu', function (err, decode) {
           if (decode !== undefined) {
@@ -188,12 +242,22 @@ var Controller = function () {
         });
       }
     }
+
+    /**
+    * @description: protects api/group/:groupID/messages
+    * @param {Object} req
+    * @param {Object} res
+    * @return {Object} response
+    */
+
   }, {
     key: 'getMessageFromGroup',
     value: function getMessageFromGroup(req, res) {
       var groupID = req.params.groupID;
-      if (groupID === undefined || groupID === '') {
+      if (groupID === undefined || groupID === '' || groupID.trim().length === 0) {
         res.status(401).json({ message: 'group-id must be provided' });
+      } else if (isNaN(groupID)) {
+        res.status(401).json({ message: 'The supplied id must be an integer' });
       } else {
         messageDbInstance.getMessages(groupID, function (messages) {
           res.status(200).json(messages);

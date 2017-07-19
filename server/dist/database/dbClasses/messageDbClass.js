@@ -44,7 +44,7 @@ var MessageClass = function () {
     value: function postMessage(groupid, postedby, message) {
       var _this = this;
 
-      this.message.sync({ force: true }).then(function () {
+      this.message.sync().then(function () {
         return _this.message.create({
           groupid: groupid,
           postedby: postedby,

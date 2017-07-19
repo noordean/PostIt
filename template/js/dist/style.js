@@ -1,5 +1,10 @@
 'use strict';
 
 $(document).ready(function () {
-  $('.slider').slider({ full_width: true });
+  $(".dropdown-button").dropdown();
+  $('.button-collapse').sideNav({
+    menuWidth: 240,
+    closeOnClick: false
+  });
+  $('.collapsible').collapsible();
 });

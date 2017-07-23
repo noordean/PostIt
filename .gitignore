@@ -2,6 +2,7 @@ node_modules
 server/dist
 .env
 coverage
-server
+client
 template
 .sass-cache
+webpack.config.js

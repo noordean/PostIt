@@ -1,5 +1,5 @@
 body {
-  background: #f5f5f5 url(../image/connect.jpg) no-repeat;
+  background: url(../image/team.jpg) no-repeat;
   background-size: cover; }
 
 #logo h1, #navLogo {
@@ -64,7 +64,7 @@ body {
   text-align: center; }
 
 .group-cards {
-  background-color: #bcaaa4;
+  background-color: white;
   margin: 2px 5px 2px 5px; }
 
 .media-heading {
@@ -78,5 +78,31 @@ body {
 
 #slideOut {
   position: fixed; }
+
+blockquote {
+  font-family: Georgia, serif;
+  font-size: 30px;
+  font-style: italic;
+  width: 500px;
+  margin: 2em 0;
+  padding: 0.25em 40px;
+  line-height: 1.45;
+  position: relative;
+  color: #383838; }
+
+blockquote:before {
+  display: block;
+  content: "\201C";
+  font-size: 80px;
+  position: absolute;
+  left: -20px;
+  top: -20px;
+  color: #7a7a7a; }
+
+.btn {
+  background-color: #b71c1c; }
+
+.container {
+  padding-top: 20px; }
 
 /*# sourceMappingURL=style.css.map */

@@ -6,7 +6,6 @@ import groupDbClass from '../database/dbClasses/groupDbClass';
 import messageDbClass from '../database/dbClasses/messageDbClass';
 
 const salt = bcrypt.genSaltSync(10);
-let token = '';
 const userDbInstance = new userDbClass(sequelize);
 const groupDbInstance = new groupDbClass(sequelize);
 const messageDbInstance = new messageDbClass(sequelize);
@@ -16,9 +15,6 @@ const messageDbInstance = new messageDbClass(sequelize);
  * @class
  */
 export default class Controller {
-  checkForWhiteSpace(string) {
-    return string.trim().length;
-  }
   /**
  * @description: protects api/user/signup
  * @param {Object} req
@@ -29,21 +25,21 @@ export default class Controller {
     const username = req.body.username;
     const password = req.body.password;
     const email = req.body.email;
-    if (username === undefined || password === undefined || email === undefined) {
-      res.json({ message: 'You need to provide username, password and email' });
-    } else if (username.trim().length === 0 || password.trim().length === 0 || email.trim().length === 0) {
-      res.json({ message: 'Username, password or email cannot be empty' });
-      console.log(/\S+@\S+\.\S+/.test(email));
-    } else if (/\S+@\S+\.\S+/.test(email) === false) {
-      res.status(401).json({ message: 'Kindly supply a valid email' });
+    if (password === undefined) {
+      res.status(401).json({ message: 'Password must be supplied' });
+    } else if (/^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z\d]{5,12}$/.test(password) === false) {
+      res.status(401).json({ message: 'Password must be alphanumeric and should contain 5-12 characters' });
     } else {
-      userDbInstance.getUser(username, (user) => {
-        if (user.length === 0) {
-          const hashedPassword = bcrypt.hashSync(password, salt);
-          userDbInstance.saveUser(username, hashedPassword, email);
-          res.json({ message: 'Registration successful' });
+      const hashedPassword = bcrypt.hashSync(password, salt);
+      userDbInstance.saveUser(username, hashedPassword, email, (user) => {
+        if (Array.isArray(user)) {
+          if (user[1] === false) {
+            res.status(401).json({ message: 'You already have an existing account. Kindly go and login' });
+          } else {
+            res.status(200).json({ message: 'Registration successful', id: user[0].id, username: user[0].username, email: user[0].email });
+          }
         } else {
-          res.json({ message: 'You already have an existing account. Kindly go and login' });
+          res.status(401).json({ message: user });
         }
       });
     }
@@ -60,19 +56,18 @@ export default class Controller {
     const password = req.body.password;
     if (username === undefined || password === undefined) {
       res.status(401).json({ message: 'You need to provide username and password' });
-    } else if (username.trim().length === 0 || password.trim().length === 0) {
-      res.status(401).json({ message: 'Username and password cannot be empty' });
     } else {
       userDbInstance.getUser(username, (user) => {
         if (user.length === 0) {
           res.status(404).json({ message: 'Invalid user!' });
         } else {
+          let token = '';
           if (bcrypt.compareSync(password, user[0].password)) {
             const payload = { username };
             token = jwt.sign(payload, 'nuruuuuuuu', {
               expiresIn: '1h'
             });
-            res.status(200).json({ message: 'You are now logged in', user: username });
+            res.status(200).json({ message: 'You are now logged in', id: user[0].id, user: username, email: user[0].email, token });
           } else {
             res.status(404).json({ message: 'Incorrect password' });
           }
@@ -89,29 +84,23 @@ export default class Controller {
  */
   createGroup(req, res) {
     const groupName = req.body.groupName;
-    const createdBy = req.body.createdBy;
-    if (groupName === undefined || createdBy === undefined) {
-      res.status(401).json({ message: 'You need to provide the group-name and the creator\'s username' });
-    } else if (groupName.trim().length === 0 || createdBy.trim().length === 0) {
-      res.status(401).json({ message: 'group-name and the creator\'s username cannot be empty' });
+    const token = req.body.token;
+    if (groupName === undefined || token === undefined) {
+      res.status(401).json({ message: 'The group-name and your logged-in token must be specified' });
+    } else if (groupName.trim().length === 0) {
+      res.status(401).json({ message: 'The group-name cannot be empty' });
     } else {
-      groupDbInstance.getGroupByName(groupName, (group) => {
-        if (group.length === 0) {
-          jwt.verify(token, 'nuruuuuuuu', (err, decode) => {
-            if (decode !== undefined) {
-              if (decode.username === createdBy) {
-                groupDbInstance.createGroup(groupName, createdBy, (groups) => {
-                  res.status(200).json({ data: groups.dataValues, message: 'Group successfully created' });
-                });
-              } else {
-                res.status(401).json({ message: 'Access denied!. Kindly login before creating group' });
-              }
+      jwt.verify(token, 'nuruuuuuuu', (err, decode) => {
+        if (decode !== undefined) {
+          groupDbInstance.createGroup(groupName, decode.username, (group) => {
+            if (group[1] === false) {
+              res.status(401).json({ message: 'There is already an existing group with this name' });
             } else {
-              res.status(401).json({ message: 'Access denied!. Kindly login before creating group' });
+              res.status(200).json({ message: 'Group successfully created', id: group[0].id, name: group[0].groupname, members: group[0].groupmembers, createdby: group[0].createdby });
             }
           });
         } else {
-          res.status(404).json({ message: 'The selected group name is unavailable' });
+          res.status(401).json({ message: 'Access denied!. Kindly login before creating group' });
         }
       });
     }
@@ -126,10 +115,11 @@ export default class Controller {
   addUserToGroup(req, res) {
     const id = req.params.groupID;
     const username = req.body.username;
-    if (req.params.groupID === undefined || req.body.username === undefined) {
-      res.status(401).json({ message: 'You need to provide the group-id and the username' });
+    const token = req.body.token;
+    if (req.params.groupID === undefined || req.body.username === undefined || token === undefined) {
+      res.status(401).json({ message: 'You need to provide the group-id, your logged-in token and the username to add' });
     } else if (id.trim().length === 0 || username.trim().length === 0) {
-      res.status(401).json({ message: 'group-id and username cannot be empty' });
+      res.status(401).json({ message: 'Group-id and username cannot be empty' });
     } else if (isNaN(id)) {
       res.status(401).json({ message: 'The supplied id must be an integer' });
     } else {
@@ -143,12 +133,8 @@ export default class Controller {
             } else {
               jwt.verify(token, 'nuruuuuuuu', (err, decode) => {
                 if (decode !== undefined) {
-                  if (decode.username === group[0].createdby) {
-                    groupDbInstance.addUserToGroup(id, username);
-                    res.status(200).json({ message: 'user successfully added' });
-                  } else {
-                    res.status(401).json({ message: 'Access denied!. Kindly login before adding user' });
-                  }
+                  groupDbInstance.addUserToGroup(id, username);
+                  res.status(200).json({ message: 'User successfully added' });
                 } else {
                   res.status(401).json({ message: 'Access denied!. Kindly login before adding user' });
                 }
@@ -168,25 +154,28 @@ export default class Controller {
  */
   postMessageToGroup(req, res) {
     const groupID = req.params.groupID;
-    const postedBy = req.body.postedBy;
     const message = req.body.message;
-    if (groupID === undefined || postedBy === undefined || message === undefined) {
-      res.status(401).json({ message: 'You need to provide the group-id, postedBy and message' });
-    } else if (groupID.trim().length === 0 || postedBy.trim().length === 0 || message.trim().length === 0) {
-      res.status(401).json({ message: 'group-id, user or message cannot be empty' });
+    const token = req.body.token;
+    if (groupID === undefined || message === undefined || token === undefined) {
+      res.status(401).json({ message: 'You need to provide the group-id, your logged-in token and the message' });
+    } else if (groupID.trim().length === 0 || message.trim().length === 0) {
+      res.status(401).json({ message: 'group-id or message cannot be empty' });
     } else if (isNaN(groupID)) {
       res.status(401).json({ message: 'The supplied id must be an integer' });
     } else {
-      jwt.verify(token, 'nuruuuuuuu', (err, decode) => {
-        if (decode !== undefined) {
-          if (decode.username === postedBy) {
-            messageDbInstance.postMessage(groupID, postedBy, message);
-            res.status(200).json({ message: 'Message posted successfully' });
-          } else {
-            res.status(401).json({ message: 'Access denied!. Kindly login before posting message' });
-          }
+      groupDbInstance.getGroupById(groupID, (group) => {
+        if (group.length === 0) {
+          res.status(404).json({ message: 'Invalid group id' });
         } else {
-          res.status(401).json({ message: 'Access denied!. Kindly login before posting message' });
+          jwt.verify(token, 'nuruuuuuuu', (err, decode) => {
+            if (decode !== undefined) {
+              messageDbInstance.postMessage(groupID, decode.username, message, (msg) => {
+                res.status(200).json({ message: 'Message posted successfully', groupID: msg.groupid, postedby: msg.postedby, content: msg.message });
+              });
+            } else {
+              res.status(401).json({ message: 'Access denied!. Kindly login before posting message' });
+            }
+          });
         }
       });
     }
@@ -200,15 +189,27 @@ export default class Controller {
  */
   getMessageFromGroup(req, res) {
     const groupID = req.params.groupID;
-    if (groupID === undefined || groupID === '' || groupID.trim().length === 0) {
-      res.status(401).json({ message: 'group-id must be provided' });
+    const token = req.headers.token;
+    if (groupID === undefined || groupID.trim().length === 0 || token === undefined) {
+      res.status(401).json({ message: 'group-id and your logged-in token must be provided' });
     } else if (isNaN(groupID)) {
       res.status(401).json({ message: 'The supplied id must be an integer' });
     } else {
-      messageDbInstance.getMessages(groupID, (messages) => {
-        res.status(200).json(messages);
+      groupDbInstance.getGroupById(groupID, (group) => {
+        if (group.length === 0) {
+          res.status(404).json({ message: 'Invalid group id' });
+        } else {
+          jwt.verify(token, 'nuruuuuuuu', (err, decode) => {
+            if (decode !== undefined) {
+              messageDbInstance.getMessages(groupID, (messages) => {
+                res.status(200).json(messages);
+              });
+            } else {
+              res.status(401).json({ message: 'Access denied!. Kindly login before viewing messages' });
+            }
+          });
+        }
       });
     }
   }
 }
-

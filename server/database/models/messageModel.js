@@ -18,14 +18,6 @@ export default (sequelizeObject) => {
       type: Sequelize.STRING,
       allowNull: false
     }
-  },
-  {
-    classMethods: {
-      associate: (models) => {
-        Message.belongsTo(models.Group);
-        Message.belongsTo(models.User);
-      }
-    }
   }
   );
   return Message;

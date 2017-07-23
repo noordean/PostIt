@@ -4,42 +4,69 @@ import React, {Component} from "react";
 export default class Dashboard extends Component{
   render(){
     return (
-            <div className="container cards">
-	          <div className="row">
-	            <div className="col-md-4">
-	              <div className="box">
-                    <h5>Andela21 general</h5>
-                    <hr/>
-                    <p>4 members</p>
-                    <a href="#" className="btn btn-primary">View Message Board</a>
-                  </div>
-	            </div>
-	          <div className="col-md-4">
-	            <div className="box">
-                   <h5>Bootcamp</h5>
-                   <hr/>
-                   <p>64 members</p>
-                   <a href="#" className="btn btn-primary">View Message Board</a> 
+        <div>
+          <div className="row group-cards">
+            <div className="col s12 m6">
+              <div className="card">
+                <div className="card-content grey lighten-4 text">
+                  <span className="card-title">Bootcamp</span>
+                  <p>64 group members</p>
                 </div>
-	         </div>
-	         <div className="col-md-4">
-	           <div className="box">
-                  <h5>Andela21 group a</h5>
-                  <hr/>
-                  <p>5 members</p>
-                  <a href="#" className="btn btn-primary">View Message Board</a> 
+              <div className="card-action grey lighten-4">
+                <a href="#" className="red-text text-accent-1">View Message Board</a>
               </div>
-	        </div>
-	        <div className="col-md-4">
-	          <div className="box">
-                 <h5>Andela21 random</h5>
-                 <hr/>
-                 <p>10 members</p>
-                 <a href="#" className="btn btn-primary">View Message Board</a> 
+            </div>
+          </div>
+
+          <div className="col s12 m6">
+            <div className="card">
+              <div className="card-content grey lighten-4 text">
+                <span className="card-title">Andela General</span>
+                <p>4 group members</p>
               </div>
-	       </div>
-	    </div>
-     </div>
+            <div className="card-action grey lighten-4">
+              <a href="#" className="red-text text-accent-1">View Message Board</a>
+            </div>
+          </div>
+        </div>
+
+        <div className="col s12 m6">
+          <div className="card">
+            <div className="card-content grey lighten-4 text">
+              <span className="card-title">Andela21 Group A</span>
+              <p>10 group members</p>
+            </div>
+            <div className="card-action grey lighten-4">
+              <a href="#" className="red-text text-accent-1">View Message Board</a>
+            </div>
+          </div>
+        </div>
+
+        <div className="col s12 m6">
+          <div className="card">
+            <div className="card-content grey lighten-4 text">
+              <span className="card-title">Andela21 Random</span>
+              <p>4 group members</p>
+            </div>
+            <div className="card-action grey lighten-4">
+              <a href="#" className="red-text text-accent-1">View Message Board</a>
+            </div>
+          </div>
+      </div>
+
+      <div className="col s12 m6">
+        <div className="card">
+          <div className="card-content grey lighten-4 text">
+            <span className="card-title">Andela21 Random</span>
+            <p>4 group members</p>
+          </div>
+          <div className="card-action grey lighten-4">
+            <a href="#" className="red-text text-accent-1">View Message Board</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
     );
   }
 }

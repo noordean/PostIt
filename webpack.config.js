@@ -2,13 +2,11 @@ const webpack = require('webpack');
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-const BUILD_DIR = path.resolve(__dirname, 'client/src');
-const APP_DIR = path.resolve(__dirname, 'client');
-
 module.exports = {
-  entry: {
-    'bundle': APP_DIR + '/index.js',
-    'style': APP_DIR + '/src/public/js/style.js'
+  entry: [path.resolve(__dirname, 'client/index.js'), path.resolve(__dirname, 'client/src/public/css/style.scss')],
+  output: {
+    path: path.resolve(__dirname, 'client/src'),
+    filename: 'bundle.js'
   },
   module: {
     loaders: [
@@ -19,15 +17,23 @@ module.exports = {
           presets: ['es2015', 'react']
         }
       },
-      { test: /\.scss$/,
-        use: ExtractTextPlugin.extract({
+      { test: /\.css$/,
+        loader: ExtractTextPlugin.extract({
           fallback: 'style-loader',
-          use: ['css-loader', 'sass-loader'] })
-      }]
-  },
-  output: {
-    path: BUILD_DIR,
-    filename: '[name].js'
+          loader: 'css-loader?importLoaders=1' })
+      },
+      {
+        test: /\.(sass|scss)$/,
+        loader: ExtractTextPlugin.extract(['css-loader', 'sass-loader'])
+      },
+      {
+        test: /\.(jpg|png|gif|svg)$/i,
+        loaders: [
+          'file-loader?name=/public/image/[name].[ext]',
+          'image-webpack-loader'
+        ]
+      },
+    ]
   },
   plugins: [
     new ExtractTextPlugin('bundle.css')

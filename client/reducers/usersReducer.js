@@ -11,20 +11,20 @@ export default (state = {
 }, action) => {
   switch (action.type) {
     case 'REGISTRATION_BEGINS':
-      return Object.assign({}, state, {regProcessing: true});
+      return Object.assign({}, state, { regProcessing: true });
     case 'REGISTRATION_SUCCESSFUL':
-      return Object.assign({}, state, {regStatus: action.payload, regProcessed: true});
+      return Object.assign({}, state, { regStatus: action.payload, regProcessed: true });
     case 'REGISTRATION_REJECTED':
-      return Object.assign({}, state, {regError: action.payload});
+      return Object.assign({}, state, { regError: action.payload });
     case 'LOGIN_BEGINS':
-      return Object.assign({}, state, {loginProcessing: true});
+      return Object.assign({}, state, { loginProcessing: true });
     case 'LOGIN_SUCCESSFUL':
-      return Object.assign({}, state, {loginStatus: action.payload, loginProcessed: true});
+      return Object.assign({}, state, { loginStatus: action.payload, loginProcessed: true });
     case 'LOGIN_UNSUCCESSFUL':
-      return Object.assign({}, state, {loginStatus: action.payload, loginProcessed: true});
+      return Object.assign({}, state, { loginStatus: action.payload, loginProcessed: true });
     case 'LOGIN_REJECTED':
-      return Object.assign({}, state, {loginError: action.payload});
+      return Object.assign({}, state, { loginError: action.payload });
     default:
       return state;
   }
-}
+};

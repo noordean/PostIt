@@ -21,12 +21,14 @@ class MessageClass {
  * @param {String} message
  * @return {Object} postedData
  */
-  postMessage(groupid, postedby, message) {
+  postMessage(groupid, postedby, message, done) {
     this.message.sync().then(() => {
       return this.message.create({
         groupid,
         postedby,
         message
+      }).then((msg) => {
+        done(msg);
       }).catch((err) => {
         throw new Error(err);
       });

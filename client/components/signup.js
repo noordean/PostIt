@@ -22,7 +22,7 @@ class SignUp extends Component{
 	}
   
 	componentWillUnmount() {
-		// return the state to their initial values
+		// return state to its initial value
 		this.props.user.regStatus = {};
 		this.props.user.regError = null;
 		this.props.user.regProcessed = false;
@@ -36,7 +36,7 @@ class SignUp extends Component{
 		}
 		if (this.props.user.regProcessed) {
 			if (this.props.user.regStatus.message === 'Registration successful') {
-			  errorMsg = <div className="error-message gr">{this.props.user.regStatus.message}, Click <Link to="/login"> here </Link> to login</div>;
+			  errorMsg = <div className="error-message gr">{this.props.user.regStatus.message}, Click <Link to="/signin"> here </Link> to login</div>;
 			} else {
 			  errorMsg = <div className="error-message re">{this.props.user.regStatus.message}</div>;
 			}
@@ -45,40 +45,57 @@ class SignUp extends Component{
 			errorMsg = <div className="error-message re">An unexpected error occured. Kindly check your internet connection</div>;
 		}
     return (
-        <div className="row centered-form">
-					<div ref="clientError" className="error-message re"></div>
-					{errorMsg}
-          <div className="mainbox col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
-            <div className="panel panel-default">
-              <div className="panel-heading">
-		        <h3 className="panel-title">Get a PostIt account <small>It's free!</small></h3>
-	          </div>
-	          <div className="panel-body">
-		        <form role="form" onSubmit={this.registerHandler.bind(this)}>
-		          <div className="form-group">
-		            <input type="text" name="username" id="username" className="form-control" placeholder="Username" ref="usernameInput" minLength="5" maxLength="12" required/>
-		          </div>
-		          <div className="form-group">
-			        <input type="email" name="email" id="email" className="form-control" placeholder="Email Address" ref="emailInput" required/>
-		          </div>
-		          <div className="row">
-			        <div className="col-xs-6 col-sm-6 col-md-6">
-			          <div className="form-group">
-			            <input type="password" name="password" id="password" className="form-control" placeholder="Password" ref="passwordInput" pattern="[a-zA-Z0-9]{4,}" minLength="6" required/>
-			          </div>
-			        </div>
-		            <div className="col-xs-6 col-sm-6 col-md-6">
-			          <div className="form-group">
-			            <input type="password" name="password_confirmation" id="password_confirmation" className="form-control" placeholder="Confirm Password" ref="confirmPasswordInput" pattern="[a-zA-Z0-9]{4,}" minLength="6" required/>
-			          </div>
-			        </div>
-		         </div>   			
-		         <input type="submit" value="Register" className="btn btn-info btn-block"/>	    		
-		       </form>
-	        </div>
-	     </div>
-      </div>
-    </div>
+						<div className="container">
+  						<div id="register-page" className="row">
+    						<div className="col s12 z-depth-4 card-panel">
+      						<form className="register-form">
+        						<div className="row">
+          						<div className="input-field col s12 center">
+												<img id="reg-img" src="public/image/regsiter.jpg" alt="" className="circle responsive-img valign profile-image-login"/>
+												<div ref="clientError"></div>
+												{errorMsg}
+          						</div>
+        						</div>
+        						<div className="row margin">
+          						<div className="input-field col s12">
+            						<i className="material-icons prefix">account_circle</i>
+            						<input id="username" type="text" ref="usernameInput"/>
+            						<label htmlFor="username" className="center-align">Username</label>
+          						</div>
+        						</div>
+        						<div className="row margin">
+          						<div className="input-field col s12">
+            						<i className="material-icons prefix">email</i>
+            						<input id="email" type="email" ref="emailInput"/>
+            						<label htmlFor="email" className="center-align">Email</label>
+          						</div>
+        						</div>
+        						<div className="row margin">
+          					<div className="input-field col s12">
+            					<i className="material-icons prefix">lock</i>
+            					<input id="password" type="password" ref="passwordInput"/>
+            					<label htmlFor="password">Password</label>
+          					</div>
+        					</div>
+        					<div className="row margin">
+          					<div className="input-field col s12">
+            					<i className="material-icons prefix">lock</i>
+            					<input id="password-again" type="password" ref="confirmPasswordInput"/>
+            					<label htmlFor="password-again">Confirm Password</label>
+          					</div>
+        					</div>
+        					<div className="row">
+          					<div className="input-field col s12">
+            					<a href="#" className="btn waves-effect waves-light col s12 red darken-4" onClick={this.registerHandler.bind(this)}>Register Now</a>
+          					</div>
+          					<div className="input-field col s12">
+            					<p className="margin center medium-small sign-up">Already have an account? <a href="page-login.html">Login</a></p>
+          					</div>
+        					</div>
+      					</form>
+    					</div>
+  					</div>
+					</div>
     );
   }
 }

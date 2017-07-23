@@ -36,37 +36,53 @@ class SignIn extends Component{
 		}
 
     return (
-      <div className="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">    
-        {errorMsg}                
-        <div className="panel panel-info" >
-          <div className="panel-heading">
-            <div className="panel-title">Login</div>
-          </div>     
-         <div className="panel-body" >
-           <form id="loginform" className="form-horizontal" role="form">        
-             <div className="input-group">
-               <span className="input-group-addon"><i className="glyphicon glyphicon-user"></i></span>
-                 <input id="login-username" type="text" className="form-control" name="username" placeholder="username" ref="usernameInput" required/>
-             </div>
-             <div className="input-group">
-               <span className="input-group-addon"><i className="glyphicon glyphicon-lock"></i></span>
-                 <input id="login-password" type="password" className="form-control" name="password" placeholder="password" ref="passwordInput" required/>
-             </div>    
-             <div className="form-group">
-               <div className="col-sm-12 controls">
-                 <a id="btn-login" href="#" className="btn btn-success" onClick={this.loginHandler.bind(this)}>Login </a>
-                 <a id="btn-fblogin" href="#" className="btn btn-primary">Login with Google</a>
-               </div>
-             </div>
-             <div className="form-group">
-               <div className="col-md-12 control">
-                 <div className="create-account">Don't have an account? <Link to="signup">Sign Up Here</Link></div>
-               </div>
-             </div>    
-           </form>     
-         </div>                     
-       </div>  
-     </div>
+          <div className="container">
+            <div id="login-page" className="row">
+              <div className="col s12 z-depth-4 card-panel">
+              <form className="login-form">
+                <div className="row">
+                <div className="input-field col s12 center">
+                  <img id="login-img" src="public/image/login.jpg" alt="" className="circle responsive-img valign profile-image-login"/>
+                  {errorMsg}
+                </div>
+              </div>
+              <div className="row margin">
+                <div className="input-field col s12">
+                  <i className="material-icons prefix">account_circle</i>
+                  <input id="username" type="text" ref="usernameInput"/>
+                  <label htmlFor="username" className="center-align">Username</label>
+                </div>
+              </div>
+              <div className="row margin">
+                <div className="input-field col s12">
+                  <i className="material-icons prefix">lock</i>
+                  <input id="password" type="password" ref="passwordInput"/>
+                  <label htmlFor="password">Password</label>
+                </div>
+              </div>
+            <div className="row">          
+            <div className="input-field col s12 m12 l12  login-text">
+              <input type="checkbox" id="remember-me" />
+              <label htmlFor="remember-me">Remember me</label>
+          </div>
+        </div>
+        <div className="row">
+          <div className="input-field col s12">
+            <a href="#" className="btn waves-effect waves-light col s12 red darken-4" onClick={this.loginHandler.bind(this)}>Login</a>
+          </div>
+        </div>
+        <div className="row">
+          <div className="input-field col s6 m6 l6">
+            <p className="margin medium-small"><a href="#">Register Now!</a></p>
+          </div>
+        <div className="input-field col s6 m6 l6">
+            <p className="margin right-align medium-small"><a href="#">Forgot password ?</a></p>
+        </div>          
+      </div>
+    </form>
+  </div>
+</div>
+</div>
     );
   }
 }

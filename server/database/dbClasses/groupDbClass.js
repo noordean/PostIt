@@ -24,10 +24,14 @@ class GroupClass {
   createGroup(groupname, createdby, done) {
     const groupmembers = [createdby];
     return this.group.sync().then(() => {
-      this.group.create({
-        groupname,
-        createdby,
-        groupmembers
+      this.group.findOrCreate({
+        where: {
+          groupname
+        },
+        defaults: {
+          createdby,
+          groupmembers
+        }
       }).then((group) => {
         done(group);
       }).catch((err) => {

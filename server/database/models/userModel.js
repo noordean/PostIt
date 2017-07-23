@@ -8,25 +8,31 @@ export default (sequelizeObject) => {
   const User = sequelizeObject.define('users', {
     username: {
       type: Sequelize.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: true,
+      validate: {
+        is: {
+          args: /^[a-z]{5,12}$/i,
+          msg: 'Username should contain only letters and must have between 5-12 characters'
+        }
+      }
     },
     password: {
       type: Sequelize.STRING,
-      allowNull: false
+      allowNull: false,
     },
     email: {
       type: Sequelize.STRING,
-      allowNull: false
-    }
-  },
-  {
-    classMethods: {
-      associate: (models) => {
-        User.hasMany(models.Group);
-        User.hasMany(models.Message);
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: {
+          args: true,
+          msg: 'Invalid email detected. Kindly supply a valid email'
+        }
       }
     }
-  }
+  },
   );
   return User;
 };

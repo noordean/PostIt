@@ -1,11 +1,11 @@
 
 export default (state = {
   regStatus: {},
-  regProcessiong: false,
+  regProcessing: false,
   regProcessed: false,
   regError: null,
   loginStatus: {},
-  loginProcessiong: false,
+  loginProcessing: false,
   loginProcessed: false,
   loginError: null,
 }, action) => {

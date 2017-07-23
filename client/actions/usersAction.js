@@ -1,5 +1,5 @@
 import axios from "axios";
-import {browserHistory} from 'react-router';
+import { browserHistory } from 'react-router';
 
 export const registerUser = (username, email, password) => {
   return (dispatch) => {
@@ -33,7 +33,8 @@ export const loginUser = (username, password) => {
       dispatch({ type:'LOGIN_UNSUCCESSFUL', payload: response.data });
     })
     .catch((err) => {
+      console.log(err);
       dispatch({ type:'LOGIN_REJECTED', payload:err })
-    })
+    });
   }
 }

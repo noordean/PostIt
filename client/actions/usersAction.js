@@ -21,7 +21,7 @@ export const registerUser = (username, email, password) => {
 export const loginUser = (username, password) => {
   return (dispatch) => {
     dispatch({ type:'LOGIN_BEGINS' });
-    axios.post('https://postit-api.herokuapp.com/api/user/signin', {
+    axios.post('http://localhost:3000/api/user/signin', {
       username,
       password
     })

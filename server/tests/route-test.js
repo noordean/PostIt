@@ -39,21 +39,11 @@ describe('PostIt Endpoints', () => {
       userDbInstance.deleteUser(helperObject.alreadyRegisteredUser.username);
       done();
     });
-    it('should respond with OK status', (done) => {
-      chai.request(app)
-        .post('/api/user/signup')
-        .send(helperObject.validRegUser)
-        .end((err, res) => {
-          res.should.have.status(200);
-          done();
-        });
-    }).timeout(20000);
     it('should respond with success message', (done) => {
       chai.request(app)
         .post('/api/user/signup')
         .send(helperObject.validRegUser)
         .end((err, res) => {
-          res.should.have.status(200);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('Registration successful');
@@ -65,7 +55,6 @@ describe('PostIt Endpoints', () => {
         .post('/api/user/signup')
         .send(helperObject.regUserWithInvalidEmail)
         .end((err, res) => {
-          res.should.have.status(401);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('Invalid email detected. Kindly supply a valid email');
@@ -77,7 +66,6 @@ describe('PostIt Endpoints', () => {
         .post('/api/user/signup')
         .send(helperObject.regUserWithWrongPassword)
         .end((err, res) => {
-          res.should.have.status(401);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('Password must be alphanumeric and should contain 5-12 characters');
@@ -89,7 +77,6 @@ describe('PostIt Endpoints', () => {
         .post('/api/user/signup')
         .send(helperObject.regUserWithWrongUsername)
         .end((err, res) => {
-          res.should.have.status(401);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('Username should contain only letters and must have between 5-12 characters');
@@ -101,7 +88,6 @@ describe('PostIt Endpoints', () => {
         .post('/api/user/signup')
         .send(helperObject.regUserWithShortPassword)
         .end((err, res) => {
-          res.should.have.status(401);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('Password must be alphanumeric and should contain 5-12 characters');
@@ -113,7 +99,6 @@ describe('PostIt Endpoints', () => {
         .post('/api/user/signup')
         .send(helperObject.regUserWithShortUsername)
         .end((err, res) => {
-          res.should.have.status(401);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('Username should contain only letters and must have between 5-12 characters');
@@ -125,7 +110,6 @@ describe('PostIt Endpoints', () => {
         .post('/api/user/signup')
         .send(helperObject.regUserWithNoUsername)
         .end((err, res) => {
-          res.should.have.status(401);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('username must be supplied');
@@ -137,7 +121,6 @@ describe('PostIt Endpoints', () => {
         .post('/api/user/signup')
         .send(helperObject.regUserWithNoPassword)
         .end((err, res) => {
-          res.should.have.status(401);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('Password must be supplied');
@@ -149,7 +132,6 @@ describe('PostIt Endpoints', () => {
         .post('/api/user/signup')
         .send(helperObject.regUserWithNoEmail)
         .end((err, res) => {
-          res.should.have.status(401);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('email must be supplied');
@@ -175,7 +157,6 @@ describe('PostIt Endpoints', () => {
         .post('/api/user/signin')
         .send(helperObject.loginUserWithNoUsername)
         .end((err, res) => {
-          res.should.have.status(401);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('You need to provide username and password');
@@ -187,7 +168,6 @@ describe('PostIt Endpoints', () => {
         .post('/api/user/signin')
         .send(helperObject.loginUserWithNoPassword)
         .end((err, res) => {
-          res.should.have.status(401);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('You need to provide username and password');
@@ -199,7 +179,6 @@ describe('PostIt Endpoints', () => {
         .post('/api/user/signin')
         .send(helperObject.loginInvalidUser)
         .end((err, res) => {
-          res.should.have.status(404);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('Invalid user!');
@@ -231,7 +210,6 @@ describe('PostIt Endpoints', () => {
         .post('/api/group')
         .send(helperObject.createGroupWithEmptyGroupname)
         .end((err, res) => {
-          res.should.have.status(401);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('The group-name cannot be empty');
@@ -243,7 +221,6 @@ describe('PostIt Endpoints', () => {
         .post('/api/group')
         .send(helperObject.createGroupWithNoGroupname)
         .end((err, res) => {
-          res.should.have.status(401);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('The group-name and your logged-in token must be specified');
@@ -255,7 +232,6 @@ describe('PostIt Endpoints', () => {
         .post('/api/group')
         .send(helperObject.createGroupWithNoGroupname)
         .end((err, res) => {
-          res.should.have.status(401);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('The group-name and your logged-in token must be specified');

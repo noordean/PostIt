@@ -6,7 +6,10 @@ dotenv.config();
 /**
  * connect to an online postgreSQL database
  */
-const sequelize = new Sequelize(process.env.DATABASE_URL, { query: { raw: true } });
+const sequelize = new Sequelize(process.env.DATABASE_URL, { query: { raw: true },
+  pool: { max: 4,
+    min: 2,
+  } });
 
 /**
  * Check if successfully connected
@@ -14,7 +17,6 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, { query: { raw: true }
 sequelize.authenticate().then(() => {
   console.log('connected');
 }).catch((err) => {
-  console.log(err);
   console.log('errorrr');
 });
 

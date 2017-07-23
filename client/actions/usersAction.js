@@ -31,6 +31,7 @@ export const loginUser = (username, password) => {
           browserHistory.push('/dashboard');
         }
         dispatch({ type: 'LOGIN_UNSUCCESSFUL', payload: response.data });
+          localStorage.setItem('user', JSON.stringify(response.data));
       })
       .catch((err) => {
         dispatch({ type: 'LOGIN_REJECTED', payload: err });

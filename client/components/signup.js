@@ -48,7 +48,7 @@ class SignUp extends Component{
 						<div className="container">
   						<div id="register-page" className="row">
     						<div className="col s12 z-depth-4 card-panel">
-      						<form className="register-form">
+      						<form className="register-form" onSubmit={this.registerHandler.bind(this)}>
         						<div className="row">
           						<div className="input-field col s12 center">
 												<img id="reg-img" src="public/image/regsiter.jpg" alt="" className="circle responsive-img valign profile-image-login"/>
@@ -59,34 +59,34 @@ class SignUp extends Component{
         						<div className="row margin">
           						<div className="input-field col s12">
             						<i className="material-icons prefix">account_circle</i>
-            						<input id="username" type="text" ref="usernameInput"/>
+            						<input id="username" type="text" ref="usernameInput" required/>
             						<label htmlFor="username" className="center-align">Username</label>
           						</div>
         						</div>
         						<div className="row margin">
           						<div className="input-field col s12">
             						<i className="material-icons prefix">email</i>
-            						<input id="email" type="email" ref="emailInput"/>
+            						<input id="email" type="email" ref="emailInput" required/>
             						<label htmlFor="email" className="center-align">Email</label>
           						</div>
         						</div>
         						<div className="row margin">
           					<div className="input-field col s12">
             					<i className="material-icons prefix">lock</i>
-            					<input id="password" type="password" ref="passwordInput"/>
+            					<input id="password" type="password" ref="passwordInput" required/>
             					<label htmlFor="password">Password</label>
           					</div>
         					</div>
         					<div className="row margin">
           					<div className="input-field col s12">
             					<i className="material-icons prefix">lock</i>
-            					<input id="password-again" type="password" ref="confirmPasswordInput"/>
+            					<input id="password-again" type="password" ref="confirmPasswordInput" required/>
             					<label htmlFor="password-again">Confirm Password</label>
           					</div>
         					</div>
         					<div className="row">
           					<div className="input-field col s12">
-            					<a href="#" className="btn waves-effect waves-light col s12 red darken-4" onClick={this.registerHandler.bind(this)}>Register Now</a>
+											<input type="submit" value="Register Now" className="btn waves-effect waves-light col s12 red darken-4"/>
           					</div>
           					<div className="input-field col s12">
             					<p className="margin center medium-small sign-up">Already have an account? <a href="page-login.html">Login</a></p>

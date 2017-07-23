@@ -49,14 +49,14 @@ class SignIn extends Component{
               <div className="row margin">
                 <div className="input-field col s12">
                   <i className="material-icons prefix">account_circle</i>
-                  <input id="username" type="text" ref="usernameInput"/>
+                  <input id="username" type="text" ref="usernameInput" required/>
                   <label htmlFor="username" className="center-align">Username</label>
                 </div>
               </div>
               <div className="row margin">
                 <div className="input-field col s12">
                   <i className="material-icons prefix">lock</i>
-                  <input id="password" type="password" ref="passwordInput"/>
+                  <input id="password" type="password" ref="passwordInput" required/>
                   <label htmlFor="password">Password</label>
                 </div>
               </div>

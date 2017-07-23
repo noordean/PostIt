@@ -4,3 +4,4 @@ server/dist
 coverage
 server
 template
+.sass-cache

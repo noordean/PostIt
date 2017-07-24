@@ -27,11 +27,11 @@ export const loginUser = (username, password) => {
     })
       .then((response) => {
         if (response.data.message === 'You are now logged in') {
+          localStorage.setItem('user', JSON.stringify(response.data));
           dispatch({ type: 'LOGIN_SUCCESSFUL', payload: response.data });
           browserHistory.push('/dashboard');
         }
         dispatch({ type: 'LOGIN_UNSUCCESSFUL', payload: response.data });
-          localStorage.setItem('user', JSON.stringify(response.data));
       })
       .catch((err) => {
         dispatch({ type: 'LOGIN_REJECTED', payload: err });

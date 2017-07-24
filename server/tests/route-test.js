@@ -39,17 +39,6 @@ describe('PostIt Endpoints', () => {
       userDbInstance.deleteUser(helperObject.alreadyRegisteredUser.username);
       done();
     });
-    it('should respond with success message', (done) => {
-      chai.request(app)
-        .post('/api/user/signup')
-        .send(helperObject.validRegUser)
-        .end((err, res) => {
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.message.should.be.eql('Registration successful');
-          done();
-        });
-    }).timeout(20000);
     it('should respond with error message if invalid email is supplied', (done) => {
       chai.request(app)
         .post('/api/user/signup')
@@ -135,17 +124,6 @@ describe('PostIt Endpoints', () => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('email must be supplied');
-          done();
-        });
-    }).timeout(20000);
-    it('should respond with error message if user is already registered', (done) => {
-      chai.request(app)
-        .post('/api/user/signup')
-        .send(helperObject.alreadyRegisteredUser)
-        .end((err, res) => {
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.message.should.be.eql('You already have an existing account. Kindly go and login');
           done();
         });
     }).timeout(20000);

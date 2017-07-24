@@ -1,8 +1,11 @@
 language: node_js
 node_js:
     - "5"
+
+services:
+    - postgresql
 before_script:
-    - npm install gulp -g
+    - psql -c 'create database postit;' -U postgres
     - npm install
 script: 
     - gulp run-tests

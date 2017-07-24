@@ -39,6 +39,17 @@ describe('PostIt Endpoints', () => {
       userDbInstance.deleteUser(helperObject.alreadyRegisteredUser.username);
       done();
     });
+    it('should respond with success message', (done) => {
+      chai.request(app)
+        .post('/api/user/signup')
+        .send(helperObject.validRegUser)
+        .end((err, res) => {
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.message.should.be.eql('Registration successful');
+          done();
+        });
+    });
     it('should respond with error message if invalid email is supplied', (done) => {
       chai.request(app)
         .post('/api/user/signup')
@@ -49,7 +60,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('Invalid email detected. Kindly supply a valid email');
           done();
         });
-    }).timeout(20000);
+    });
     it('should respond with error message if incorrect password combination is supplied', (done) => {
       chai.request(app)
         .post('/api/user/signup')
@@ -60,7 +71,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('Password must be alphanumeric and should contain 5-12 characters');
           done();
         });
-    }).timeout(20000);
+    });
     it('should respond with error message if incorrect username combination is supplied', (done) => {
       chai.request(app)
         .post('/api/user/signup')
@@ -71,7 +82,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('Username should contain only letters and must have between 5-12 characters');
           done();
         });
-    }).timeout(20000);
+    });
     it('should respond with error message if incorrect username combination is supplied', (done) => {
       chai.request(app)
         .post('/api/user/signup')
@@ -82,7 +93,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('Password must be alphanumeric and should contain 5-12 characters');
           done();
         });
-    }).timeout(20000);
+    });
     it('should respond with error message if incorrect username combination is supplied', (done) => {
       chai.request(app)
         .post('/api/user/signup')
@@ -104,7 +115,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('username must be supplied');
           done();
         });
-    }).timeout(20000);
+    });
     it('should respond with error message if password is undefined', (done) => {
       chai.request(app)
         .post('/api/user/signup')
@@ -115,7 +126,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('Password must be supplied');
           done();
         });
-    }).timeout(20000);
+    });
     it('should respond with error message if email is undefined', (done) => {
       chai.request(app)
         .post('/api/user/signup')
@@ -126,7 +137,18 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('email must be supplied');
           done();
         });
-    }).timeout(20000);
+    });
+    it('should respond with error message if user is already registered', (done) => {
+      chai.request(app)
+        .post('/api/user/signup')
+        .send(helperObject.alreadyRegisteredUser)
+        .end((err, res) => {
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.message.should.be.eql('You already have an existing account. Kindly go and login');
+          done();
+        });
+    });
   });
 
   describe('POST api/user/signin', () => {
@@ -140,7 +162,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('You need to provide username and password');
           done();
         });
-    }).timeout(20000);
+    });
     it('should respond with error message if password is undefined', (done) => {
       chai.request(app)
         .post('/api/user/signin')
@@ -151,7 +173,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('You need to provide username and password');
           done();
         });
-    }).timeout(20000);
+    });
     it('should respond with error message if invalid username is supplied', (done) => {
       chai.request(app)
         .post('/api/user/signin')
@@ -162,7 +184,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('Invalid user!');
           done();
         });
-    }).timeout(20000);
+    });
     it('should respond with success message if correct username and password are supplied', (done) => {
       chai.request(app)
         .post('/api/user/signin')
@@ -174,7 +196,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('You are now logged in');
           done();
         });
-    }).timeout(20000);
+    });
   });
 
   describe('POST api/group', () => {
@@ -193,7 +215,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('The group-name cannot be empty');
           done();
         });
-    }).timeout(20000);
+    });
     it('should respond with error message if groupname is not supplied', (done) => {
       chai.request(app)
         .post('/api/group')
@@ -204,7 +226,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('The group-name and your logged-in token must be specified');
           done();
         });
-    }).timeout(20000);
+    });
     it('should respond with error message if token is not supplied', (done) => {
       chai.request(app)
         .post('/api/group')
@@ -215,7 +237,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('The group-name and your logged-in token must be specified');
           done();
         });
-    }).timeout(20000);
+    });
     it('should respond with success message if the correct group-name and logged-in token are specified', (done) => {
       chai.request(app)
         .post('/api/group')
@@ -226,7 +248,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('Group successfully created');
           done();
         });
-    }).timeout(20000);
+    });
     it('should respond with error message if user is not logged in', (done) => {
       chai.request(app)
         .post('/api/group')
@@ -237,7 +259,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('Access denied!. Kindly login before creating group');
           done();
         });
-    }).timeout(20000);
+    });
   });
 
   describe('POST api/group/:groupID/user', () => {
@@ -251,7 +273,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('Invalid group id');
           done();
         });
-    }).timeout(20000);
+    });
     it('should respond with error message if invalid id is used', (done) => {
       chai.request(app)
         .post('/api/group/14hjgjdkskb/user')
@@ -262,7 +284,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('The supplied id must be an integer');
           done();
         });
-    }).timeout(20000);
+    });
     it('should respond with error message if username is not defined', (done) => {
       chai.request(app)
         .post('/api/group/14678923562789/user')
@@ -273,7 +295,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('You need to provide the group-id, your logged-in token and the username to add');
           done();
         });
-    }).timeout(20000);
+    });
     it('should respond with error message if token is not defined', (done) => {
       chai.request(app)
         .post('/api/group/157235927/user')
@@ -284,7 +306,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('You need to provide the group-id, your logged-in token and the username to add');
           done();
         });
-    }).timeout(20000);
+    });
   });
 
   describe('POST api/group/:groupID/message', () => {
@@ -298,7 +320,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('You need to provide the group-id, your logged-in token and the message');
           done();
         });
-    }).timeout(20000);
+    });
     it('should respond with error message if message is not defined', (done) => {
       chai.request(app)
         .post('/api/group/17539649/message')
@@ -309,7 +331,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('You need to provide the group-id, your logged-in token and the message');
           done();
         });
-    }).timeout(20000);
+    });
     it('should respond with error message if groupID is empty', (done) => {
       chai.request(app)
         .post('/api/group/ /message')
@@ -320,7 +342,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('group-id or message cannot be empty');
           done();
         });
-    }).timeout(20000);
+    });
     it('should respond with error message if token is incorrect', (done) => {
       chai.request(app)
         .post('/api/group/17539649632jkdghfjkhgdk/message')
@@ -331,7 +353,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('The supplied id must be an integer');
           done();
         });
-    }).timeout(20000);
+    });
     it('should respond with error message if id is invalid', (done) => {
       chai.request(app)
         .post('/api/group/17539649/message')
@@ -342,7 +364,7 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('Invalid group id');
           done();
         });
-    }).timeout(20000);
+    });
     it('should respond with error message if message is empty', (done) => {
       chai.request(app)
         .post('/api/group/17539649/message')
@@ -353,6 +375,6 @@ describe('PostIt Endpoints', () => {
           res.body.message.should.be.eql('group-id or message cannot be empty');
           done();
         });
-    }).timeout(20000);
+    });
   });
 });

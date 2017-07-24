@@ -28,7 +28,10 @@ gulp.task('pre-test', ['transpile'], () => {
 });
 gulp.task('run-tests', ['pre-test'], () => {
   return gulp.src(['server/dist/tests/route-test.js', 'server/dist/tests/model-test.js'], { read: false })
-    .pipe(mocha())
+    .pipe(mocha({
+      timeout: 100000
+    }
+    ))
     .pipe(istanbul.writeReports())
     .pipe(exit());
 });

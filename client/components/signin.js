@@ -39,7 +39,7 @@ class SignIn extends Component{
           <div className="container">
             <div id="login-page" className="row">
               <div className="col s12 z-depth-4 card-panel">
-              <form className="login-form">
+              <form className="login-form" onSubmit={this.loginHandler.bind(this)}>
                 <div className="row">
                 <div className="input-field col s12 center">
                   <img id="login-img" src="public/image/login.jpg" alt="" className="circle responsive-img valign profile-image-login"/>
@@ -68,7 +68,7 @@ class SignIn extends Component{
         </div>
         <div className="row">
           <div className="input-field col s12">
-            <a href="#" className="btn waves-effect waves-light col s12 red darken-4" onClick={this.loginHandler.bind(this)}>Login</a>
+            <input type="submit" value="Login" className="btn waves-effect waves-light col s12 red darken-4"/>
           </div>
         </div>
         <div className="row">

@@ -1,8 +1,11 @@
 import React, {Component} from "react";
-
+import Home from './home';
 
 export default class Dashboard extends Component{
-  render(){
+  render() {
+    if (!localStorage.user) {
+      return <Home/>;
+    }
     return (
         <div>
           <div className="row group-cards">

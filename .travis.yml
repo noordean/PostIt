@@ -8,7 +8,7 @@ before_script:
     - psql -c 'create database postit;' -U postgres
     - npm install
 script: 
-    - gulp run-tests
+    - npm test
 after_success:
     - gulp codeclimate
     - npm install -g codeclimate-test-reporter

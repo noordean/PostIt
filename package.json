@@ -5,7 +5,7 @@
   "main": "server/server.js",
   "scripts": {
     "dev": "webpack-dev-server --content-base client/src --inline --hot",
-    "test": "gulp run-tests",
+    "test": "istanbul cover _mocha test/**/*.js -- --require babel-core/register --timeout 100000",
     "start": "gulp serve"
   },
   "repository": {
@@ -45,6 +45,7 @@
     "gulp-mocha": "^3.0.1",
     "gulp-nodemon": "^2.2.1",
     "image-webpack-loader": "^3.3.1",
+    "istanbul": "^0.4.5",
     "jasmine": "^2.6.0",
     "jasmine-node": "^1.14.5",
     "jsonwebtoken": "^7.4.1",

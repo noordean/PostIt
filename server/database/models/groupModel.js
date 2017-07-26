@@ -14,6 +14,10 @@ export default (sequelizeObject) => {
       type: Sequelize.STRING,
       allowNull: false
     },
+    description: {
+      type: Sequelize.STRING,
+      allowNull: false
+    },
     groupmembers: Sequelize.ARRAY(Sequelize.TEXT)
   }
   );

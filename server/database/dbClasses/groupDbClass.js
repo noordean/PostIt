@@ -21,8 +21,7 @@ class GroupClass {
  * @param {Function} done
  * @return {Object} insertedData
  */
-  createGroup(groupname, createdby, done) {
-    const groupmembers = [createdby];
+  createGroup(groupname, createdby, description, groupmembers, done) {
     return this.group.sync().then(() => {
       this.group.findOrCreate({
         where: {
@@ -30,6 +29,7 @@ class GroupClass {
         },
         defaults: {
           createdby,
+          description,
           groupmembers
         }
       }).then((group) => {

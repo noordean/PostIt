@@ -84,15 +84,21 @@ export default class Controller {
  */
   createGroup(req, res) {
     const groupName = req.body.groupName;
+    const groupMembers = req.body.groupMembers;
+    const description = req.body.description;
+
     const token = req.body.token;
-    if (groupName === undefined || token === undefined) {
-      res.json({ message: 'The group-name and your logged-in token must be specified' });
+    if (groupName === undefined || token === undefined || groupMembers === undefined || description === undefined) {
+      res.json({ message: 'The group-name, group-members, description, and your logged-in token must be specified' });
+    } else if (!Array.isArray(groupMembers)) {
+      res.json({ message: 'The groupMembers must be an array' });
     } else if (groupName.trim().length === 0) {
       res.json({ message: 'The group-name cannot be empty' });
     } else {
       jwt.verify(token, 'nuruuuuuuu', (err, decode) => {
         if (decode !== undefined) {
-          groupDbInstance.createGroup(groupName, decode.username, (group) => {
+          groupMembers.push(decode.username);
+          groupDbInstance.createGroup(groupName, decode.username, description, groupMembers, (group) => {
             if (group[1] === false) {
               res.json({ message: 'There is already an existing group with this name' });
             } else {

@@ -6,7 +6,8 @@ export const createGroup = (groupName, description, groupMembers, token) => {
     axios.post('https://postit-api.herokuapp.com/api/group', {
       groupName,
       description,
-      groupMembers
+      groupMembers,
+      token
     })
       .then((response) => {
         dispatch({ type: 'GROUP_CREATED', payload: response.data });

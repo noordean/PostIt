@@ -17,12 +17,11 @@ class Header extends Component{
     const description = this.refs.descriptionInput.value;
     const groupMembers = this.refs.autoInput.value.split(' ');
     const token = JSON.parse(localStorage.user).token
-    alert(Array.isArray(groupMembers));
-    /*if (groupMembers[0].length === 0) {
+    if (groupMembers[0].length === 0) {
       this.refs.errMsg.innerHTML = 'Please select members to add';
     } else {
      this.props.createGroup(groupName, description, groupMembers, token);
-    }*/
+    }
   }
   render() {
     let errorMsg = <div ref="errMsg" className="center"></div>

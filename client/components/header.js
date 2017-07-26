@@ -8,36 +8,47 @@ export default class Header extends Component{
     localStorage.removeItem('user');
     browserHistory.push('/');
   }
-  getAuto() {
-    alert(this.refs.autoInput.innerHTML);
+  createGroup(event) {
+    event.preventDefault();
+    const groupName = this.refs.groupNameInput.value;
+    const description = this.refs.descriptionInput.innerHTML;
+    const groupMembers = this.refs.autoInput.innerHTML;
+    if (groupMembers === '') {
+      this.refs.errMsg.innerHTML = 'Please select members to add';
+    } else {
+      this.refs.errMsg.innerHTML = '';
+      alert(groupMembers);
+    }
   }
-  render(){
+  render() {
+    const errorMsg = <div ref="errMsg" className="center"></div>
     const userHeader = (
           <div>
             <div id="modal1" className="modal">
             <div className="modal-content">
               <form className="group-form">
                 <div className="row">
+                  {errorMsg}
                   <div className="input-field col s12">
-                    <input id="password" type="text"/>
+                    <input type="text" ref="groupNameInput"/>
                     <label htmlFor="password">Group Name</label>
                   </div>
                 </div>
                 <div className="row">
                   <div className="input-field col s12">
-                    <textarea id="textarea1" className="materialize-textarea white"></textarea>
+                    <textarea id="textarea1" className="materialize-textarea white" ref="descriptionInput"></textarea>
                     <label htmlFor="password">Description</label>
                   </div>
                 </div>
                 <div className="row">
                   <div className="input-field col s12">
                   <div id="chip" className="chips chips-autocomplete"></div>
-                  <div id="getChips" ref="autoInput"></div>
+                  <div  id="getChips" ref="autoInput"></div>
                 </div>
               </div>
               <div className="row">
                 <div className="input-field col s12">
-                  <a href="#" className="btn waves-effect waves-light col s12 red darken-4" onClick={this.getAuto.bind(this)}>Create</a>
+                  <a href="#" className="btn waves-effect waves-light col s12 red darken-4" onClick={this.createGroup.bind(this)}>Create</a>
                 </div>
               </div>
             </form>

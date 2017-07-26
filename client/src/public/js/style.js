@@ -19,6 +19,6 @@ $(document).ready(() => {
   });
 
 $('.chips').on('chip.add', (e, chip) => {
-   $('#getChips').append(chip.tag + ',');
+   $('#getChips').append(chip.tag + ' ');
  });
 });

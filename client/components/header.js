@@ -20,11 +20,12 @@ class Header extends Component{
     if (groupMembers[0].length === 0) {
       this.refs.errMsg.innerHTML = 'Please select members to add';
     } else {
-     this.props.createGroup(groupName, description, groupMembers, token);
+      this.props.createGroup(groupName, description, groupMembers, token);
+      this.refs.errMsg.innerHTML = '';
     }
   }
   render() {
-    let errorMsg = <div ref="errMsg" className="center"></div>
+    let errorMsg = <div className="center"></div>
 		if (this.props.group.groupProcessing) {
 			errorMsg = <div className="center">Creating group...</div>;
 		}
@@ -44,6 +45,7 @@ class Header extends Component{
             <div className="modal-content">
               <form className="group-form">
                 <div className="row">
+                  <div ref="errMsg" className="center"></div>
                   {errorMsg}
                   <div className="input-field col s12">
                     <input type="text" ref="groupNameInput"/>

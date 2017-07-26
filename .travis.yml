@@ -10,7 +10,7 @@ before_script:
 script: 
     - npm test
 after_success:
-    - gulp codeclimate
+    - npm run coveralls
     - npm install -g codeclimate-test-reporter
     - codeclimate-test-reporter < coverage/lcov.info
 env:

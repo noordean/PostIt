@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "webpack-dev-server --content-base client/src --inline --hot",
     "test": "istanbul cover _mocha server/tests/**/*.js -- --require babel-core/register --timeout 100000",
+    "coveralls": "npm test && gulp codeclimate",
     "start": "gulp serve"
   },
   "repository": {

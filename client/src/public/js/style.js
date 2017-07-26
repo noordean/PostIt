@@ -17,8 +17,13 @@ $(document).ready(() => {
       minLength: 1,
     }
   });
-
+let selectedUsers = [];
 $('.chips').on('chip.add', (e, chip) => {
-   $('#getChips').append(chip.tag + ' ');
+  selectedUsers.push(chip.tag);
+  $('#getChips').val(selectedUsers.join(' '));
+ });
+$('.chips').on('chip.delete', (e, chip) => {
+  selectedUsers.splice(selectedUsers.indexOf(chip.tag), 1);
+   $('#getChips').val(selectedUsers.join(' '));
  });
 });

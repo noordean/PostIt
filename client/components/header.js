@@ -1,8 +1,11 @@
 import React, {Component} from "react";
 import {Link} from 'react-router';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 import { browserHistory } from 'react-router';
+import { createGroup } from '../actions/groupAction';
 
-export default class Header extends Component{
+class Header extends Component{
   logoutHandler(event) {
     event.preventDefault();
     localStorage.removeItem('user');
@@ -11,17 +14,31 @@ export default class Header extends Component{
   createGroup(event) {
     event.preventDefault();
     const groupName = this.refs.groupNameInput.value;
-    const description = this.refs.descriptionInput.innerHTML;
-    const groupMembers = this.refs.autoInput.innerHTML;
-    if (groupMembers === '') {
+    const description = this.refs.descriptionInput.value;
+    const groupMembers = this.refs.autoInput.value.split(' ');
+    const token = JSON.parse(localStorage.user).token
+    alert(Array.isArray(groupMembers));
+    /*if (groupMembers[0].length === 0) {
       this.refs.errMsg.innerHTML = 'Please select members to add';
     } else {
-      this.refs.errMsg.innerHTML = '';
-      alert(groupMembers);
-    }
+     this.props.createGroup(groupName, description, groupMembers, token);
+    }*/
   }
   render() {
-    const errorMsg = <div ref="errMsg" className="center"></div>
+    let errorMsg = <div ref="errMsg" className="center"></div>
+		if (this.props.group.groupProcessing) {
+			errorMsg = <div className="center">Creating group...</div>;
+		}
+		if (this.props.group.groupProcessed) {
+			if (this.props.group.groupStatus.message === 'Group successfully created') {
+			  errorMsg = <div className="center">{this.props.group.groupStatus.message}</div>;
+			} else {
+			  errorMsg = <div className="center">{this.props.group.groupStatus.message}</div>;
+			}
+		}
+		if (this.props.group.groupError !== null) {
+			errorMsg = <div className="center">An unexpected error occured. Kindly check your internet connection</div>;
+		}
     const userHeader = (
           <div>
             <div id="modal1" className="modal">
@@ -43,7 +60,7 @@ export default class Header extends Component{
                 <div className="row">
                   <div className="input-field col s12">
                   <div id="chip" className="chips chips-autocomplete"></div>
-                  <div  id="getChips" ref="autoInput"></div>
+                  <input type='hidden'  id="getChips" ref="autoInput"/>
                 </div>
               </div>
               <div className="row">
@@ -91,3 +108,16 @@ export default class Header extends Component{
     );
   }
 }
+
+
+const mapStateToProps = (state) => {
+  return {
+    group: state.group
+  };
+}
+
+const matchDispatchToProps = (dispatch) => {
+  return bindActionCreators({ createGroup: createGroup}, dispatch);
+}
+
+export default connect(mapStateToProps, matchDispatchToProps)(Header);

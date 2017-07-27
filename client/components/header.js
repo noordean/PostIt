@@ -9,7 +9,7 @@ class Header extends Component{
   logoutHandler(event) {
     event.preventDefault();
     localStorage.removeItem('user');
-    browserHistory.push('/');
+    window.location.reload();
   }
   createGroup(event) {
     event.preventDefault();

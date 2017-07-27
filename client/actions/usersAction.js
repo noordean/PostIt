@@ -29,6 +29,7 @@ export const loginUser = (username, password) => {
         if (response.data.message === 'You are now logged in') {
           localStorage.setItem('user', JSON.stringify(response.data));
           dispatch({ type: 'LOGIN_SUCCESSFUL', payload: response.data });
+          window.location.reload();
           browserHistory.push('/dashboard');
         }
         dispatch({ type: 'LOGIN_UNSUCCESSFUL', payload: response.data });

@@ -70,7 +70,9 @@ class UserClass {
  * @return {Object} retrievedData
  */
   getAllUsers(done) {
-    this.user.findAll({}).then((data) => {
+    this.user.findAll({
+      attributes: ['id', 'username']
+    }).then((data) => {
       done(data);
     }).catch((err) => {
       throw new Error(err);

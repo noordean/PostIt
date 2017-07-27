@@ -10,6 +10,7 @@ router.post('/api/group', controller.createGroup);
 router.post('/api/group/:groupID/user', controller.addUserToGroup);
 router.post('/api/group/:groupID/message', controller.postMessageToGroup);
 router.get('/api/group/:groupID/messages', controller.getMessageFromGroup);
+router.get('/api/users', controller.getAllUsers);
 
 router.get('/', (req, res) => {
   res.send('PostIt API running...');

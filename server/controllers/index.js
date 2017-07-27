@@ -218,4 +218,15 @@ export default class Controller {
       });
     }
   }
+  /**
+ * @description: get all users from database
+ * @param {Object} req
+ * @param {Object} res
+ * @return {Object} response
+ */
+  getAllUsers(req, res) {
+    userDbInstance.getAllUsers((users) => {
+      res.json({ message: users });
+    });
+  }
 }

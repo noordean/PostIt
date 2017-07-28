@@ -114,6 +114,24 @@ class GroupClass {
   deleteGroup(groupName) {
     this.group.destroy({ where: { groupname: groupName } });
   }
+
+  /**
+ * @description: get all groups for a particular user
+ * @param {String} username
+ * @param {Function} done
+ * @return {Object} retrievedData
+ */
+  getGroupByUsername(username, done) {
+    this.group.findAll({
+      where: { groupmembers: {
+        $contains: [username]
+      } },
+      limit: 6,
+      order: [['createdAt', 'DESC']] })
+      .then((group) => {
+        done(group);
+      });
+  }
 }
 
 export default GroupClass;

@@ -219,7 +219,7 @@ export default class Controller {
     }
   }
   /**
- * @description: get all users from database
+ * @description: controller for api/users
  * @param {Object} req
  * @param {Object} res
  * @return {Object} response
@@ -228,5 +228,22 @@ export default class Controller {
     userDbInstance.getAllUsers((users) => {
       res.json({ message: users });
     });
+  }
+
+  /**
+ * @description: controller for api/groups/:username
+ * @param {Object} req
+ * @param {Object} res
+ * @return {Object} response
+ */
+  getUsersGroup(req, res) {
+    const username = req.params.username;
+    if (username === undefined || username.trim().length === 0) {
+      res.json({ message: 'You need to supply username as params' });
+    } else {
+      groupDbInstance.getGroupByUsername(username, (groups) => {
+        res.json({ message: groups });
+      });
+    }
   }
 }

@@ -8,6 +8,7 @@ import Home from './components/home';
 import Signup from './components/signup';
 import Signin from './components/signin';
 import Dashboard from './components/dashboard';
+import MessageBoard from './components/messageboard';
 require('./src/public/js/style.js');
 
 import {Router, Route, IndexRoute, browserHistory} from 'react-router';
@@ -19,6 +20,7 @@ ReactDOM.render(<Provider store={store}>
      <Route path="signup" component={Signup}/>
      <Route path="signin" component={Signin}/>
      <Route path="dashboard" component={Dashboard}/>
+     <Route path="messageboard" component={MessageBoard}/>
    </Route>  
  </Router>
 </Provider>,

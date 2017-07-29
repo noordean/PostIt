@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import Home from './home';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
+import {Link} from 'react-router';
 import { getGroups } from '../actions/getGroupsAction';
 
 class Dashboard extends Component{
@@ -29,7 +30,7 @@ class Dashboard extends Component{
                             <p>{group.groupmembers.length} group members</p>
                           </div>
                           <div className="card-action grey lighten-4">
-                            <a href="#" className="red-text text-accent-1">View Message Board</a>
+                            <Link to="/messageboard" className="red-text text-accent-1">View Message Board</Link>
                           </div>
                         </div>
                       </div>);

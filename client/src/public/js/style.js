@@ -1,7 +1,16 @@
 $(document).ready(() => {
-  $('.slider').slider({full_width: true});
+  $('.slider').slider({ full_width: true });
   $('.modal').modal();
 
+  // side nav
+  $(".dropdown-button").dropdown();
+  $('.button-collapse').sideNav({
+    menuWidth: 240,
+    closeOnClick: false
+  });
+  $('.collapsible').collapsible();
+
+  // getting username from database to fill autocomplete input
   $.get("https://postit-api.herokuapp.com/api/users", function(data){
      let autoCompleteValues = {};
      data.message.forEach(function(user){

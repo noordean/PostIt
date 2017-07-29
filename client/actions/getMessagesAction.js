@@ -1,26 +1,20 @@
 
+import axios from 'axios';
+
 export const getMessages = (groupID, token) => {
   return (dispatch) => {
     dispatch({ type: 'GET_MESSAGES_BEGINS' });
-  fetch('https://postit-api.herokuapp.com/api/group/' + groupID +'/messages', {
-      method: 'get',
+    axios.get('https://postit-api.herokuapp.com/api/group/' + groupID + '/messages', {
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Origin': '',
-        'token': token
+        token
       }
-  }) 
-    .then(function(res) {
-        if (res.ok) {
-            res.json().then((data) => {
-                dispatch({ type: 'GOT_MESSAGES', payload: data });                
-                console.log(data);
-            })
-        }
-     })
-     .catch((err) => {
+    })
+      .then((response) => {
+        console.log(response.data);
+        dispatch({ type: 'GOT_GROUPS', payload: response.data });
+      })
+      .catch((err) => {
         dispatch({ type: 'GET_MESSAGES_REJECTED', payload: err });
-     })
-  }
-}
+      });
+  };
+};

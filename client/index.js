@@ -20,7 +20,7 @@ ReactDOM.render(<Provider store={store}>
      <Route path="signup" component={Signup}/>
      <Route path="signin" component={Signin}/>
      <Route path="dashboard" component={Dashboard}/>
-     <Route path="messageboard" component={MessageBoard}/>
+     <Route path="messageboard/:groupID" component={MessageBoard}/>
    </Route>  
  </Router>
 </Provider>,

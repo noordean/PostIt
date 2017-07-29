@@ -41,7 +41,7 @@ class Header extends Component{
 			errorMsg = <div className="center">An unexpected error occured. Kindly check your internet connection</div>;
 		}
     const userHeader = (
-          <div>
+          <div className="navbar-fixed">
             <div id="modal1" className="modal">
             <div className="modal-content">
               <form className="group-form">
@@ -94,7 +94,7 @@ class Header extends Component{
 
     const guestHeader = (
           <nav>
-            <div className="nav-wrapper red darken-4">
+            <div className="nav-wrapper navbar-fixed red darken-4">
               <Link  id="navLogo" href="/" className="brand-logo left">PostIt</Link>
               <ul className="right">
                 <li><Link to="/signup">Join PostIt</Link></li>

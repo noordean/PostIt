@@ -30,7 +30,7 @@ class Dashboard extends Component{
                             <p>{group.groupmembers.length} group members</p>
                           </div>
                           <div className="card-action grey lighten-4">
-                            <Link to="/messageboard" className="red-text text-accent-1">View Message Board</Link>
+                            <Link to={"messageboard/" + group.id} className="red-text text-accent-1">View Message Board</Link>
                           </div>
                         </div>
                       </div>);

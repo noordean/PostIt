@@ -11,6 +11,7 @@ export const createGroup = (groupName, description, groupMembers, token) => {
     })
       .then((response) => {
         dispatch({ type: 'GROUP_CREATED', payload: response.data });
+        window.location.reload();
       })
       .catch((err) => {
         dispatch({ type: 'CREATE_GROUP_REJECTED', payload: err });

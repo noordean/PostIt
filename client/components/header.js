@@ -9,6 +9,7 @@ class Header extends Component{
   logoutHandler(event) {
     event.preventDefault();
     localStorage.removeItem('user');
+    browserHistory.push('/');
     window.location.reload();
   }
   createGroup(event) {
@@ -77,7 +78,7 @@ class Header extends Component{
         </div>
         <ul id="dropdown1" className="dropdown-content">
           <li><a href="#!">Profile</a></li>
-          <li><a href="#" onClick={this.logoutHandler.bind(this)}>Log out</a></li>
+          <li><a href="" onClick={this.logoutHandler.bind(this)}>Log out</a></li>
         </ul>
       <nav>
         <div className="nav-wrapper red darken-4">

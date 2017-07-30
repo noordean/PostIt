@@ -7,8 +7,9 @@ import { getGroups } from '../actions/getGroupsAction';
 import SideNav from './sidenav';
 
 class Dashboard extends Component{
-  setGroupIDHandler(groupID) {
+  setGroupIDHandler(groupID, groupName) {
     localStorage.setItem('groupID', groupID);
+    localStorage.setItem('groupName', groupName);
   }
   componentDidMount() {
     this.props.getGroups();
@@ -34,7 +35,7 @@ class Dashboard extends Component{
                             <p>{group.groupmembers.length} group members</p>
                           </div>
                           <div className="card-action grey lighten-4">
-                            <Link to="messageboard" className="red-text text-accent-1" onClick={this.setGroupIDHandler.bind(this, group.id)}>View Message Board</Link>
+                            <Link to="messageboard" className="red-text text-accent-1" onClick={this.setGroupIDHandler.bind(this, group.id, group.groupname)}>View Message Board</Link>
                           </div>
                         </div>
                       </div>);

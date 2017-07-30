@@ -4,8 +4,12 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {Link} from 'react-router';
 import { getGroups } from '../actions/getGroupsAction';
+import SideNav from './sidenav';
 
 class Dashboard extends Component{
+  setGroupIDHandler(groupID) {
+    localStorage.setItem('groupID', groupID);
+  }
   componentDidMount() {
     this.props.getGroups();
   }
@@ -30,7 +34,7 @@ class Dashboard extends Component{
                             <p>{group.groupmembers.length} group members</p>
                           </div>
                           <div className="card-action grey lighten-4">
-                            <Link to={"messageboard/" + group.id} className="red-text text-accent-1">View Message Board</Link>
+                            <Link to="messageboard" className="red-text text-accent-1" onClick={this.setGroupIDHandler.bind(this, group.id)}>View Message Board</Link>
                           </div>
                         </div>
                       </div>);

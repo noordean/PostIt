@@ -41,7 +41,7 @@ class Header extends Component{
 			errorMsg = <div className="center">An unexpected error occured. Kindly check your internet connection</div>;
 		}
     const userHeader = (
-          <div className="navbar-fixed">
+          <div>
             <div id="modal1" className="modal">
             <div className="modal-content">
               <form className="group-form">

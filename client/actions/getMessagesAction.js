@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 
 export const getMessages = (groupID, token) => {
@@ -10,8 +9,7 @@ export const getMessages = (groupID, token) => {
       }
     })
       .then((response) => {
-        console.log(response.data);
-        dispatch({ type: 'GOT_GROUPS', payload: response.data });
+        dispatch({ type: 'GOT_MESSAGES', payload: response.data });
       })
       .catch((err) => {
         dispatch({ type: 'GET_MESSAGES_REJECTED', payload: err });

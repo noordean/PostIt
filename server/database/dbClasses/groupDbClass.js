@@ -77,15 +77,15 @@ class GroupClass {
   /**
  * @description: adds user to a group of id 'groupId'
  * @param {String} groupId
- * @param {String} username
+ * @param {Array} usernames
  * @return {Object} updatedData
  */
-  addUserToGroup(groupId, username) {
+  addUserToGroup(groupId, usernames) {
     this.group.find({ where: { id: groupId } }).then((group) => {
-      const newMembers = group.groupmembers;
-      if (newMembers.indexOf(username) === -1) {
-        newMembers.push(username);
-      }
+      const members = group.groupmembers;
+      const newMembers = members.concat(usernames.filter((item) => {
+        return members.indexOf(item) < 0;
+      }));
       this.group.update({ groupmembers: newMembers },
         { where: { id: groupId } });
     });

@@ -120,11 +120,13 @@ export default class Controller {
  */
   addUserToGroup(req, res) {
     const id = req.params.groupID;
-    const username = req.body.username;
+    const usernames = req.body.usernames;
     const token = req.body.token;
-    if (req.params.groupID === undefined || req.body.username === undefined || token === undefined) {
-      res.json({ message: 'You need to provide the group-id, your logged-in token and the username to add' });
-    } else if (id.trim().length === 0 || username.trim().length === 0) {
+    if (req.params.groupID === undefined || req.body.usernames === undefined || token === undefined) {
+      res.json({ message: 'You need to provide the group-id, your logged-in token and the usernames to add' });
+    } else if (!Array.isArray(usernames)) {
+      res.json({ message: 'usernames must be an array' });
+    } else if (id.trim().length === 0) {
       res.json({ message: 'Group-id and username cannot be empty' });
     } else if (isNaN(id)) {
       res.json({ message: 'The supplied id must be an integer' });
@@ -133,14 +135,14 @@ export default class Controller {
         if (group.length === 0) {
           res.json({ message: 'Invalid group id' });
         } else {
-          userDbInstance.getUser(username, (user) => {
+          userDbInstance.getUser(usernames[0], (user) => {
             if (user.length === 0) {
               res.json({ message: 'Invalid user detected' });
             } else {
               jwt.verify(token, 'nuruuuuuuu', (err, decode) => {
                 if (decode !== undefined) {
-                  groupDbInstance.addUserToGroup(id, username);
-                  res.json({ message: 'User successfully added' });
+                  groupDbInstance.addUserToGroup(id, usernames);
+                  res.json({ message: 'Users successfully added' });
                 } else {
                   res.json({ message: 'Access denied!. Kindly login before adding user' });
                 }
@@ -242,6 +244,23 @@ export default class Controller {
       res.json({ message: 'You need to supply username as params' });
     } else {
       groupDbInstance.getGroupByUsername(username, (groups) => {
+        res.json({ message: groups });
+      });
+    }
+  }
+
+  /**
+ * @description: controller for api/groups/:id/members
+ * @param {Object} req
+ * @param {Object} res
+ * @return {Object} response
+ */
+  getGroupMembers(req, res) {
+    const groupID = req.params.groupID;
+    if (groupID === undefined || groupID.trim().length === 0) {
+      res.json({ message: 'You need to supply groupID as params' });
+    } else {
+      groupDbInstance.getGroupById(groupID, (groups) => {
         res.json({ message: groups });
       });
     }

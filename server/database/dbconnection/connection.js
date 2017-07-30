@@ -15,7 +15,6 @@ sequelize.authenticate().then(() => {
   console.log('connected');
 }).catch((err) => {
   console.log(err);
-  console.log('errorrr');
 });
 
 export default sequelize;

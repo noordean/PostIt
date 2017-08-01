@@ -47,7 +47,7 @@ class MessageBoard extends Component {
                         <p className="col-lg-10">{decodeURI(message.message)}</p>
                       </div>
                       <div className="col s2">
-                        <small className="pull-right time"><i className="fa fa-clock-o"></i>{message.createdAt}</small>
+                        <small className="pull-right time"><i className="fa fa-clock-o"></i>{new Date(message.createdAt).toLocaleString()}</small>
                       </div>
                     </div>
                     <hr/>

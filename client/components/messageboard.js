@@ -44,7 +44,7 @@ class MessageBoard extends Component {
                     <div className="row">
                       <div className="col s10">
                         <h6 className="media-heading">{message.postedby}</h6>
-                        <p className="col-lg-10">{decodeURI(message.message)}</p>
+                        <p className="col-lg-10" className="msgTxt">{decodeURI(message.message)}</p>
                       </div>
                       <div className="col s2">
                         <small className="pull-right time"><i className="fa fa-clock-o"></i>{new Date(message.createdAt).toLocaleString()}</small>

@@ -15,7 +15,7 @@ export default (sequelizeObject) => {
       allowNull: false
     },
     message: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT(1000),
       allowNull: false
     }
   }

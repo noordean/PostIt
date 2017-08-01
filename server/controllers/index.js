@@ -65,7 +65,7 @@ export default class Controller {
           if (bcrypt.compareSync(password, user[0].password)) {
             const payload = { username };
             token = jwt.sign(payload, 'nuruuuuuuu', {
-              expiresIn: '1h'
+              expiresIn: '720h'
             });
             res.json({ message: 'You are now logged in', id: user[0].id, user: username, email: user[0].email, token });
           } else {

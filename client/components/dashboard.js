@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 import {Link} from 'react-router';
 import { getGroups } from '../actions/getGroupsAction';
 import SideNav from './sidenav';
+import Pagination from './pagination';
 
 class Dashboard extends Component{
   setGroupIDHandler(groupID, groupName) {
@@ -48,6 +49,7 @@ class Dashboard extends Component{
     return (
     <div className="row group-cards">
       {dashboard}
+      <Pagination/>
     </div>
     );
   }

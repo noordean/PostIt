@@ -240,10 +240,11 @@ export default class Controller {
  */
   getUsersGroup(req, res) {
     const username = req.params.username;
-    if (username === undefined || username.trim().length === 0) {
-      res.json({ message: 'You need to supply username as params' });
+    const offset = req.params.offset;
+    if (username === undefined || offset === undefined || username.trim().length === 0) {
+      res.json({ message: 'You need to supply username and offset as params' });
     } else {
-      groupDbInstance.getGroupByUsername(username, (groups) => {
+      groupDbInstance.getGroupByUsername(username, offset, (groups) => {
         res.json({ message: groups });
       });
     }

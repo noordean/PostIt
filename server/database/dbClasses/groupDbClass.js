@@ -121,12 +121,13 @@ class GroupClass {
  * @param {Function} done
  * @return {Object} retrievedData
  */
-  getGroupByUsername(username, done) {
+  getGroupByUsername(username, offset, done) {
     this.group.findAll({
       where: { groupmembers: {
         $contains: [username]
       } },
       limit: 6,
+      offset,
       order: [['createdAt', 'DESC']] })
       .then((group) => {
         done(group);

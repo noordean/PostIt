@@ -25,7 +25,7 @@ class UserClass {
  * @return {Object} savedData
  */
   saveUser(username, password, email, done) {
-    this.user.sync({}).then(() => {
+    this.user.sync().then(() => {
       return this.user.findOrCreate({
         where: {
           username

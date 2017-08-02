@@ -42,7 +42,10 @@ class MessageClass {
  * @return {Object} retrievedData
  */
   getMessages(groupID, done) {
-    this.message.findAll({ where: { groupid: groupID } }).then((data) => {
+    this.message.findAll({
+      where: { groupid: groupID },
+      order: [['createdAt', 'DESC']]
+    }).then((data) => {
       done(data);
     }).catch((err) => {
       throw new Error(err);

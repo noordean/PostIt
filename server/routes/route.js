@@ -11,7 +11,7 @@ router.post('/api/group/:groupID/user', controller.addUserToGroup);
 router.post('/api/group/:groupID/message', controller.postMessageToGroup);
 router.get('/api/group/:groupID/messages', controller.getMessageFromGroup);
 router.get('/api/users', controller.getAllUsers);
-router.get('/api/groups/:username/:offset', controller.getUsersGroup);
+router.get('/api/groups/:username/:offset/:limit', controller.getUsersGroup);
 router.get('/api/group/:groupID/members', controller.getGroupMembers);
 
 router.get('/', (req, res) => {

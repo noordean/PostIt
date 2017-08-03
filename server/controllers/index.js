@@ -241,10 +241,11 @@ export default class Controller {
   getUsersGroup(req, res) {
     const username = req.params.username;
     const offset = req.params.offset;
-    if (username === undefined || offset === undefined || username.trim().length === 0) {
-      res.json({ message: 'You need to supply username and offset as params' });
+    const limit = req.params.limit;
+    if (username === undefined || offset === undefined || limit === undefined || username.trim().length === 0) {
+      res.json({ message: 'You need to supply username, offset and limit as params' });
     } else {
-      groupDbInstance.getGroupByUsername(username, offset, (groups) => {
+      groupDbInstance.getGroupByUsername(username, limit, offset, (groups) => {
         res.json({ message: groups });
       });
     }

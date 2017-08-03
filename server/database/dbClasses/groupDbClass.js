@@ -123,16 +123,28 @@ class GroupClass {
  * @return {Object} retrievedData
  */
   getGroupByUsername(username, limit, offset, done) {
-    this.group.findAll({
-      where: { groupmembers: {
-        $contains: [username]
-      } },
-      limit,
-      offset,
-      order: [['createdAt', 'DESC']] })
-      .then((group) => {
-        done(group);
-      });
+    if (limit === '0') {
+      this.group.findAll({
+        where: { groupmembers: {
+          $contains: [username]
+        } },
+        offset,
+        order: [['createdAt', 'DESC']] })
+        .then((group) => {
+          done(group);
+        });
+    } else {
+      this.group.findAll({
+        where: { groupmembers: {
+          $contains: [username]
+        } },
+        limit,
+        offset,
+        order: [['createdAt', 'DESC']] })
+        .then((group) => {
+          done(group);
+        });
+    }
   }
 }
 

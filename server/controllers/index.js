@@ -242,12 +242,18 @@ export default class Controller {
     const username = req.params.username;
     const offset = req.params.offset;
     const limit = req.params.limit;
-    if (username === undefined || offset === undefined || limit === undefined || username.trim().length === 0) {
-      res.json({ message: 'You need to supply username, offset and limit as params' });
+    if (username === undefined || offset === undefined || username.trim().length === 0) {
+      res.json({ message: 'You need to supply username and offset or limit as params' });
     } else {
-      groupDbInstance.getGroupByUsername(username, limit, offset, (groups) => {
-        res.json({ message: groups });
-      });
+      if (limit === 0) {
+        groupDbInstance.getGroupByUsername(username, offset, (groups) => {
+          res.json({ message: groups });
+        });
+      } else {
+        groupDbInstance.getGroupByUsername(username, limit, offset, (groups) => {
+          res.json({ message: groups });
+        });
+      }
     }
   }
 

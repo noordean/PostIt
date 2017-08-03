@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-export const getGroups = () => {
+export const getGroups = (offset) => {
   return (dispatch) => {
     dispatch({ type: 'GET_GROUPS_BEGINS' });
-    axios.get('https://postit-api.herokuapp.com/api/groups/' + JSON.parse(localStorage.user).user)
+    axios.get('https://postit-api.herokuapp.com/api/groups/' + JSON.parse(localStorage.user).user + '/' + offset)
       .then((response) => {
         dispatch({ type: 'GOT_GROUPS', payload: response.data });
       })

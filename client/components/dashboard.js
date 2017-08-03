@@ -13,7 +13,7 @@ class Dashboard extends Component{
     localStorage.setItem('groupName', groupName);
   }
   componentDidMount() {
-    this.props.getGroups();
+    this.props.getGroups(0);
   }
   render() {
     let dashboard;

@@ -9,6 +9,7 @@ class Header extends Component{
   logoutHandler(event) {
     event.preventDefault();
     localStorage.removeItem('user');
+    localStorage.removeItem('offset');
     browserHistory.push('/');
     window.location.reload();
   }

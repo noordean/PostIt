@@ -4,8 +4,9 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {Link} from 'react-router';
 import { getGroups } from '../actions/getGroupsAction';
+import { getAllGroups } from '../actions/getAllGroups';
 import SideNav from './sidenav';
-import Pagination from './pagination';
+import ReactPaginate from 'react-paginate';
 
 class Dashboard extends Component{
   setGroupIDHandler(groupID, groupName) {
@@ -13,9 +14,28 @@ class Dashboard extends Component{
     localStorage.setItem('groupName', groupName);
   }
   componentDidMount() {
-    this.props.getGroups(0);
+    const limit = 6;
+    this.props.getAllGroups(0);
+    if (localStorage.groupOffset) {
+      this.props.getGroups(localStorage.groupOffset, limit);
+    } else {
+      this.props.getGroups(0, limit);
+    }
+
   }
+
+  handlePageClick(data) {
+    const limit = 6;
+    let selected = data.selected;
+    let offset = Math.ceil(selected * 6);
+    localStorage.setItem('groupOffset', offset);
+    this.props.getGroups(offset, limit);
+  };
+
   render() {
+    console.log("beginnnnnnin");
+    console.log(this.props.usersAllGroups.reqStatus.message);
+    console.log('endddddddddd');
     let dashboard;
     if (!localStorage.user) {
       dashboard = <Home/>;
@@ -49,7 +69,17 @@ class Dashboard extends Component{
     return (
     <div className="row group-cards">
       {dashboard}
-      <Pagination/>
+      <ReactPaginate previousLabel={'Prev'}
+                      nextLabel={'Next'}
+                      breakLabel={'...'}
+                      breakClassName={"break-me"}
+                      pageCount={2}
+                      marginPagesDisplayed={2}
+                      pageRangeDisplayed={5}
+                      onPageChange={this.handlePageClick.bind(this)}
+                      containerClassName={"pagination"}
+                      subContainerClassName={"pages pagination"}
+                      activeClassName={"active"} />
     </div>
     );
   }
@@ -57,12 +87,12 @@ class Dashboard extends Component{
 
 const mapStateToProps = (state) => {
   return {
-    usersGroups: state.usersGroups
+    usersGroups: state.usersGroups,
+    usersAllGroups: state.usersAllGroups
   };
 }
 
 const matchDispatchToProps = (dispatch) => {
-  return bindActionCreators({ getGroups: getGroups}, dispatch);
+  return bindActionCreators({ getGroups: getGroups, getAllGroups: getAllGroups}, dispatch);
 }
-
 export default connect(mapStateToProps, matchDispatchToProps)(Dashboard);

@@ -6,6 +6,7 @@ import groupsMessages from './getMessagesReducer';
 import groupMembers from './getGroupMembersReducer';
 import addMembers from './addMembers';
 import postMessage from './postMessage';
+import usersAllGroups from './getAllGroups';
 
 export default combineReducers({
   user,
@@ -14,5 +15,6 @@ export default combineReducers({
   groupsMessages,
   groupMembers,
   addMembers,
-  postMessage
+  postMessage,
+  usersAllGroups
 });

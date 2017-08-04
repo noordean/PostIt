@@ -9,7 +9,8 @@ class Header extends Component{
   logoutHandler(event) {
     event.preventDefault();
     localStorage.removeItem('user');
-    localStorage.removeItem('offset');
+    localStorage.removeItem('groupOffset');
+    localStorage.removeItem('messageOffset');
     browserHistory.push('/');
     window.location.reload();
   }

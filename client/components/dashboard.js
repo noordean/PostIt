@@ -4,39 +4,35 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {Link} from 'react-router';
 import { getGroups } from '../actions/getGroupsAction';
-import { getAllGroups } from '../actions/getAllGroups';
+import { getTotalGroups } from '../actions/getAllGroups';
 import SideNav from './sidenav';
 import ReactPaginate from 'react-paginate';
 
-class Dashboard extends Component{
+const LIMIT = 6;
+class Dashboard extends Component {
   setGroupIDHandler(groupID, groupName) {
     localStorage.setItem('groupID', groupID);
     localStorage.setItem('groupName', groupName);
   }
   componentDidMount() {
-    const limit = 6;
-    this.props.getAllGroups(0);
+    this.props.getTotalGroups();
     if (localStorage.groupOffset) {
-      this.props.getGroups(localStorage.groupOffset, limit);
+      this.props.getGroups(localStorage.groupOffset, LIMIT);
     } else {
-      this.props.getGroups(0, limit);
+      this.props.getGroups(0, LIMIT);
     }
-
   }
 
   handlePageClick(data) {
-    const limit = 6;
     let selected = data.selected;
-    let offset = Math.ceil(selected * 6);
+    let offset = Math.ceil(selected * LIMIT);
     localStorage.setItem('groupOffset', offset);
-    this.props.getGroups(offset, limit);
+    this.props.getGroups(offset, LIMIT);
   };
 
   render() {
-    console.log("beginnnnnnin");
-    console.log(this.props.usersAllGroups.reqStatus.message);
-    console.log('endddddddddd');
     let dashboard;
+    let pagination;
     if (!localStorage.user) {
       dashboard = <Home/>;
     } else {
@@ -66,20 +62,24 @@ class Dashboard extends Component{
         }
       } 
     }
-    return (
-    <div className="row group-cards">
-      {dashboard}
-      <ReactPaginate previousLabel={'Prev'}
+    
+    if (this.props.totalGroups.reqStatus.message !== undefined) {
+      pagination =       <ReactPaginate previousLabel={'Prev'}
                       nextLabel={'Next'}
                       breakLabel={'...'}
                       breakClassName={"break-me"}
-                      pageCount={2}
+                      pageCount={Math.ceil(this.props.totalGroups.reqStatus.message/LIMIT)}
                       marginPagesDisplayed={2}
                       pageRangeDisplayed={5}
                       onPageChange={this.handlePageClick.bind(this)}
                       containerClassName={"pagination"}
                       subContainerClassName={"pages pagination"}
                       activeClassName={"active"} />
+    }
+    return (
+    <div className="row group-cards">
+      {dashboard}
+      {pagination}
     </div>
     );
   }
@@ -88,11 +88,11 @@ class Dashboard extends Component{
 const mapStateToProps = (state) => {
   return {
     usersGroups: state.usersGroups,
-    usersAllGroups: state.usersAllGroups
+    totalGroups: state.totalGroups
   };
 }
 
 const matchDispatchToProps = (dispatch) => {
-  return bindActionCreators({ getGroups: getGroups, getAllGroups: getAllGroups}, dispatch);
+  return bindActionCreators({ getGroups: getGroups, getTotalGroups: getTotalGroups}, dispatch);
 }
 export default connect(mapStateToProps, matchDispatchToProps)(Dashboard);

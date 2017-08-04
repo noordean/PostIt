@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-export const getMessages = (groupID, token) => {
+export const getMessages = (groupID, token, offset, limit) => {
   return (dispatch) => {
     dispatch({ type: 'GET_MESSAGES_BEGINS' });
-    axios.get('https://postit-api.herokuapp.com/api/group/' + groupID + '/messages', {
+    axios.get('https://postit-api.herokuapp.com/api/group/' + groupID + '/messages/' + offset + '/' + limit, {
       headers: {
         token
       }

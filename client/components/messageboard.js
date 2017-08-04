@@ -4,13 +4,21 @@ import {connect} from 'react-redux';
 import { getMessages } from '../actions/getMessagesAction';
 import { getGroupMembers } from '../actions/getGroupMembers';
 import { postGroupMessage } from '../actions/postMessage';
+import { getTotalMessages } from '../actions/getTotalMessages';
 import SideNav from './sidenav';
 import Home from './home';
+import ReactPaginate from 'react-paginate';
 
+const LIMIT = 10;
 class MessageBoard extends Component {
   componentDidMount() {
-    this.props.getMessages(localStorage.groupID, JSON.parse(localStorage.user).token);
+    if (localStorage.messageOffset) {
+      this.props.getMessages(localStorage.groupID, JSON.parse(localStorage.user).token, localStorage.messageOffset, LIMIT); 
+    } else {
+      this.props.getMessages(localStorage.groupID, JSON.parse(localStorage.user).token, 0, LIMIT );
+    }
     this.props.getGroupMembers(localStorage.groupID);
+    this.props.getTotalMessages()
   }
   componentWillUnmount() {
     this.props.groupsMessages.reqStatus = [];
@@ -26,7 +34,14 @@ class MessageBoard extends Component {
       this.refs.msgInput.value = '';
     }
   }
+  handlePageClick(data) {
+    let selected = data.selected;
+    let offset = Math.ceil(selected * LIMIT);
+    localStorage.setItem('messageOffset', offset);
+    this.props.getMessages(localStorage.groupID, JSON.parse(localStorage.user).token, offset, LIMIT)
+  };
   render() {
+    let pagination;
     if (!localStorage.user) {
       return <Home/>
     }
@@ -64,7 +79,21 @@ class MessageBoard extends Component {
       if (this.props.groupMembers.reqStatus.message.length > 0) {
         members = this.props.groupMembers.reqStatus.message[0].groupmembers;
       }
-    } 
+    }
+
+   if (this.props.totalMessages.reqStatus.message !== undefined) {
+      pagination =       <ReactPaginate previousLabel={'Prev'}
+                      nextLabel={'Next'}
+                      breakLabel={'...'}
+                      breakClassName={"break-me"}
+                      pageCount={Math.ceil(this.props.totalMessages.reqStatus.message/LIMIT)}
+                      marginPagesDisplayed={2}
+                      pageRangeDisplayed={5}
+                      onPageChange={this.handlePageClick.bind(this)}
+                      containerClassName={"pagination"}
+                      subContainerClassName={"pages pagination"}
+                      activeClassName={"active"} />
+   }
     return (
       <div>
         <SideNav members={members} groupName={localStorage.groupName}/>
@@ -86,6 +115,7 @@ class MessageBoard extends Component {
               </form>
             </div>
             {messageBoard}
+            {pagination}
           </div>
         </div>
       </div>
@@ -97,12 +127,13 @@ const mapStateToProps = (state) => {
   return {
     groupsMessages: state.groupsMessages,
     groupMembers: state.groupMembers,
-    postMessage: state.postMessage
+    postMessage: state.postMessage,
+    totalMessages: state.totalMessages
   };
 }
 
 const matchDispatchToProps = (dispatch) => {
-  return bindActionCreators({ getMessages: getMessages, getGroupMembers: getGroupMembers, postGroupMessage: postGroupMessage}, dispatch);
+  return bindActionCreators({ getMessages: getMessages, getGroupMembers: getGroupMembers, postGroupMessage: postGroupMessage, getTotalMessages: getTotalMessages}, dispatch);
 }
 
 export default connect(mapStateToProps, matchDispatchToProps)(MessageBoard);

@@ -198,10 +198,12 @@ export default class Controller {
   getMessageFromGroup(req, res) {
     const groupID = req.params.groupID;
     const token = req.headers.token;
-    if (groupID === undefined || groupID.trim().length === 0 || token === undefined) {
-      res.json({ message: 'group-id and your logged-in token must be provided' });
-    } else if (isNaN(groupID)) {
-      res.json({ message: 'The supplied id must be an integer' });
+    const limit = req.params.limit;
+    const offset = req.params.offset;
+    if (groupID === undefined || groupID.trim().length === 0 || token === undefined || limit === undefined || offset === undefined) {
+      res.json({ message: 'group-id, limit, offset and your logged-in token must be provided' });
+    } else if (isNaN(groupID) || isNaN(limit) || isNaN(offset)) {
+      res.json({ message: 'The supplied id, limit and offset must be integers' });
     } else {
       groupDbInstance.getGroupById(groupID, (group) => {
         if (group.length === 0) {
@@ -209,7 +211,7 @@ export default class Controller {
         } else {
           jwt.verify(token, 'nuruuuuuuu', (err, decode) => {
             if (decode !== undefined) {
-              messageDbInstance.getMessages(groupID, (messages) => {
+              messageDbInstance.getMessages(groupID, limit, offset, (messages) => {
                 res.json(messages);
               });
             } else {
@@ -245,15 +247,43 @@ export default class Controller {
     if (username === undefined || offset === undefined || username.trim().length === 0) {
       res.json({ message: 'You need to supply username and offset or limit as params' });
     } else {
-      if (limit === 0) {
-        groupDbInstance.getGroupByUsername(username, offset, (groups) => {
-          res.json({ message: groups });
-        });
-      } else {
-        groupDbInstance.getGroupByUsername(username, limit, offset, (groups) => {
-          res.json({ message: groups });
-        });
-      }
+      groupDbInstance.getGroupByUsername(username, limit, offset, (groups) => {
+        res.json({ message: groups });
+      });
+    }
+  }
+
+  /**
+ * @description: controller for api/groups/:username
+ * @param {Object} req
+ * @param {Object} res
+ * @return {Object} response
+ */
+  getTotalGroups(req, res) {
+    const username = req.params.username;
+    if (username === undefined || username.trim().length === 0) {
+      res.json({ message: 'You need to supply username as params' });
+    } else {
+      groupDbInstance.getTotalGroups(username, (number) => {
+        res.json({ message: number.count });
+      });
+    }
+  }
+
+  /**
+ * @description: controller for api/groups/:username
+ * @param {Object} req
+ * @param {Object} res
+ * @return {Object} response
+ */
+  getTotalMessages(req, res) {
+    const groupID = req.params.groupID;
+    if (groupID === undefined || groupID.trim().length === 0) {
+      res.json({ message: 'You need to supply username as params' });
+    } else {
+      messageDbInstance.getTotalMessages(groupID, (number) => {
+        res.json({ message: number.count });
+      });
     }
   }
 

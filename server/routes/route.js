@@ -9,9 +9,11 @@ router.post('/api/user/signin', controller.signIn);
 router.post('/api/group', controller.createGroup);
 router.post('/api/group/:groupID/user', controller.addUserToGroup);
 router.post('/api/group/:groupID/message', controller.postMessageToGroup);
-router.get('/api/group/:groupID/messages', controller.getMessageFromGroup);
+router.get('/api/group/:groupID/messages/:offset/:limit', controller.getMessageFromGroup);
 router.get('/api/users', controller.getAllUsers);
 router.get('/api/groups/:username/:offset/:limit', controller.getUsersGroup);
+router.get('/api/groups/:username', controller.getTotalGroups);
+router.get('/api/groups/:groupID/messages', controller.getTotalMessages);
 router.get('/api/group/:groupID/members', controller.getGroupMembers);
 
 router.get('/', (req, res) => {

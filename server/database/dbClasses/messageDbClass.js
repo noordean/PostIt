@@ -38,13 +38,33 @@ class MessageClass {
   /**
  * @description: retrieves message from a group of id 'groupid'
  * @param {Number} groupID
+ * @param {Number} limit
+ * @param {Number} offset
  * @param {Function} done
  * @return {Object} retrievedData
  */
-  getMessages(groupID, done) {
+  getMessages(groupID, limit, offset, done) {
     this.message.findAll({
       where: { groupid: groupID },
+      limit,
+      offset,
       order: [['createdAt', 'DESC']]
+    }).then((data) => {
+      done(data);
+    }).catch((err) => {
+      throw new Error(err);
+    });
+  }
+
+  /**
+ * @description: retrieves message from a group of id 'groupid'
+ * @param {Number} groupID
+ * @param {Function} done
+ * @return {Object} retrievedData
+ */
+  getTotalMessages(groupID, done) {
+    this.message.findAndCount({
+      where: { groupid: groupID }
     }).then((data) => {
       done(data);
     }).catch((err) => {

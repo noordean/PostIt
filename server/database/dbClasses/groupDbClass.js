@@ -118,33 +118,38 @@ class GroupClass {
   /**
  * @description: get all groups for a particular user
  * @param {String} username
+ * @param {Integer} limit
  * @param {Integer} offset
  * @param {Function} done
  * @return {Object} retrievedData
  */
   getGroupByUsername(username, limit, offset, done) {
-    if (limit === '0') {
-      this.group.findAll({
-        where: { groupmembers: {
-          $contains: [username]
-        } },
-        offset,
-        order: [['createdAt', 'DESC']] })
-        .then((group) => {
-          done(group);
-        });
-    } else {
-      this.group.findAll({
-        where: { groupmembers: {
-          $contains: [username]
-        } },
-        limit,
-        offset,
-        order: [['createdAt', 'DESC']] })
-        .then((group) => {
-          done(group);
-        });
-    }
+    this.group.findAll({
+      where: { groupmembers: {
+        $contains: [username]
+      } },
+      limit,
+      offset,
+      order: [['createdAt', 'DESC']] })
+      .then((group) => {
+        done(group);
+      });
+  }
+
+  /**
+ * @description: get total number of groups
+ * @param {String} username
+ * @param {Function} done
+ * @return {Object} retrievedData
+ */
+  getTotalGroups(username, done) {
+    this.group.findAndCount({
+      where: { groupmembers: {
+        $contains: [username]
+      } } })
+      .then((group) => {
+        done(group);
+      });
   }
 }
 

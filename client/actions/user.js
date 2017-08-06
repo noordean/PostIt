@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { browserHistory } from 'react-router';
 
 /**
  * @class UserActions
@@ -71,7 +70,7 @@ export default class UserActions {
   static getGroupMembers(groupID) {
     return (dispatch) => {
       dispatch({ type: 'GET_MEMBERS_BEGINS' });
-      axios.get(`https://postit-api.herokuapp.com/api/group/${groupID}/members`)
+      return axios.get(`https://postit-api.herokuapp.com/api/group/${groupID}/members`)
         .then((response) => {
           dispatch({ type: 'GOT_MEMBERS', payload: response.data });
         })
@@ -94,7 +93,7 @@ export default class UserActions {
   static addGroupMembers(groupID, usernames, token) {
     return (dispatch) => {
       dispatch({ type: 'ADD_MEMBERS_BEGINS' });
-      axios.post(`https://postit-api.herokuapp.com/api/group/${groupID}/user`, {
+      return axios.post(`https://postit-api.herokuapp.com/api/group/${groupID}/user`, {
         groupID,
         usernames,
         token

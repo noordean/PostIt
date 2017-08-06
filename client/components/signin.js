@@ -2,17 +2,23 @@ import React, {Component} from "react";
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {Link} from 'react-router';
-import {loginUser} from '../actions/usersAction';
+import UsersActions from '../actions/user';
+import { browserHistory } from 'react-router';
 
 class SignIn extends Component{
-
   loginHandler(event) {
     event.preventDefault();
     const username = this.refs.usernameInput.value;
     const password = this.refs.passwordInput.value;
-    this.props.loginUser(username, password);  
+    this.props.loginUser(username, password)
+    .then(() => {
+      if (this.props.user.loginStatus.message === 'You are now logged in') {
+       localStorage.setItem('user', JSON.stringify(this.props.user.loginStatus));
+        browserHistory.push('/dashboard');
+        window.location.reload();
+      }
+    })
   }
-  
   componentWillUnmount() {
     this.props.user.loginStatus = {};
     this.props.user.loginError = null;
@@ -94,7 +100,7 @@ const mapStateToProps = (state) => {
 }
 
 const matchDispatchToProps = (dispatch) => {
-  return bindActionCreators({ loginUser: loginUser}, dispatch);
+  return bindActionCreators({ loginUser: UsersActions.loginUser}, dispatch);
 }
 
 export default connect(mapStateToProps, matchDispatchToProps)(SignIn);

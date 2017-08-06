@@ -3,7 +3,7 @@ import {Link} from 'react-router';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import { browserHistory } from 'react-router';
-import { createGroup } from '../actions/groupAction';
+import GroupActions from '../actions/group';
 
 class Header extends Component{
   logoutHandler(event) {
@@ -23,7 +23,12 @@ class Header extends Component{
     if (groupMembers[0].length === 0) {
       this.refs.errMsg.innerHTML = 'Please select members to add';
     } else {
-      this.props.createGroup(groupName, description, groupMembers, token);
+      this.props.createGroup(groupName, description, groupMembers, token)
+      .then(() => {
+        if (this.props.group.groupStatus.message === 'Group successfully created') {
+          window.location.reload();
+        }
+      })
       this.refs.errMsg.innerHTML = '';
     }
   }
@@ -121,7 +126,7 @@ const mapStateToProps = (state) => {
 }
 
 const matchDispatchToProps = (dispatch) => {
-  return bindActionCreators({ createGroup: createGroup}, dispatch);
+  return bindActionCreators({ createGroup: GroupActions.createGroup}, dispatch);
 }
 
 export default connect(mapStateToProps, matchDispatchToProps)(Header);

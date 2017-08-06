@@ -1,9 +1,9 @@
 import React, {Component} from "react";
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import { addGroupMembers } from '../actions/addMembers';
+import UserActions from '../actions/user';
 
-class SideNav extends Component{
+class SideNav extends Component {
   addMembersHandler(event) {
     event.preventDefault();
     const usernames = this.refs.autoInpt.value.split(' ');
@@ -73,7 +73,7 @@ const mapStateToProps = (state) => {
 }
 
 const matchDispatchToProps = (dispatch) => {
-  return bindActionCreators({ addGroupMembers: addGroupMembers}, dispatch);
+  return bindActionCreators({ addGroupMembers: UserActions.addGroupMembers}, dispatch);
 }
 
 export default connect(mapStateToProps, matchDispatchToProps)(SideNav);

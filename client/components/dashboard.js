@@ -3,8 +3,7 @@ import Home from './home';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {Link} from 'react-router';
-import { getGroups } from '../actions/getGroupsAction';
-import { getTotalGroups } from '../actions/getAllGroups';
+import GroupActions from '../actions/group';
 import SideNav from './sidenav';
 import ReactPaginate from 'react-paginate';
 
@@ -15,11 +14,11 @@ class Dashboard extends Component {
     localStorage.setItem('groupName', groupName);
   }
   componentDidMount() {
-    this.props.getTotalGroups();
+    this.props.getTotalGroups(JSON.parse(localStorage.user).user)
     if (localStorage.groupOffset) {
-      this.props.getGroups(localStorage.groupOffset, LIMIT);
+      this.props.getGroups(JSON.parse(localStorage.user).user, localStorage.groupOffset, LIMIT);
     } else {
-      this.props.getGroups(0, LIMIT);
+      this.props.getGroups(JSON.parse(localStorage.user).user, 0, LIMIT);
     }
   }
 
@@ -27,7 +26,7 @@ class Dashboard extends Component {
     let selected = data.selected;
     let offset = Math.ceil(selected * LIMIT);
     localStorage.setItem('groupOffset', offset);
-    this.props.getGroups(offset, LIMIT);
+    this.props.getGroups(JSON.parse(localStorage.user).user, offset, LIMIT);
   };
 
   render() {
@@ -93,6 +92,6 @@ const mapStateToProps = (state) => {
 }
 
 const matchDispatchToProps = (dispatch) => {
-  return bindActionCreators({ getGroups: getGroups, getTotalGroups: getTotalGroups}, dispatch);
+  return bindActionCreators({ getGroups: GroupActions.getGroups, getTotalGroups: GroupActions.getTotalGroups}, dispatch);
 }
 export default connect(mapStateToProps, matchDispatchToProps)(Dashboard);

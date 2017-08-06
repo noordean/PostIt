@@ -1,10 +1,8 @@
 import React, {Component} from "react";
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import { getMessages } from '../actions/getMessagesAction';
-import { getGroupMembers } from '../actions/getGroupMembers';
-import { postGroupMessage } from '../actions/postMessage';
-import { getTotalMessages } from '../actions/getTotalMessages';
+import UserActions from '../actions/user';
+import MessageActions from '../actions/message';
 import SideNav from './sidenav';
 import Home from './home';
 import ReactPaginate from 'react-paginate';
@@ -18,7 +16,7 @@ class MessageBoard extends Component {
       this.props.getMessages(localStorage.groupID, JSON.parse(localStorage.user).token, 0, LIMIT );
     }
     this.props.getGroupMembers(localStorage.groupID);
-    this.props.getTotalMessages()
+    this.props.getTotalMessages(localStorage.groupID);
   }
   componentWillUnmount() {
     this.props.groupsMessages.reqStatus = [];
@@ -133,7 +131,11 @@ const mapStateToProps = (state) => {
 }
 
 const matchDispatchToProps = (dispatch) => {
-  return bindActionCreators({ getMessages: getMessages, getGroupMembers: getGroupMembers, postGroupMessage: postGroupMessage, getTotalMessages: getTotalMessages}, dispatch);
+  return bindActionCreators({
+    getMessages: MessageActions.getMessages,
+    getGroupMembers: UserActions.getGroupMembers,
+    postGroupMessage: MessageActions.postGroupMessage,
+    getTotalMessages: MessageActions.getTotalMessages}, dispatch);
 }
 
 export default connect(mapStateToProps, matchDispatchToProps)(MessageBoard);

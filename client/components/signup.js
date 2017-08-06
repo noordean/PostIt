@@ -2,7 +2,7 @@ import 'babel-polyfill';
 import React, {Component} from "react";
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import {registerUser} from '../actions/usersAction';
+import UsersActions from '../actions/user';
 import {Link} from 'react-router';
 
 class SignUp extends Component{
@@ -107,7 +107,7 @@ const mapStateToProps = (state) => {
 }
 
 const matchDispatchToProps = (dispatch) => {
-  return bindActionCreators({ registerUser: registerUser}, dispatch);
+  return bindActionCreators({ registerUser: UsersActions.registerUser}, dispatch);
 }
 
 export default connect(mapStateToProps, matchDispatchToProps)(SignUp);

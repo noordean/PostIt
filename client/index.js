@@ -1,0 +1,28 @@
+import 'babel-polyfill';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import {Provider} from 'react-redux';
+import store from "./store.js";
+import Inndex from './components/index';
+import Home from './components/home';
+import Signup from './components/signup';
+import Signin from './components/signin';
+import Dashboard from './components/dashboard';
+import MessageBoard from './components/messageboard';
+require('./src/public/js/style.js');
+
+import {Router, Route, IndexRoute, browserHistory} from 'react-router';
+
+ReactDOM.render(<Provider store={store}>
+ <Router history={browserHistory}>
+   <Route path="/" component={Inndex}>
+     <IndexRoute component={Home}/>
+     <Route path="signup" component={Signup}/>
+     <Route path="signin" component={Signin}/>
+     <Route path="dashboard" component={Dashboard}/>
+     <Route path="messageboard" component={MessageBoard}/>
+   </Route>  
+ </Router>
+</Provider>,
+document.getElementById("root")
+);

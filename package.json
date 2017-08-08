@@ -5,8 +5,8 @@
   "main": "server/server.js",
   "scripts": {
     "dev": "webpack-dev-server --content-base client/src --inline --hot",
-    "test": "istanbul cover _mocha server/tests/**/*.js -- --require babel-core/register --timeout 100000",
     "coveralls": "npm test && gulp codeclimate",
+    "test": "jest",
     "start": "gulp serve"
   },
   "repository": {
@@ -56,6 +56,7 @@
     "pg-hstore": "^2.3.2",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
+    "react-paginate": "^4.4.3",
     "react-redux": "^5.0.5",
     "react-router": "^2.8.1",
     "redux": "^3.7.0",
@@ -70,8 +71,13 @@
     "webpack-dev-server": "^2.5.0"
   },
   "devDependencies": {
+    "babel-jest": "^20.0.3",
     "eslint": "^4.1.1",
     "eslint-config-airbnb-base": "^11.2.0",
-    "eslint-plugin-import": "^2.6.1"
+    "eslint-plugin-import": "^2.6.1",
+    "jest": "^20.0.4",
+    "moxios": "^0.4.0",
+    "nock": "^9.0.14",
+    "redux-mock-store": "^1.2.3"
   }
 }

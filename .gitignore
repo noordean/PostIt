@@ -1,8 +1,5 @@
 node_modules
 server/dist
 coverage
-client
-template
 .sass-cache
-webpack.config.js
 .env

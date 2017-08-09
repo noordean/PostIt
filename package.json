@@ -78,6 +78,7 @@
     "jest": "^20.0.4",
     "moxios": "^0.4.0",
     "nock": "^9.0.14",
-    "redux-mock-store": "^1.2.3"
+    "redux-mock-store": "^1.2.3",
+    "sequelize-cli": "^2.8.0"
   }
 }

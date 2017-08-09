@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import router from './routes/route';
+// import router from './routes/route';
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -17,6 +17,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/', router);
+// app.use('/', router);
 
 export default app;

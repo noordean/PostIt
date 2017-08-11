@@ -11,10 +11,6 @@ module.exports = (sequelize, DataTypes) => {
     description: {
       type: DataTypes.STRING,
       allowNull: false
-    },
-    groupmembers: {
-      type: DataTypes.STRING,
-      allowNull: false
     }
   }, {
     classMethods: {
@@ -24,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
           as: 'messages'
         });
         Group.belongsToMany(models.User, {
-          through: 'GroupUsers'
+          through: 'GroupUser'
         });
       }
     }

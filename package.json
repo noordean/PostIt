@@ -7,7 +7,7 @@
     "dev": "webpack-dev-server --content-base client/src --inline --hot",
     "coveralls": "npm test && gulp codeclimate",
     "test": "jest",
-    "start:dev": "nodemon ./server/dist/server.js",
+    "start:dev": "gulp serve",
     "start": "gulp serve"
   },
   "repository": {

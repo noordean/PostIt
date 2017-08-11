@@ -9,13 +9,27 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       username: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true,
+        validate: {
+          is: {
+            args: /^[a-z]{5,12}$/i,
+            msg: 'Username should contain only letters and must have between 5-12 characters'
+          }
+        }
       },
       password: {
         type: Sequelize.STRING
       },
       email: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true,
+        validate: {
+          isEmail: {
+            args: true,
+            msg: 'Invalid email detected. Kindly supply a valid email'
+          }
+        }
       },
       createdAt: {
         allowNull: false,

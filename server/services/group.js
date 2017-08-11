@@ -1,8 +1,7 @@
-import Sequelize from 'sequelize';
 import db from '../models';
 
-const validationError = Sequelize.ValidationError;
 const Group = db.Group;
+const Message = db.Message;
 
 /**
  * class GroupClass
@@ -28,6 +27,38 @@ export default class GroupClass {
       }
     }).then((group) => {
       done(group);
+    }).catch((err) => {
+      done({ err });
+    });
+  }
+
+  /**
+ * @description: retrieves group using group id
+ * @param {Number} groupId
+ * @param {Function} done
+ * @return {Object} retrievedData
+ */
+  static getGroupById(groupId, done) {
+    Group.findAll({ where: { id: groupId } }).then((group) => {
+      done(group);
+    });
+  }
+
+  /**
+ * @description: retrieves messages from a group of id 'groupid'
+ * @param {Number} groupID
+ * @param {Function} done
+ * @return {Object} retrievedData
+ */
+  static getGroupMessages(groupID, done) {
+    Group.findOne({
+      where: { id: groupID },
+      include: [{
+        model: Message,
+        as: 'messages'
+      }]
+    }).then((data) => {
+      done(data);
     }).catch((err) => {
       done({ err });
     });

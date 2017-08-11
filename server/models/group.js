@@ -12,18 +12,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     }
-  }, {
-    classMethods: {
-      associate: (models) => {
-        Group.hasMany(models.Message, {
-          foreignKey: 'groupId',
-          as: 'messages'
-        });
-        Group.belongsToMany(models.User, {
-          through: 'GroupUser'
-        });
-      }
-    }
   });
+  Group.associate = (models) => {
+    Group.hasMany(models.Message, {
+      foreignKey: 'groupId',
+      as: 'messages'
+    });
+  };
   return Group;
 };

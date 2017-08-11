@@ -12,7 +12,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       message: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT(1000)
       },
       priority: {
         type: Sequelize.STRING

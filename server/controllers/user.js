@@ -2,6 +2,8 @@ import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import userDbInstance from '../services/user';
+import groupDbInstance from '../services/group';
+import groupUserDbInstance from '../services/groupuser';
 
 dotenv.config();
 const salt = bcrypt.genSaltSync(10);
@@ -74,6 +76,65 @@ export default class UserController {
         }
         if (user instanceof Object && !Array.isArray(user)) {
           res.status(500).json({ message: 'Sorry, unexpected error occurred' });
+        }
+      });
+    }
+  }
+
+  /**
+ * @description: controls api/users to get all users
+ * @param {Object} req
+ * @param {Object} res
+ * @return {Object} response
+ */
+  static getAllUsers(req, res) {
+    const token = req.headers.token;
+    if (token === undefined) {
+      res.status(400).json({ message: 'You need to supply your login token' });
+    } else {
+      jwt.verify(token, JWT_SECRET, (err, decode) => {
+        if (decode === undefined) {
+          res.status(401).json({ message: 'Access denied!. Kindly login' });
+        } else {
+          userDbInstance.getAllUsers((users) => {
+            res.status(200).json({ message: users });
+          });
+        }
+      });
+    }
+  }
+
+  /**
+ * @description: controls api/users to get all users
+ * @param {Object} req
+ * @param {Object} res
+ * @return {Object} response
+ */
+  static getGroupUsers(req, res) {
+    const groupId = req.params.groupID;
+    const token = req.headers.token;
+    if (token === undefined || groupId === undefined) {
+      res.status(400).json({ message: 'You need to supply your login token and the groupId' });
+    } else {
+      jwt.verify(token, JWT_SECRET, (err, decode) => {
+        if (decode === undefined) {
+          res.status(401).json({ message: 'Access denied!. Kindly login' });
+        } else {
+          groupDbInstance.getGroupById(groupId, (group) => {
+            if (group.length === 0) {
+              res.status(404).json({ message: 'Invalid group id' });
+            } else {
+              groupUserDbInstance.getGroupUsersId(groupId, (user) => {
+                if (user.length > 0) {
+                  userDbInstance.getGroupUsers(user, (username) => {
+                    res.status(200).json({ message: username });
+                  });
+                } else {
+                  res.status(404).json({ message: 'This group does not contain any member' });
+                }
+              });
+            }
+          });
         }
       });
     }

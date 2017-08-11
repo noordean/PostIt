@@ -55,13 +55,45 @@ export default class UserClass {
   }
 
   /**
+ * @description: retrieves users using userId
+ * @param {Integer} userId
+ * @param {Function} done
+ * @return {Object} retrievedData
+ */
+  static getUserById(userId, done) {
+    User.findAll({ where: { id: userId } }).then((group) => {
+      done(group);
+    });
+  }
+
+  /**
  * @description: retrieves all users
  * @param {Function} done callback function
  * @return {Object} retrievedData
  */
-  getAllUsers(done) {
-    this.user.findAll({
+  static getAllUsers(done) {
+    User.findAll({
       attributes: ['id', 'username']
+    }).then((data) => {
+      done(data);
+    }).catch((err) => {
+      done({ err });
+    });
+  }
+
+  /**
+ * @description: retrieves usernames of all members with userIDs
+ * @param {Number} userIDs
+ * @param {Function} done
+ * @return {Object} retrievedData
+ */
+  static getGroupUsers(userIDs, done) {
+    const IDs = [];
+    userIDs.forEach((user) => {
+      IDs.push(user.userId);
+    });
+    User.findAll({
+      where: { id: IDs }
     }).then((data) => {
       done(data);
     }).catch((err) => {
@@ -74,8 +106,8 @@ export default class UserClass {
  * @param {String} userName
  * @return {Object} deletedData
  */
-  deleteUser(userName) {
-    this.user.destroy({ where: { username: userName } });
+  static deleteUser(userName) {
+    User.destroy({ where: { username: userName } });
   }
 }
 

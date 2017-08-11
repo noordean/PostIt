@@ -1,8 +1,8 @@
 
 module.exports = (sequelize, DataTypes) => {
   const GroupUser = sequelize.define('GroupUser', {
-    groupId: DataTypes.INTEGER,
-    userId: DataTypes.INTEGER
+    userId: DataTypes.STRING,
+    groupId: DataTypes.STRING
   });
   return GroupUser;
 };

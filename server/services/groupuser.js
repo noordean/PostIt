@@ -30,7 +30,7 @@ export default class UserGroupClass {
  * @description: add user to group
  * @param {Integer} groupId the id of group to get users from
  * @param {Function} done callback
- * @return {Object} insertedData
+ * @return {Object} retrievedData
  */
   static getGroupUsersId(groupId, done) {
     return GroupUser.findAll({
@@ -40,8 +40,25 @@ export default class UserGroupClass {
     }).then((result) => {
       done(result);
     }).catch((err) => {
-      throw new Error(err);
-      // done({ err });
+      done({ err });
+    });
+  }
+
+  /**
+ * @description: add user to group
+ * @param {Integer} userId the id of group to get users from
+ * @param {Function} done callback
+ * @return {Object} retrievedData
+ */
+  static getUserGroupsId(userId, done) {
+    return GroupUser.findAll({
+      where: {
+        userId
+      }
+    }).then((result) => {
+      done(result);
+    }).catch((err) => {
+      done({ err });
     });
   }
 }

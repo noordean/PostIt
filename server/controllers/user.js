@@ -89,6 +89,7 @@ export default class UserController {
  */
   static getAllUsers(req, res) {
     const token = req.headers.token;
+    const userrs = req.headers.userrs;
     if (token === undefined) {
       res.status(400).json({ message: 'You need to supply your login token' });
     } else {
@@ -96,7 +97,7 @@ export default class UserController {
         if (decode === undefined) {
           res.status(401).json({ message: 'Access denied!. Kindly login' });
         } else {
-          userDbInstance.getAllUsers((users) => {
+          userDbInstance.getAllUsers(userrs, (users) => {
             res.status(200).json({ message: users });
           });
         }

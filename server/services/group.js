@@ -63,4 +63,46 @@ export default class GroupClass {
       done({ err });
     });
   }
+
+  /**
+ * @description: retrieves usernames of all members with userIDs
+ * @param {Number} groupIDs,
+ * @param {Number} limit max number of records to get
+ * @param {Number} offset where to start from
+ * @param {Function} done
+ * @return {Object} retrievedData
+ */
+  static getUserGroups(groupIDs, limit = 100000, offset = 0, done) {
+    const IDs = [];
+    groupIDs.forEach((group) => {
+      IDs.push(group.groupId);
+    });
+    Group.findAndCount({
+      where: { id: IDs },
+      limit,
+      offset,
+      order: [['createdAt', 'DESC']]
+    }).then((data) => {
+      done(data);
+    }).catch((err) => {
+      done({ err });
+    });
+  }
+  /**
+ * @description: delete a group using a groupId
+ * @param {Number} groupId
+ * @param {Function} done callback
+ * @return {Object} deletedData
+ */
+  static deleteGroup(groupId, done) {
+    Group.destroy({
+      where: {
+        id: groupId
+      }
+    }).then((group) => {
+      done(group);
+    }).catch((err) => {
+      done({ err });
+    });
+  }
 }

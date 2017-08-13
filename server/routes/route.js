@@ -13,9 +13,9 @@ router.post('/api/group/:groupID/message', messageController.postMessageToGroup)
 router.get('/api/group/:groupID/messages', groupController.getGroupMessages);
 router.get('/api/users', userController.getAllUsers);
 router.get('/api/group/:groupID/user', userController.getGroupUsers);
-// router.get('/api/groups/:username', controller.getTotalGroups);
-// router.get('/api/groups/:groupID/messages', controller.getTotalMessages);
-// router.get('/api/group/:groupID/members', controller.getGroupMembers);
+router.get('/api/user/:userID/:limit/:offset/groups', groupController.getUserGroups);
+router.delete('/api/group/:groupID', groupController.deleteGroup);
+router.delete('/api/message/:messageID', messageController.deleteMessage);
 
 router.get('/', (req, res) => {
   res.send('PostIt API running...');

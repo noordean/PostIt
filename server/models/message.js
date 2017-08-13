@@ -13,9 +13,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    groupId: {
-      type: DataTypes.INTEGER
-    },
     userId: {
       type: DataTypes.INTEGER
     }
@@ -23,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
   Message.associate = (models) => {
     Message.belongsTo(models.Group, {
       foreignKey: 'groupId',
-      as: 'messages'
+      onDelete: 'SET NULL'
     });
     Message.belongsTo(models.User, {
       foreignKey: 'userId'

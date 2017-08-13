@@ -28,4 +28,39 @@ export default class MessageClass {
       done({ err });
     });
   }
+
+  /**
+ * @description: get message from database
+ * @param {Number} messageId the id of the message to delete
+ * @param {Function} done callback
+ * @return {Object} retrievedData
+ */
+  static getMessageById(messageId, done) {
+    Message.findAll({
+      where: {
+        id: messageId
+      }
+    }).then((group) => {
+      done(group);
+    }).catch((err) => {
+      done({ err });
+    });
+  }
+  /**
+ * @description: delete a message of message id
+ * @param {Number} messageId
+ * @param {Function} done callback
+ * @return {Object} deletedData
+ */
+  static deleteMessage(messageId, done) {
+    Message.destroy({
+      where: {
+        id: messageId
+      }
+    }).then((msg) => {
+      done(msg);
+    }).catch((err) => {
+      done({ err });
+    });
+  }
 }

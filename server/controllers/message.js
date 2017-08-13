@@ -49,4 +49,36 @@ export default class MessageController {
       });
     }
   }
+
+  /**
+ * @description: controls api/message/:messageID
+ * @param {Object} req
+ * @param {Object} res
+ * @return {Object} response
+ */
+  static deleteMessage(req, res) {
+    const messageID = req.params.messageID;
+    const token = req.body.token;
+    if (messageID === undefined || messageID.trim().length === 0 || token === undefined) {
+      res.json({ message: 'Message-id and your logged-in token must be provided' });
+    } else if (isNaN(messageID)) {
+      res.json({ message: 'The supplied id must be integer' });
+    } else {
+      messageDbInstance.getMessageById(messageID, (msg) => {
+        if (msg.length === 0) {
+          res.json({ message: 'Invalid message id' });
+        } else {
+          jwt.verify(token, JWT_SECRET, (err, decode) => {
+            if (decode !== undefined) {
+              messageDbInstance.deleteMessage(messageID, () => {
+                res.status(200).json({ message: 'message deleted' });
+              });
+            } else {
+              res.json({ message: 'Access denied!. Kindly login before viewing messages' });
+            }
+          });
+        }
+      });
+    }
+  }
 }

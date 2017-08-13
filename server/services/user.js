@@ -68,12 +68,17 @@ export default class UserClass {
 
   /**
  * @description: retrieves all users
+ * @param {Array} usernames usernames to be excluded
  * @param {Function} done callback function
  * @return {Object} retrievedData
  */
-  static getAllUsers(done) {
+  static getAllUsers(usernames, done) {
     User.findAll({
-      attributes: ['id', 'username']
+      where: {
+        username: {
+          $notIn: usernames
+        }
+      }
     }).then((data) => {
       done(data);
     }).catch((err) => {

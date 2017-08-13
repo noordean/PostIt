@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import {bindActionCreators} from 'redux';
+import {Link} from 'react-router';
 import {connect} from 'react-redux';
 import UserActions from '../actions/user';
 
@@ -52,10 +53,13 @@ class SideNav extends Component {
               </form>
           </div>
           </div>
-          <ul id="slide-out" className="side-nav red darken-4 white-text">
+
+
+          <ul id="slide-out" className="side-nav fixed red darken-4 white-text">
             <li><h5 className="user-view">{this.props.groupName}</h5></li>
+            <li><Link className="waves-effect waves-light btn modal-trigger red darken-4" to="/dashboard">Dashboard</Link></li>
             <li><a className="waves-effect waves-light btn modal-trigger red darken-4" href="#modal2">Add new members</a></li>
-            <li><i className="material-icons prefix">account_circle</i><a className='dropdown-button' href='#' data-activates='dropdown3'>Members<i className="material-icons right">arrow_drop_down</i></a></li>
+            <li><i className="material-icons prefix">account_circle</i><a className='dropdown-button' href="" data-activates='dropdown3'>Members<i className="material-icons right">arrow_drop_down</i></a></li>
           </ul>
           <ul id='dropdown3' className='dropdown-content'>
             {members}

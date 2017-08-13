@@ -1,13 +1,8 @@
-import Sequelize from 'sequelize';
 
-/**
- * @param {Object} sequelizeObject
- * @return {Object} user model
- */
-export default (sequelizeObject) => {
-  const User = sequelizeObject.define('users', {
+module.exports = (sequelize, DataTypes) => {
+  const User = sequelize.define('User', {
     username: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       allowNull: false,
       unique: true,
       validate: {
@@ -18,11 +13,11 @@ export default (sequelizeObject) => {
       }
     },
     password: {
-      type: Sequelize.STRING,
-      allowNull: false,
+      type: DataTypes.STRING,
+      allowNull: false
     },
     email: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       allowNull: false,
       unique: true,
       validate: {
@@ -32,8 +27,15 @@ export default (sequelizeObject) => {
         }
       }
     }
-  },
-  );
+  }, {
+    classMethods: {
+      associate: (models) => {
+        User.hasMany(models.Message, {
+          foreignKey: 'userId',
+          as: 'messages'
+        });
+      }
+    }
+  });
   return User;
 };
-

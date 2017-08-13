@@ -3,10 +3,6 @@ import chaiHttp from 'chai-http';
 import chai from 'chai';
 import bcrypt from 'bcryptjs';
 import app from '../server';
-import sequelize from '../database/dbconnection/connection';
-import userDbClass from '../database/dbClasses/userDbClass';
-import groupDbClass from '../database/dbClasses/groupDbClass';
-import messageDbClass from '../database/dbClasses/messageDbClass';
 import helperObject from './helper';
 
 dotenv.config();
@@ -14,9 +10,6 @@ dotenv.config();
 chai.use(chaiHttp);
 const salt = bcrypt.genSaltSync(10);
 const should = chai.should();
-const userDbInstance = new userDbClass(sequelize);
-const groupDbInstance = new groupDbClass(sequelize);
-const messageDbInstance = new messageDbClass(sequelize);
 const hashedPassword = bcrypt.hashSync(helperObject.alreadyRegisteredUser.password, salt);
 
 describe('PostIt Endpoints', () => {

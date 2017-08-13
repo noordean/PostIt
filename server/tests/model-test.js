@@ -1,58 +1,65 @@
 import chai from 'chai';
-import sequelize from '../database/dbconnection/connection';
-import userDbClass from '../database/dbClasses/userDbClass';
-import groupDbClass from '../database/dbClasses/groupDbClass';
-import messageDbClass from '../database/dbClasses/messageDbClass';
+import userDbInstance from '../services/user';
+import groupDbInstance from '../services/group';
 
 const should = chai.should();
-const userDbInstance = new userDbClass(sequelize);
-const groupDbInstance = new groupDbClass(sequelize);
-const messageDbInstance = new messageDbClass(sequelize);
 
 describe('<Unit Test>', () => {
   describe('Model User:', () => {
-    afterEach((done) => {
-      userDbInstance.deleteUser('example');
-      done();
-    });
     describe('Method saveUser', () => {
       it('should be able to save whithout problems', (done) => {
-        userDbInstance.saveUser('example', 'example1', 'example@gmail.com', (user) => {
+        userDbInstance.saveUser('mUser', 'mUser1', 'mUser@gmail.com', '08123456576', (user) => {
           user.should.be.a('array');
           user.length.should.eql(2);
-          user[0].username.should.eql('example');
+          user[0].username.should.eql('mUser');
           done();
         });
-      }).timeout(10000);
-      it('should be able to return an error if invalid data are supplied', (done) => {
-        userDbInstance.saveUser('example', 'example1', 'invalidEmail@', (err) => {
+      });
+      it('should be able to return an error if invalid email is supplied', () => {
+        userDbInstance.saveUser('example', 'example1', 'invalidEmail', '08123456576', (err) => {
           err.should.be.a('string');
+        });
+      });
+      it('should be able to return an error if invalid username is supplied', () => {
+        userDbInstance.saveUser('example123', 'example1', 'invalidEmail@gmail.com', '08123346576', (err) => {
+          err.should.be.a('string');
+        });
+      });
+      it('should be able to return an error if invalid password is supplied', () => {
+        userDbInstance.saveUser('example123', 'example', 'invalidEmail@gmail.com', '08123456576', (err) => {
+          err.should.be.a('string');
+        });
+      });
+    });
+
+    describe('Method getUser', () => {
+      it('should be able to get an exisiting user', (done) => {
+        userDbInstance.getUser('existing', (user) => {
+          user.should.be.a('array');
+          user[0].username.should.eql('existing');
           done();
         });
-      }).timeout(10000);
+      });
+      it('should be able to return empty array if user is not found', (done) => {
+        userDbInstance.getUser('notExist', (user) => {
+          user.should.be.a('array');
+          user.length.should.eql(0);
+          done();
+        });
+      });
     });
   });
 
   describe('Model Group:', () => {
-    afterEach((done) => {
-      groupDbInstance.deleteGroup('group-example');
-      done();
-    });
-    describe('Method createGroup', () => {
+    describe('Method saveGroup', () => {
       it('should be able to create group whithout problems', (done) => {
-        groupDbInstance.createGroup('group-example', 'example', (group) => {
+        groupDbInstance.saveGroup('group-example', 'mrNoName', 'for test..', (group) => {
           group.should.be.a('array');
-          group.length.should.eql(2);
-          group[0].createdby.should.eql('example');
+          group[0].createdby.should.eql('mrNoName');
+          group[0].groupname.should.eql('group-example');
           done();
         });
-      }).timeout(10000);
-      it('should be able to return error message if groupname is empty', (done) => {
-        groupDbInstance.createGroup('', 'example', (err) => {
-          err.should.be.a('array');
-          done();
-        });
-      }).timeout(10000);
+      });
     });
   });
 });

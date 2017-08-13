@@ -16,14 +16,15 @@ export default class UserClass {
  * @param {Function} done
  * @return {Object} savedData
  */
-  static saveUser(username, password, email, done) {
+  static saveUser(username, password, email, phoneNumber, done) {
     return User.findOrCreate({
       where: {
         username
       },
       defaults: {
         password,
-        email
+        email,
+        phoneNumber
       }
     }).then((user) => {
       done(user);

@@ -26,6 +26,17 @@ module.exports = (sequelize, DataTypes) => {
           msg: 'Invalid email detected. Kindly supply a valid email'
         }
       }
+    },
+    phoneNumber: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        is: {
+          args: /^[0-9]{11,}$/i,
+          msg: 'Phone number should not contain letters and should be valid'
+        }
+      }
     }
   }, {
     classMethods: {

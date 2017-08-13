@@ -1,52 +1,21 @@
-import dotenv from 'dotenv';
 import chaiHttp from 'chai-http';
 import chai from 'chai';
-import bcrypt from 'bcryptjs';
 import app from '../server';
-import helperObject from './helper';
-
-dotenv.config();
 
 chai.use(chaiHttp);
-const salt = bcrypt.genSaltSync(10);
 const should = chai.should();
-const hashedPassword = bcrypt.hashSync(helperObject.alreadyRegisteredUser.password, salt);
-
+let sentToken = '';
 describe('PostIt Endpoints', () => {
-  let sentToken = '';
-  beforeEach((done) => {
-    userDbInstance.saveUser(helperObject.alreadyRegisteredUser.username, hashedPassword, helperObject.alreadyRegisteredUser.email, () => {
-
-    });
-    done();
-  });
-  beforeEach((done) => {
-    groupDbInstance.createGroup('already created group', 'nurudeen', () => {
-
-    });
-    done();
-  });
   describe('POST api/user/signup', () => {
-    afterEach((done) => {
-      userDbInstance.deleteUser(helperObject.validRegUser.username);
-      userDbInstance.deleteUser(helperObject.alreadyRegisteredUser.username);
-      done();
-    });
-    it('should respond with success message', (done) => {
-      chai.request(app)
-        .post('/api/user/signup')
-        .send(helperObject.validRegUser)
-        .end((err, res) => {
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.message.should.be.eql('Registration successful');
-          done();
-        });
-    });
     it('should respond with error message if invalid email is supplied', (done) => {
       chai.request(app)
         .post('/api/user/signup')
-        .send(helperObject.regUserWithInvalidEmail)
+        .send({
+          username: 'invalidEmail',
+          password: 'invalid123',
+          email: 'invalidEmail',
+          phoneNumber: '07098765432'
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
@@ -57,7 +26,12 @@ describe('PostIt Endpoints', () => {
     it('should respond with error message if incorrect password combination is supplied', (done) => {
       chai.request(app)
         .post('/api/user/signup')
-        .send(helperObject.regUserWithWrongPassword)
+        .send({
+          username: 'incorrect',
+          password: 'incorrectPassword',
+          email: 'incorrect@gmail.com',
+          phoneNumber: '07098765432'
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
@@ -68,7 +42,12 @@ describe('PostIt Endpoints', () => {
     it('should respond with error message if incorrect username combination is supplied', (done) => {
       chai.request(app)
         .post('/api/user/signup')
-        .send(helperObject.regUserWithWrongUsername)
+        .send({
+          username: 'incorrect123',
+          password: 'incorrect123',
+          email: 'incorrect123@gmail.com',
+          phoneNumber: '07098765432'
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
@@ -76,10 +55,15 @@ describe('PostIt Endpoints', () => {
           done();
         });
     });
-    it('should respond with error message if incorrect username combination is supplied', (done) => {
+    it('should respond with error message if the supplied password is too short', (done) => {
       chai.request(app)
         .post('/api/user/signup')
-        .send(helperObject.regUserWithShortPassword)
+        .send({
+          username: 'shortUser',
+          password: 'shot',
+          email: 'shortUser@gmail.com',
+          phoneNumber: '07098765432'
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
@@ -87,21 +71,30 @@ describe('PostIt Endpoints', () => {
           done();
         });
     });
-    it('should respond with error message if incorrect username combination is supplied', (done) => {
+    it('should respond with error message if the supplied username is too short', (done) => {
       chai.request(app)
         .post('/api/user/signup')
-        .send(helperObject.regUserWithShortUsername)
+        .send({
+          username: 'shot',
+          password: 'short123',
+          email: 'short@gmail.com',
+          phoneNumber: '07098765432'
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('Username should contain only letters and must have between 5-12 characters');
           done();
         });
-    }).timeout(20000);
+    });
     it('should respond with error message if username is undefined', (done) => {
       chai.request(app)
         .post('/api/user/signup')
-        .send(helperObject.regUserWithNoUsername)
+        .send({
+          password: 'undefUser123',
+          email: 'UndefinedUser@gmail.com',
+          phoneNumber: '07098765432'
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
@@ -112,7 +105,11 @@ describe('PostIt Endpoints', () => {
     it('should respond with error message if password is undefined', (done) => {
       chai.request(app)
         .post('/api/user/signup')
-        .send(helperObject.regUserWithNoPassword)
+        .send({
+          username: 'undefPass',
+          email: 'undefPass@gmail.com',
+          phoneNumber: '07098765432'
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
@@ -123,7 +120,11 @@ describe('PostIt Endpoints', () => {
     it('should respond with error message if email is undefined', (done) => {
       chai.request(app)
         .post('/api/user/signup')
-        .send(helperObject.regUserWithNoEmail)
+        .send({
+          username: 'undefEmail',
+          password: 'undefMail123',
+          phoneNumber: '07098765432'
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
@@ -134,11 +135,32 @@ describe('PostIt Endpoints', () => {
     it('should respond with error message if user is already registered', (done) => {
       chai.request(app)
         .post('/api/user/signup')
-        .send(helperObject.alreadyRegisteredUser)
+        .send({
+          username: 'existing',
+          password: 'exist123',
+          email: 'existing@gmail.com',
+          phoneNumber: '07098765432'
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('You already have an existing account. Kindly go and login');
+          done();
+        });
+    });
+    it('should respond with error message if phoneNumber is invalid', (done) => {
+      chai.request(app)
+        .post('/api/user/signup')
+        .send({
+          username: 'invaPhone',
+          password: 'invaPh123',
+          email: 'invalidPhone@gmail.com',
+          phoneNumber: '07098765HY'
+        })
+        .end((err, res) => {
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.message.should.be.eql('Phone number should not contain letters and should be valid');
           done();
         });
     });
@@ -148,7 +170,9 @@ describe('PostIt Endpoints', () => {
     it('should respond with error message if username is undefined', (done) => {
       chai.request(app)
         .post('/api/user/signin')
-        .send(helperObject.loginUserWithNoUsername)
+        .send({
+          password: 'undefUser1'
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
@@ -159,7 +183,9 @@ describe('PostIt Endpoints', () => {
     it('should respond with error message if password is undefined', (done) => {
       chai.request(app)
         .post('/api/user/signin')
-        .send(helperObject.loginUserWithNoPassword)
+        .send({
+          username: 'undefUser'
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
@@ -170,7 +196,10 @@ describe('PostIt Endpoints', () => {
     it('should respond with error message if invalid username is supplied', (done) => {
       chai.request(app)
         .post('/api/user/signin')
-        .send(helperObject.loginInvalidUser)
+        .send({
+          username: 'INVALID',
+          password: 'invaUser123'
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
@@ -181,7 +210,10 @@ describe('PostIt Endpoints', () => {
     it('should respond with success message if correct username and password are supplied', (done) => {
       chai.request(app)
         .post('/api/user/signin')
-        .send(helperObject.loginUserWithcorrectPassword)
+        .send({
+          username: 'existing',
+          password: 'exist123'
+        })
         .end((err, res) => {
           sentToken = res.body.token;
           res.body.should.be.a('object');
@@ -191,17 +223,16 @@ describe('PostIt Endpoints', () => {
         });
     });
   });
-
   describe('POST api/group', () => {
-    afterEach((done) => {
-      groupDbInstance.deleteGroup('Group Testing');
-      groupDbInstance.deleteGroup('already created group');
-      done();
-    });
     it('should respond with error message if empty groupname is supplied', (done) => {
       chai.request(app)
         .post('/api/group')
-        .send(helperObject.createGroupWithEmptyGroupname)
+        .send({
+          token: sentToken,
+          groupName: '',
+          createdby: 'mrNoName',
+          description: 'for test'
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
@@ -212,40 +243,41 @@ describe('PostIt Endpoints', () => {
     it('should respond with error message if groupname is not supplied', (done) => {
       chai.request(app)
         .post('/api/group')
-        .send(helperObject.createGroupWithNoGroupname)
+        .send({
+          token: sentToken,
+          createdby: 'mrNoName',
+          description: 'for test'
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
-          res.body.message.should.be.eql('The group-name and your logged-in token must be specified');
+          res.body.message.should.be.eql('The group-name, description, and your logged-in token must be specified');
           done();
         });
     });
     it('should respond with error message if token is not supplied', (done) => {
       chai.request(app)
         .post('/api/group')
-        .send(helperObject.createGroupWithNoGroupname)
+        .send({
+          createdby: 'mrNoName',
+          description: 'for test'
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
-          res.body.message.should.be.eql('The group-name and your logged-in token must be specified');
-          done();
-        });
-    });
-    it('should respond with success message if the correct group-name and logged-in token are specified', (done) => {
-      chai.request(app)
-        .post('/api/group')
-        .send({ groupName: 'Group Testing', token: sentToken })
-        .end((err, res) => {
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.message.should.be.eql('Group successfully created');
+          res.body.message.should.be.eql('The group-name, description, and your logged-in token must be specified');
           done();
         });
     });
     it('should respond with error message if user is not logged in', (done) => {
       chai.request(app)
         .post('/api/group')
-        .send({ groupName: 'already created group', token: 'nonsense' })
+        .send({
+          token: 'invalidToken',
+          groupName: 'Invalid Group',
+          createdby: 'mrNoName',
+          description: 'for test'
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
@@ -253,50 +285,76 @@ describe('PostIt Endpoints', () => {
           done();
         });
     });
+    it('should respond with error message if the groupName is already existing', (done) => {
+      chai.request(app)
+        .post('/api/group')
+        .send({
+          token: sentToken,
+          groupName: 'New Group',
+          createdby: 'mrNoName',
+          description: 'for test'
+        })
+        .end((err, res) => {
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.message.should.be.eql('There is already an existing group with this name');
+          done();
+        });
+    });
   });
 
   describe('POST api/group/:groupID/user', () => {
-    it('should respond with error message if incorrect id is used', (done) => {
+    it('should respond with error message if incorrect group id is used', (done) => {
       chai.request(app)
         .post('/api/group/146447878/user')
-        .send({ username: 'nurudeen', token: sentToken })
+        .send({
+          userId: 1,
+          token: sentToken
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
-          res.body.message.should.be.eql('Invalid group id');
+          res.body.message.should.be.eql('Invalid group id supplied');
           done();
         });
     });
-    it('should respond with error message if invalid id is used', (done) => {
+    it('should respond with error message if invalid group id is used', (done) => {
       chai.request(app)
         .post('/api/group/14hjgjdkskb/user')
-        .send({ username: 'nurudeen', token: sentToken })
+        .send({
+          userId: 1,
+          token: sentToken
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
-          res.body.message.should.be.eql('The supplied id must be an integer');
+          res.body.message.should.be.eql('The supplied id\'s must be integers');
           done();
         });
     });
-    it('should respond with error message if username is not defined', (done) => {
+    it('should respond with error message if userId is not defined', (done) => {
       chai.request(app)
-        .post('/api/group/14678923562789/user')
-        .send({ token: sentToken })
+        .post('/api/group/1/user')
+        .send({
+          token: sentToken
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
-          res.body.message.should.be.eql('You need to provide the group-id, your logged-in token and the username to add');
+          res.body.message.should.be.eql('You need to provide the group-id, your logged-in token and the userId');
           done();
         });
     });
     it('should respond with error message if token is not defined', (done) => {
       chai.request(app)
-        .post('/api/group/157235927/user')
-        .send({ username: 'nurudeen' })
+        .post('/api/group/1/user')
+        .send({
+          userId: 1
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
-          res.body.message.should.be.eql('You need to provide the group-id, your logged-in token and the username to add');
+          res.body.message.should.be.eql('You need to provide the group-id, your logged-in token and the userId');
           done();
         });
     });
@@ -305,30 +363,40 @@ describe('PostIt Endpoints', () => {
   describe('POST api/group/:groupID/message', () => {
     it('should respond with error message if token is not defined', (done) => {
       chai.request(app)
-        .post('/api/group/17539649632/message')
-        .send({ message: 'Hi guyz' })
+        .post('/api/group/1/message')
+        .send({
+          message: 'Hi guyz',
+          priority: 'Critical'
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
-          res.body.message.should.be.eql('You need to provide the group-id, your logged-in token and the message');
+          res.body.message.should.be.eql('You need to provide the group-id, priority, your logged-in token and the message');
           done();
         });
     });
     it('should respond with error message if message is not defined', (done) => {
       chai.request(app)
-        .post('/api/group/17539649/message')
-        .send({ token: 'nonsense' })
+        .post('/api/group/1/message')
+        .send({
+          token: sentToken,
+          priority: 'Critical'
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
-          res.body.message.should.be.eql('You need to provide the group-id, your logged-in token and the message');
+          res.body.message.should.be.eql('You need to provide the group-id, priority, your logged-in token and the message');
           done();
         });
     });
     it('should respond with error message if groupID is empty', (done) => {
       chai.request(app)
         .post('/api/group/ /message')
-        .send({ message: 'Hi guyz', token: sentToken })
+        .send({
+          message: 'Hi guyz',
+          token: sentToken,
+          priority: 'Critical'
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
@@ -338,19 +406,27 @@ describe('PostIt Endpoints', () => {
     });
     it('should respond with error message if token is incorrect', (done) => {
       chai.request(app)
-        .post('/api/group/17539649632jkdghfjkhgdk/message')
-        .send({ message: 'Hi guyz', token: sentToken })
+        .post('/api/group/1/message')
+        .send({
+          message: 'Hi guyz',
+          token: 'incorrectToken',
+          priority: 'Critical'
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
-          res.body.message.should.be.eql('The supplied id must be an integer');
+          res.body.message.should.be.eql('Access denied!. Kindly login before posting message');
           done();
         });
     });
     it('should respond with error message if id is invalid', (done) => {
       chai.request(app)
         .post('/api/group/17539649/message')
-        .send({ message: 'Hi guyz', token: sentToken })
+        .send({
+          message: 'Hi guyz',
+          token: sentToken,
+          priority: 'Normal'
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
@@ -360,12 +436,69 @@ describe('PostIt Endpoints', () => {
     });
     it('should respond with error message if message is empty', (done) => {
       chai.request(app)
-        .post('/api/group/17539649/message')
-        .send({ message: '', token: sentToken })
+        .post('/api/group/1/message')
+        .send({
+          message: '',
+          token: sentToken,
+          Priority: 'Urgent'
+        })
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
-          res.body.message.should.be.eql('group-id or message cannot be empty');
+          res.body.message.should.be.eql('You need to provide the group-id, priority, your logged-in token and the message');
+          done();
+        });
+    });
+    it('should respond with error message if wrong priority is specified', (done) => {
+      chai.request(app)
+        .post('/api/group/1/message')
+        .send({
+          message: 'Hi guyz',
+          token: sentToken,
+          priority: 'Immediate'
+        })
+        .end((err, res) => {
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.message.should.be.eql('Priority can either be Normal, Urgent or Critical');
+          done();
+        });
+    });
+  });
+
+  describe('GET api/group/:groupID/messages', () => {
+    it('should produce all messages in a valid group', (done) => {
+      chai.request(app)
+        .get('/api/group/1/messages')
+        .set('token', sentToken)
+        .end((err, res) => {
+          res.body.should.be.a('object');
+          res.body.should.have.property('messages');
+          res.body.messages[0].postedby.should.be.eql('existing');
+          res.body.messages[0].message.should.be.eql('Hello guyz');
+          res.body.messages[0].priority.should.be.eql('Critical');
+          done();
+        });
+    });
+    it('should respond with an error message if incorrect groupId is supplied', (done) => {
+      chai.request(app)
+        .get('/api/group/ghhjgdhskfjgf/messages')
+        .set('token', sentToken)
+        .end((err, res) => {
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.message.should.be.eql('The supplied id must be integer');
+          done();
+        });
+    });
+    it('should respond with an error message if invalid groupId is supplied', (done) => {
+      chai.request(app)
+        .get('/api/group/10/messages')
+        .set('token', sentToken)
+        .end((err, res) => {
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.message.should.be.eql('Invalid group id');
           done();
         });
     });

@@ -23,13 +23,14 @@ export default class UserController {
     const username = req.body.username;
     const password = req.body.password;
     const email = req.body.email;
+    const phoneNumber = req.body.phoneNumber;
     if (password === undefined) {
       res.status(400).json({ message: 'Password must be supplied' });
     } else if (/^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z\d]{5,12}$/.test(password) === false) {
       res.json({ message: 'Password must be alphanumeric and should contain 5-12 characters' });
     } else {
       const hashedPassword = bcrypt.hashSync(password, salt);
-      userDbInstance.saveUser(username, hashedPassword, email, (user) => {
+      userDbInstance.saveUser(username, hashedPassword, email, phoneNumber, (user) => {
         if (user instanceof Object) {
           if (Array.isArray(user)) {
             if (user[1] === false) {

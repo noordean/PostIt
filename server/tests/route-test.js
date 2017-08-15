@@ -98,7 +98,7 @@ describe('PostIt Endpoints', () => {
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
-          res.body.message.should.be.eql('username must be supplied');
+          res.body.message.should.be.eql('username cannot be null');
           done();
         });
     });
@@ -128,7 +128,7 @@ describe('PostIt Endpoints', () => {
         .end((err, res) => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
-          res.body.message.should.be.eql('email must be supplied');
+          res.body.message.should.be.eql('email cannot be null');
           done();
         });
     });

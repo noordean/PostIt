@@ -1,0 +1,9 @@
+{
+  "exclude": [
+    "server/migrations",
+    "server/seeders"
+  ],
+  "include": [
+    "server"
+  ]
+}

@@ -10,25 +10,27 @@ export default class GroupActions {
   * @static
   * @param {String} groupName The name of the group to be created
   * @param {String} description The description of the group to be created
-  * @param {Array} groupMembers The members of the group to be created
   * @param {String} token JWToken to access the endpoint
   * @returns {Object} dispatch object
   * @memberof GroupActions
   */
-  static createGroup(groupName, description, groupMembers, token) {
+  static createGroup(groupName, description, token) {
     return (dispatch) => {
       dispatch({ type: 'CREATE_GROUP_BEGINS' });
-      return axios.post('https://postit-api.herokuapp.com/api/group', {
+      return axios.post('/api/group', {
         groupName,
         description,
-        groupMembers,
         token
       })
         .then((response) => {
           dispatch({ type: 'GROUP_CREATED', payload: response.data });
         })
         .catch((err) => {
-          dispatch({ type: 'CREATE_GROUP_REJECTED', payload: err });
+          if (err.response.data.message) {
+            dispatch({ type: 'CREATE_GROUP_UNSUCCESSFUL', payload: err.response.data.message });
+          } else {
+            dispatch({ type: 'CREATE_GROUP_REJECTED', payload: err });
+          }
         });
     };
   }
@@ -37,42 +39,30 @@ export default class GroupActions {
   * Request to the API to get certain list of groups a user belongs to
   *
   * @static
-  * @param {String} user The name of user to get groups for
-  * @param {Integer} offset The number of records to offset from the group table
+  * @param {String} userId The id of the user to get groups for
   * @param {Integer} limit The number of records to get from the group table
+  * @param {Integer} offset The number of records to offset from the group table
+  * @param {String} token The string 
   * @returns {Object} dispatch object
   * @memberof GroupActions
   */
-  static getGroups(user, offset, limit) {
+  static getGroups(userId, limit, offset, token) {
     return (dispatch) => {
       dispatch({ type: 'GET_GROUPS_BEGINS' });
-      return axios.get(`https://postit-api.herokuapp.com/api/groups/${user}/${offset}/${limit}`)
+      return axios.get(`/api/user/${userId}/${limit}/${offset}/groups`, {
+        headers: {
+          token
+        }
+      })
         .then((response) => {
           dispatch({ type: 'GOT_GROUPS', payload: response.data });
         })
         .catch((err) => {
-          dispatch({ type: 'GET_GROUPS_REJECTED', payload: err });
-        });
-    };
-  }
-
-  /**
-  * Request to the API to gt total number of groups a user belongs to
-  *
-  * @static
-  * @param {String} user The name of user to get groups for
-  * @returns {Object} dispatch object
-  * @memberof GroupActions
-  */
-  static getTotalGroups(user) {
-    return (dispatch) => {
-      dispatch({ type: 'GET_ALL_GROUPS_BEGINS' });
-      return axios.get(`https://postit-api.herokuapp.com/api/groups/${user}`)
-        .then((response) => {
-          dispatch({ type: 'GOT_ALL_GROUPS', payload: response.data });
-        })
-        .catch((err) => {
-          dispatch({ type: 'GET_ALL_GROUPS_REJECTED', payload: err });
+          if (err.response.data.message) {
+            dispatch({ type: 'GET_GROUPS_FAILED', payload: err.response.data });
+          } else {
+            dispatch({ type: 'GET_GROUPS_REJECTED', payload: err });
+          }
         });
     };
   }

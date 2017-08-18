@@ -7,14 +7,21 @@ import UserActions from '../actions/user';
 class SideNav extends Component {
   addMembersHandler(event) {
     event.preventDefault();
-    const usernames = this.refs.autoInpt.value.split(' ');
-    if (usernames[0].length === 0) {
-      this.refs.errMsg.innerHTML = 'Please select members to add';
+    const selectedMembers = this.refs.usersSelectedInput.value.split(' ');
+    if (selectedMembers.length === 0) {
+      this.refs.errMsg.innerHTML = "Kindly select members to add"
     } else {
-      this.props.addGroupMembers(localStorage.groupID, usernames, JSON.parse(localStorage.user).token);
+      this.props.addGroupMembers(localStorage.groupID, selectedMembers, JSON.parse(localStorage.user).token)
+      .then(() => {
+        const expectedMsg = this.props.addMembers.reqStatus.message;
+        if (expectedMsg === 'Users successfully added' || expectedMsg === 'User successfully added') {
+          window.location.reload()
+        }
+      })
       this.refs.errMsg.innerHTML = '';
     }
   }
+
   render() {
     let errorMsg = <div className="center"></div>
 		if (this.props.addMembers.reqProcessing) {
@@ -41,25 +48,23 @@ class SideNav extends Component {
                 <div className="center" ref="errMsg"></div>
                 {errorMsg}
                   <div className="input-field row">
-                    <div id="chip" className="chip chip-autocomplete"></div>
+                    <div id="chips" className="chips chips-autocomplete"></div>
                   </div>
                   <div>
                     <a href="#" className="btn waves-effect waves-light col s12 red darken-4" onClick={this.addMembersHandler.bind(this)}>Add</a>
-                  </div>
-                  <div className="modal-footer">
-                    <a href="" className="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
                   </div>
                   <input type='hidden' ref="autoInpt" id="getMemberChips"/>
               </form>
           </div>
           </div>
 
-
           <ul id="slide-out" className="side-nav fixed red darken-4 white-text">
             <li><h5 className="user-view">{this.props.groupName}</h5></li>
             <li><Link className="waves-effect waves-light btn modal-trigger red darken-4" to="/dashboard">Dashboard</Link></li>
-            <li><a className="waves-effect waves-light btn modal-trigger red darken-4" href="#modal2">Add new members</a></li>
+            <li><a className="waves-effect waves-light btn modal-trigger red darken-4" href="#modal2" id="addMembers">Add members</a></li>
             <li><i className="material-icons prefix">account_circle</i><a className='dropdown-button' href="" data-activates='dropdown3'>Members<i className="material-icons right">arrow_drop_down</i></a></li>
+            <li><input type="hidden" ref="getMembersInput" id="getMembers" value={this.props.members.join(' ')}/></li>
+            <li><input type="hidden" ref="usersSelectedInput" id="getChips"/></li>
           </ul>
           <ul id='dropdown3' className='dropdown-content'>
             {members}

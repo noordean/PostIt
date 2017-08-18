@@ -4,13 +4,12 @@ import MessageReducers from './message';
 import UserReducers from './user';
 
 export default combineReducers({
-  user: UserReducers.registerAndLogin,
+  userRegistration: UserReducers.register,
+  userLogin: UserReducers.login,
   group: GroupReducers.createGroup,
   usersGroups: GroupReducers.getGroups,
-  groupsMessages: MessageReducers.getMessages,
   groupMembers: UserReducers.getGroupMembers,
   addMembers: UserReducers.addMembers,
   postMessage: MessageReducers.postMessage,
-  totalGroups: GroupReducers.getTotalGroups,
-  totalMessages: MessageReducers.getTotalMessages
+  groupMessages: MessageReducers.getMessages
 });

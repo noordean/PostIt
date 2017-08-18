@@ -11,37 +11,38 @@ class SignUp extends Component{
 		event.preventDefault();
 		const username = this.refs.usernameInput.value;
 		const email = this.refs.emailInput.value;
+		const phone = this.refs.phoneInput.value;
 		const password = this.refs.passwordInput.value;
 		const confirmPassword = this.refs.confirmPasswordInput.value;
 		if (password !== confirmPassword) {
 			this.refs.clientError.innerHTML = 'The two passwords did not match';
 		} else {
 			this.refs.clientError.innerHTML = '';
-		  this.props.registerUser(username, email, password);
+		  this.props.registerUser(username, email, password, phone);
 		}
 	}
   
 	componentWillUnmount() {
 		// return state to its initial value
-		this.props.user.regStatus = {};
-		this.props.user.regError = null;
-		this.props.user.regProcessed = false;
-		this.props.user.regProcessing = false;
+		this.props.userRegistration.reqStatus = {};
+		this.props.userRegistration.reqError = null;
+		this.props.userRegistration.reqProcessed = false;
+		this.props.userRegistration.reqProcessing = false;
 	}
 
 	render() {
 		let errorMsg = <div></div>;
-		if (this.props.user.regProcessing) {
+		if (this.props.userRegistration.reqProcessing) {
 			errorMsg = <div className="error-message">Registering user...</div>;
 		}
-		if (this.props.user.regProcessed) {
-			if (this.props.user.regStatus.message === 'Registration successful') {
-			  errorMsg = <div className="error-message gr">{this.props.user.regStatus.message}, Click <Link to="/signin"> here </Link> to login</div>;
+		if (this.props.userRegistration.reqProcessed) {
+			if (this.props.userRegistration.reqStatus.message === 'Registration successful') {
+			  errorMsg = <div className="error-message gr">{this.props.userRegistration.reqStatus.message}, Click <Link to="/signin"> here </Link> to login</div>;
 			} else {
-			  errorMsg = <div className="error-message re">{this.props.user.regStatus.message}</div>;
+			  errorMsg = <div className="error-message re">{this.props.userRegistration.reqStatus.message}</div>;
 			}
 		}
-		if (this.props.user.regError !== null) {
+		if (this.props.userRegistration.reqError !== null) {
 			errorMsg = <div className="error-message re">An unexpected error occured. Kindly check your internet connection</div>;
 		}
     return (
@@ -51,7 +52,7 @@ class SignUp extends Component{
       						<form className="register-form" onSubmit={this.registerHandler.bind(this)}>
         						<div className="row">
           						<div className="input-field col s12 center">
-												<img id="reg-img" src="public/image/regsiter.jpg" alt="" className="circle responsive-img valign profile-image-login"/>
+												<img id="reg-img" src="client/src/public/image/regsiter.jpg" alt="register img" className="circle responsive-img valign profile-image-login"/>
 												<div ref="clientError"></div>
 												{errorMsg}
           						</div>
@@ -71,6 +72,13 @@ class SignUp extends Component{
           						</div>
         						</div>
         						<div className="row margin">
+          						<div className="input-field col s12">
+            						<i className="material-icons prefix">phone</i>
+            						<input id="phonenumber" type="text" ref="phoneInput" required/>
+            						<label htmlFor="email" className="center-align">Phone Number</label>
+          						</div>
+        						</div>
+        						<div className="row margin">
           					<div className="input-field col s12">
             					<i className="material-icons prefix">lock</i>
             					<input id="password" type="password" ref="passwordInput" required/>
@@ -85,9 +93,7 @@ class SignUp extends Component{
           					</div>
         					</div>
         					<div className="row">
-          					<div className="input-field col s12">
-											<input type="submit" value="Register Now" className="btn waves-effect waves-light col s12 red darken-4"/>
-          					</div>
+											<input type="submit" value="Register Now" className="btn col s12 red darken-4"/>
           					<div className="input-field col s12">
             					<p className="margin center medium-small sign-up">Already have an account? <a href="page-login.html">Login</a></p>
           					</div>
@@ -102,7 +108,7 @@ class SignUp extends Component{
 
 const mapStateToProps = (state) => {
   return {
-    user: state.user
+    userRegistration: state.userRegistration
   };
 }
 

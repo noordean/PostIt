@@ -10,7 +10,7 @@ const initialState = {
  */
 export default class UserReducers {
   /**
-  * Reducer for registering and login users
+  * Reducer for registering users
   *
   * @static
   * @param {Object} state The initial state
@@ -18,36 +18,42 @@ export default class UserReducers {
   * @returns {Object} current state
   * @memberof UserReducers
   */
-  static registerAndLogin(state = {
-    regStatus: {},
-    regProcessing: false,
-    regProcessed: false,
-    regError: null,
-    loginStatus: {},
-    loginProcessing: false,
-    loginProcessed: false,
-    loginError: null,
-  }, action) {
+  static register(state = initialState, action) {
     switch (action.type) {
       case 'REGISTRATION_BEGINS':
-        return Object.assign({}, state, { regProcessing: true });
+        return Object.assign({}, state, { reqProcessing: true });
       case 'REGISTRATION_SUCCESSFUL':
-        return Object.assign({}, state, { regStatus: action.payload, regProcessed: true });
+      case 'REGISTRATION_UNSUCCESSFUL':
+        return Object.assign({}, state, { reqStatus: action.payload, reqProcessed: true });
       case 'REGISTRATION_REJECTED':
-        return Object.assign({}, state, { regError: action.payload });
-      case 'LOGIN_BEGINS':
-        return Object.assign({}, state, { loginProcessing: true });
-      case 'LOGIN_SUCCESSFUL':
-        return Object.assign({}, state, { loginStatus: action.payload, loginProcessed: true });
-      case 'LOGIN_UNSUCCESSFUL':
-        return Object.assign({}, state, { loginStatus: action.payload, loginProcessed: true });
-      case 'LOGIN_REJECTED':
-        return Object.assign({}, state, { loginError: action.payload });
+        return Object.assign({}, state, { reqError: action.payload });
       default:
         return state;
     }
   }
 
+  /**
+  * Reducer for login users
+  *
+  * @static
+  * @param {Object} state The initial state
+  * @param {Object} action The dispatched action
+  * @returns {Object} current state
+  * @memberof UserReducers
+  */
+  static login(state = initialState, action) {
+    switch (action.type) {
+      case 'LOGIN_BEGINS':
+        return Object.assign({}, state, { reqProcessing: true });
+      case 'LOGIN_SUCCESSFUL':
+      case 'LOGIN_UNSUCCESSFUL':
+        return Object.assign({}, state, { reqStatus: action.payload, reqProcessed: true });
+      case 'LOGIN_REJECTED':
+        return Object.assign({}, state, { reqError: action.payload });
+      default:
+        return state;
+    }
+  }
   /**
   * Reducer for adding members to a group
   *
@@ -62,6 +68,7 @@ export default class UserReducers {
       case 'ADD_MEMBERS_BEGINS':
         return Object.assign({}, state, { reqProcessing: true });
       case 'MEMBERS_ADDED':
+      case 'ADD_MEMBERS_FAILED':
         return Object.assign({}, state, { reqStatus: action.payload, reqProcessed: true });
       case 'ADD_MEMBERS_REJECTED':
         return Object.assign({}, state, { reqError: action.payload });
@@ -84,6 +91,7 @@ export default class UserReducers {
       case 'GET_MEMBERS_BEGINS':
         return Object.assign({}, state, { reqProcessing: true });
       case 'GOT_MEMBERS':
+      case 'GET_MEMBERS_FAILED':
         return Object.assign({}, state, { reqStatus: action.payload, reqProcessed: true });
       case 'GET_MEMBERS_REJECTED':
         return Object.assign({}, state, { reqError: action.payload });

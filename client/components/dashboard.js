@@ -14,20 +14,14 @@ class Dashboard extends Component {
     localStorage.setItem('groupName', groupName);
   }
   componentDidMount() {
-    this.props.getTotalGroups(JSON.parse(localStorage.user).user)
-    if (localStorage.groupOffset) {
-      this.props.getGroups(JSON.parse(localStorage.user).user, localStorage.groupOffset, LIMIT);
-    } else {
-      this.props.getGroups(JSON.parse(localStorage.user).user, 0, LIMIT);
+      this.props.getGroups(JSON.parse(localStorage.user).id, LIMIT, 0, JSON.parse(localStorage.user).token)
     }
-  }
 
   handlePageClick(data) {
     let selected = data.selected;
     let offset = Math.ceil(selected * LIMIT);
-    localStorage.setItem('groupOffset', offset);
     this.props.getGroups(JSON.parse(localStorage.user).user, offset, LIMIT);
-  };
+  }
 
   render() {
     let dashboard;
@@ -42,32 +36,36 @@ class Dashboard extends Component {
         dashboard = <div className="center">Could not load groups. Kindly check your internet connection</div>      
       }
       if (this.props.usersGroups.reqProcessed) {
-        if (this.props.usersGroups.reqStatus.message.length > 0) {
-          dashboard = this.props.usersGroups.reqStatus.message.map((group) => {
-            return (<div className="col s12 m6" key={group.id}>
+        if (this.props.usersGroups.reqStatus.message.rows !== undefined) {
+          if (this.props.usersGroups.reqStatus.message.rows.length > 0) {
+            dashboard = this.props.usersGroups.reqStatus.message.rows.map((group) => {
+              return (<div className="col s12 m6" key={group.id}>
                         <div className="card">
                           <div className="card-content grey lighten-4 text">
                             <span className="card-title">{group.groupname}</span>
-                            <p>{group.groupmembers.length} group members</p>
+                            <p>{group.description}</p>
                           </div>
                           <div className="card-action grey lighten-4">
                             <Link to="messageboard" className="red-text text-accent-1" onClick={this.setGroupIDHandler.bind(this, group.id, group.groupname)}>View Message Board</Link>
                           </div>
                         </div>
                       </div>);
-          });
+             });
+            } else {
+                dashboard = <div className="center">You do not belong to any group yet</div>
+          }
         } else {
-          dashboard = <div className="center">You do not belong to any group yet</div>
+            dashboard = <div className="center">You do not belong to any group yet</div>
         }
       } 
     }
     
-    if (this.props.totalGroups.reqStatus.message !== undefined) {
+    if (this.props.usersGroups.reqStatus.message !== undefined) {
       pagination =       <ReactPaginate previousLabel={'Prev'}
                       nextLabel={'Next'}
                       breakLabel={'...'}
                       breakClassName={"break-me"}
-                      pageCount={Math.ceil(this.props.totalGroups.reqStatus.message/LIMIT)}
+                      pageCount={Math.ceil(this.props.usersGroups.reqStatus.message.count/LIMIT)}
                       marginPagesDisplayed={2}
                       pageRangeDisplayed={5}
                       onPageChange={this.handlePageClick.bind(this)}
@@ -78,7 +76,9 @@ class Dashboard extends Component {
     return (
     <div className="row group-cards">
       {dashboard}
-      {pagination}
+      <div id="paginate">
+        {pagination}
+      </div>
     </div>
     );
   }
@@ -86,8 +86,7 @@ class Dashboard extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    usersGroups: state.usersGroups,
-    totalGroups: state.totalGroups
+    usersGroups: state.usersGroups
   };
 }
 

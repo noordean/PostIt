@@ -7,42 +7,39 @@ import SideNav from './sidenav';
 import Home from './home';
 import ReactPaginate from 'react-paginate';
 
-const LIMIT = 10;
 class MessageBoard extends Component {
-  componentDidMount() {
-    if (localStorage.messageOffset) {
-      this.props.getMessages(localStorage.groupID, JSON.parse(localStorage.user).token, localStorage.messageOffset, LIMIT); 
-    } else {
-      this.props.getMessages(localStorage.groupID, JSON.parse(localStorage.user).token, 0, LIMIT );
+  constructor(props) {
+    super(props);
+    this.state = {
+      msgStatus: 'Normal'
     }
-    this.props.getGroupMembers(localStorage.groupID);
-    this.props.getTotalMessages(localStorage.groupID);
   }
-  componentWillUnmount() {
-    this.props.groupsMessages.reqStatus = [];
-    this.props.groupsMessages.reqError = null;
-    this.props.groupsMessages.reqProcessed = false;
-    this.props.groupsMessages.reqProcessing = false;
-  }
+  componentDidMount() {
+    this.props.getGroupMembers(localStorage.groupID, JSON.parse(localStorage.user).token);
+    this.props.getMessages(localStorage.groupID, JSON.parse(localStorage.user).token);
+    }
+
   postMessageHandler(event) {
     event.preventDefault();
     const message = encodeURI(this.refs.msgInput.value);
     if (this.refs.msgInput.value.trim().length !== 0) {
-      this.props.postGroupMessage(localStorage.groupID, message, JSON.parse(localStorage.user).token);
+      this.props.postGroupMessage(localStorage.groupID, message, this.state.msgStatus, JSON.parse(localStorage.user).token);
       this.refs.msgInput.value = '';
+      window.location.reload();
     }
   }
-  handlePageClick(data) {
-    let selected = data.selected;
-    let offset = Math.ceil(selected * LIMIT);
-    localStorage.setItem('messageOffset', offset);
-    this.props.getMessages(localStorage.groupID, JSON.parse(localStorage.user).token, offset, LIMIT)
-  };
+
+  getMsgStatus(event) {
+    this.setState({
+      msgStatus: event.target.value
+    });
+  }
+
   render() {
-    let pagination;
     if (!localStorage.user) {
       return <Home/>
     }
+    let groupMembers = [];
     let messageBoard;
       if (this.props.groupsMessages.reqProcessing) {
          messageBoard = <div className="center">Loading messages...</div>
@@ -51,8 +48,8 @@ class MessageBoard extends Component {
          messageBoard = <div className="center">Could not load messages. Kindly check your internet connection</div>      
       }
       if (this.props.groupsMessages.reqProcessed) {
-        if (this.props.groupsMessages.reqStatus.length > 0) {
-          messageBoard = this.props.groupsMessages.reqStatus.map((message) => {
+        if (this.props.groupsMessages.reqStatus.messages.length > 0) {
+          messageBoard = this.props.groupsMessages.reqStatus.messages.map((message) => {
             return (<div  key={message.id}>
                     <div className="row">
                       <div className="col s10">
@@ -60,7 +57,10 @@ class MessageBoard extends Component {
                         <p className="col-lg-10" className="msgTxt">{decodeURI(message.message)}</p>
                       </div>
                       <div className="col s2">
-                        <small className="pull-right time"><i className="fa fa-clock-o"></i>{new Date(message.createdAt).toLocaleString()}</small>
+                        <div>
+                           <div><small className="pull-right time"><i className="fa fa-clock-o"></i>{new Date(message.createdAt).toLocaleString()}</small></div>
+                           <div><small className="pull-right time red-text"><i className="fa fa-clock-o"></i>{message.priority}</small></div>
+                       </div>
                       </div>
                     </div>
                     <hr/>
@@ -71,40 +71,45 @@ class MessageBoard extends Component {
           messageBoard = <div className="center">This group does not contain any message</div>
         }
       } 
-
-    let members = [];
-    if (this.props.groupMembers.reqProcessed) {
-      if (this.props.groupMembers.reqStatus.message.length > 0) {
-        members = this.props.groupMembers.reqStatus.message[0].groupmembers;
+    
+      if (this.props.groupMembers.reqProcessed) {
+        if (this.props.groupMembers.reqStatus.message.length > 0) {
+          this.props.groupMembers.reqStatus.message.forEach((member) => {
+            groupMembers.push(member.username);
+          });
+        }
       }
-    }
 
-   if (this.props.totalMessages.reqStatus.message !== undefined) {
-      pagination =       <ReactPaginate previousLabel={'Prev'}
-                      nextLabel={'Next'}
-                      breakLabel={'...'}
-                      breakClassName={"break-me"}
-                      pageCount={Math.ceil(this.props.totalMessages.reqStatus.message/LIMIT)}
-                      marginPagesDisplayed={2}
-                      pageRangeDisplayed={5}
-                      onPageChange={this.handlePageClick.bind(this)}
-                      containerClassName={"pagination"}
-                      subContainerClassName={"pages pagination"}
-                      activeClassName={"active"} />
-   }
     return (
       <div>
-        <SideNav members={members} groupName={localStorage.groupName}/>
+        <SideNav members={groupMembers} groupName={localStorage.groupName}/>
         <div className="row group-cards">
           <div className="col s3">
           </div>
           <div className="col s9">
-           <div className="row" id="checkw">
+            <div id="msgarea">
+              {messageBoard}
+            </div>
+           <div className="row" id="postArea">
               <form className="col s12" id="textareaForm">
                 <div className="row">
-                  <div className="input-field col s10">
-                    <textarea id="textarea1" className="materialize-textarea white" ref="msgInput"></textarea>
+                  <div className="input-field col s8">
+                    <textarea id="textarea1" ref="msgInput"></textarea>
                     <label htmlFor="textarea1">Message</label>
+                  </div>
+                  <div className="col s2">
+                    <p>
+                      <input name="group1" type="radio" id="test1" value="Normal" onClick={this.getMsgStatus.bind(this)}/>
+                      <label htmlFor="test1">Normal</label>
+                    </p>
+                    <p>
+                      <input name="group1" type="radio" id="test2" value="Urgent" onClick={this.getMsgStatus.bind(this)}/>
+                      <label htmlFor="test2">Urgent</label>
+                    </p>
+                    <p>
+                      <input name="group1" type="radio" id="test3" value="Critical" onClick={this.getMsgStatus.bind(this)}/>
+                      <label htmlFor="test3">Critical</label>
+                    </p>
                   </div>
                   <div className="input-field col s2">
                     <a href="#" className="btn waves-effect waves-light col s12 red darken-4" onClick={this.postMessageHandler.bind(this)}>Post</a>
@@ -112,8 +117,6 @@ class MessageBoard extends Component {
                 </div>
               </form>
             </div>
-            {messageBoard}
-            {pagination}
           </div>
         </div>
       </div>
@@ -123,10 +126,9 @@ class MessageBoard extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    groupsMessages: state.groupsMessages,
-    groupMembers: state.groupMembers,
-    postMessage: state.postMessage,
-    totalMessages: state.totalMessages
+      groupsMessages: state.groupMessages,
+      groupMembers: state.groupMembers,
+      postMessage: state.postMessage,
   };
 }
 
@@ -134,8 +136,7 @@ const matchDispatchToProps = (dispatch) => {
   return bindActionCreators({
     getMessages: MessageActions.getMessages,
     getGroupMembers: UserActions.getGroupMembers,
-    postGroupMessage: MessageActions.postGroupMessage,
-    getTotalMessages: MessageActions.getTotalMessages}, dispatch);
+    postGroupMessage: MessageActions.postGroupMessage}, dispatch);
 }
 
 export default connect(mapStateToProps, matchDispatchToProps)(MessageBoard);

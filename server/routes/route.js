@@ -17,12 +17,8 @@ router.get('/api/user/:userID/:limit/:offset/groups', groupController.getUserGro
 router.delete('/api/group/:groupID', groupController.deleteGroup);
 router.delete('/api/message/:messageID', messageController.deleteMessage);
 
-router.get('/', (req, res) => {
-  res.send('PostIt API running...');
-});
-
-router.get('*', (req, res) => {
-  res.send('Page Not Found');
-});
+// router.get('*', (req, res) => {
+//   res.send('Page Not Found');
+// });
 
 export default router;

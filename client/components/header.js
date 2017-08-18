@@ -9,8 +9,6 @@ class Header extends Component{
   logoutHandler(event) {
     event.preventDefault();
     localStorage.removeItem('user');
-    localStorage.removeItem('groupOffset');
-    localStorage.removeItem('messageOffset');
     browserHistory.push('/');
     window.location.reload();
   }
@@ -18,19 +16,13 @@ class Header extends Component{
     event.preventDefault();
     const groupName = this.refs.groupNameInput.value;
     const description = this.refs.descriptionInput.value;
-    const groupMembers = this.refs.autoInput.value.split(' ');
     const token = JSON.parse(localStorage.user).token
-    if (groupMembers[0].length === 0) {
-      this.refs.errMsg.innerHTML = 'Please select members to add';
-    } else {
-      this.props.createGroup(groupName, description, groupMembers, token)
-      .then(() => {
-        if (this.props.group.groupStatus.message === 'Group successfully created') {
-          window.location.reload();
-        }
-      })
-      this.refs.errMsg.innerHTML = '';
-    }
+    this.props.createGroup(groupName, description, token)
+    .then(() => {
+      if (this.props.group.groupStatus.message === 'Group successfully created') {
+        window.location.reload();
+      }
+    });
   }
   render() {
     let errorMsg = <div className="center"></div>
@@ -53,7 +45,6 @@ class Header extends Component{
             <div className="modal-content">
               <form className="group-form">
                 <div className="row">
-                  <div ref="errMsg" className="center"></div>
                   {errorMsg}
                   <div className="input-field col s12">
                     <input type="text" ref="groupNameInput"/>
@@ -66,12 +57,6 @@ class Header extends Component{
                     <label htmlFor="password">Description</label>
                   </div>
                 </div>
-                <div className="row">
-                  <div className="input-field col s12">
-                  <div id="chip" className="chips chips-autocomplete"></div>
-                  <input type='hidden'  id="getChips" ref="autoInput"/>
-                </div>
-              </div>
               <div className="row">
                 <div className="input-field col s12">
                   <a href="#" className="btn waves-effect waves-light col s12 red darken-4" onClick={this.createGroup.bind(this)}>Create</a>
@@ -101,7 +86,7 @@ class Header extends Component{
 
     const guestHeader = (
           <nav>
-            <div className="nav-wrapper navbar-fixed red darken-4">
+            <div className="nav-wrapper red darken-4">
               <Link  id="navLogo" href="/" className="brand-logo left">PostIt</Link>
               <ul className="right">
                 <li><Link to="/signup">Join PostIt</Link></li>

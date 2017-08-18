@@ -12,32 +12,32 @@ class SignIn extends Component{
     const password = this.refs.passwordInput.value;
     this.props.loginUser(username, password)
     .then(() => {
-      if (this.props.user.loginStatus.message === 'You are now logged in') {
-       localStorage.setItem('user', JSON.stringify(this.props.user.loginStatus));
+      if (this.props.userLogin.reqStatus.message === 'You are now logged in') {
+       localStorage.setItem('user', JSON.stringify(this.props.userLogin.reqStatus));
         browserHistory.push('/dashboard');
         window.location.reload();
       }
     })
   }
   componentWillUnmount() {
-    this.props.user.loginStatus = {};
-    this.props.user.loginError = null;
-    this.props.user.loginProcessed = false;
-    this.props.user.loginProcessing = false;
+    this.props.userLogin.reqStatus = {};
+    this.props.userLogin.reqError = null;
+    this.props.userLogin.reqProcessed = false;
+    this.props.userLogin.reqProcessing = false;
   }
   render() {
 		let errorMsg = <div></div>;
-		if (this.props.user.loginProcessing) {
+		if (this.props.userLogin.reqProcessing) {
 			errorMsg = <div className="error-message">Processing user for login...</div>;
 		}
-		if (this.props.user.loginProcessed) {
-			if (this.props.user.loginStatus.message === 'You are now logged in') {
-			  errorMsg = <div className="error-message gr">{this.props.user.loginStatus.message}</div>;
+		if (this.props.userLogin.reqProcessed) {
+			if (this.props.userLogin.reqStatus.message === 'You are now logged in') {
+			  errorMsg = <div className="error-message gr">{this.props.userLogin.reqStatus.message}</div>;
 			} else {
-			  errorMsg = <div className="error-message re">{this.props.user.loginStatus.message}</div>;
+			  errorMsg = <div className="error-message re">{this.props.userLogin.reqStatus.message}</div>;
 			}
 		}
-		if (this.props.user.loginError !== null) {
+		if (this.props.userLogin.reqError !== null) {
 			errorMsg = <div className="error-message re">An unexpected error occured. Kindly check your internet connection</div>;
 		}
 
@@ -48,7 +48,7 @@ class SignIn extends Component{
               <form className="login-form" onSubmit={this.loginHandler.bind(this)}>
                 <div className="row">
                 <div className="input-field col s12 center">
-                  <img id="login-img" src="public/image/login.jpg" alt="" className="circle responsive-img valign profile-image-login"/>
+                  <img id="login-img" src="/public/image/login.jpg" alt="" className="circle responsive-img valign profile-image-login"/>
                   {errorMsg}
                 </div>
               </div>
@@ -74,7 +74,7 @@ class SignIn extends Component{
         </div>
         <div className="row">
           <div className="input-field col s12">
-            <input type="submit" value="Login" className="btn waves-effect waves-light col s12 red darken-4"/>
+            <input type="submit" value="Login" className="btn col s12 red darken-4"/>
           </div>
         </div>
         <div className="row">
@@ -95,7 +95,7 @@ class SignIn extends Component{
 
 const mapStateToProps = (state) => {
   return {
-    user: state.user
+    userLogin: state.userLogin
   };
 }
 

@@ -11,22 +11,28 @@ export default class UserActions {
   * @param {String} username The username of the user
   * @param {String} email The email of the user
   * @param {String} password The password of the user
+  * @param {String} phoneNumber The phone number of the user
   * @returns {Object} dispatch object
   * @memberof UserActions
   */
-  static registerUser(username, email, password) {
+  static registerUser(username, email, password, phoneNumber) {
     return (dispatch) => {
       dispatch({ type: 'REGISTRATION_BEGINS' });
-      return axios.post('https://postit-api.herokuapp.com/api/user/signup', {
+      return axios.post('/api/user/signup', {
         username,
         email,
-        password
+        password,
+        phoneNumber
       })
         .then((response) => {
           dispatch({ type: 'REGISTRATION_SUCCESSFUL', payload: response.data });
         })
         .catch((err) => {
-          dispatch({ type: 'REGISTRATION_REJECTED', payload: err });
+          if (err.response.data.message) {
+            dispatch({ type: 'REGISTRATION_UNSUCCESSFUL', payload: err.response.data });
+          } else {
+            dispatch({ type: 'REGISTRATION_REJECTED', payload: err });
+          }
         });
     };
   }
@@ -43,18 +49,19 @@ export default class UserActions {
   static loginUser(username, password) {
     return (dispatch) => {
       dispatch({ type: 'LOGIN_BEGINS' });
-      return axios.post('https://postit-api.herokuapp.com/api/user/signin', {
+      return axios.post('api/user/signin', {
         username,
         password
       })
         .then((response) => {
-          if (response.data.message === 'You are now logged in') {
-            return dispatch({ type: 'LOGIN_SUCCESSFUL', payload: response.data });
-          }
-          return dispatch({ type: 'LOGIN_UNSUCCESSFUL', payload: response.data });
+          dispatch({ type: 'LOGIN_SUCCESSFUL', payload: response.data });
         })
         .catch((err) => {
-          return dispatch({ type: 'LOGIN_REJECTED', payload: err });
+          if (err.response.data.message) {
+            dispatch({ type: 'LOGIN_UNSUCCESSFUL', payload: err.response.data });
+          } else {
+            dispatch({ type: 'LOGIN_REJECTED', payload: err });
+          }
         });
     };
   }
@@ -64,18 +71,27 @@ export default class UserActions {
   *
   * @static
   * @param {Integer} groupID The id of the group to get members for
+  * @param {String} token the login token
   * @returns {Object} dispatch object
   * @memberof UserActions
   */
-  static getGroupMembers(groupID) {
+  static getGroupMembers(groupID, token) {
     return (dispatch) => {
       dispatch({ type: 'GET_MEMBERS_BEGINS' });
-      return axios.get(`https://postit-api.herokuapp.com/api/group/${groupID}/members`)
+      return axios.get(`/api/group/${groupID}/user`, {
+        headers: {
+          token
+        }
+      })
         .then((response) => {
           dispatch({ type: 'GOT_MEMBERS', payload: response.data });
         })
         .catch((err) => {
-          dispatch({ type: 'GET_MEMBERS_REJECTED', payload: err });
+          if (err.response.data.message) {
+            dispatch({ type: 'GET_MEMBERS_FAILED', payload: err.response.data });
+          } else {
+            dispatch({ type: 'GET_MEMBERS_REJECTED', payload: err });
+          }
         });
     };
   }
@@ -85,24 +101,28 @@ export default class UserActions {
   *
   * @static
   * @param {Integer} groupID The id of the group to add members to
-  * @param {String} usernames The usernames of the members to add
+  * @param {String} userId The id's of the users to add
   * @param {String} token The JWToken to access the endpoint
   * @returns {Object} dispatch object
   * @memberof UserActions
   */
-  static addGroupMembers(groupID, usernames, token) {
+  static addGroupMembers(groupID, userId, token) {
     return (dispatch) => {
       dispatch({ type: 'ADD_MEMBERS_BEGINS' });
-      return axios.post(`https://postit-api.herokuapp.com/api/group/${groupID}/user`, {
+      return axios.post(`/api/group/${groupID}/user`, {
         groupID,
-        usernames,
+        userId,
         token
       })
         .then((response) => {
           dispatch({ type: 'MEMBERS_ADDED', payload: response.data });
         })
         .catch((err) => {
-          dispatch({ type: 'ADD_MEMBERS_REJECTED', payload: err });
+          if (err.response.data.message) {
+            dispatch({ type: 'ADD_MEMBERS_FAILED', payload: err.response.data });
+          } else {
+            dispatch({ type: 'ADD_MEMBERS_REJECTED', payload: err });
+          }
         });
     };
   }

@@ -74,10 +74,11 @@ export default class UserClass {
  * @return {Object} retrievedData
  */
   static getAllUsers(usernames, done) {
+    const users = usernames.split(' ');
     User.findAll({
       where: {
         username: {
-          $notIn: usernames
+          $notIn: users
         }
       }
     }).then((data) => {

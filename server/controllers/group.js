@@ -34,7 +34,15 @@ export default class GroupController {
             if (group[1] === false) {
               res.status(409).json({ message: 'There is already an existing group with this name' });
             } else {
-              res.status(201).json({ message: 'Group successfully created', id: group[0].id, name: group[0].groupname, createdby: group[0].createdby });
+              userDbInstance.getUser(decode.username, (user) => {
+                if (user.length === 0) {
+                  res.status(409).json({ message: 'Invalid user detected' });
+                } else {
+                  userGroupDbInstance.addUser(group[0].id, user[0].id, () => {
+                    res.status(201).json({ message: 'Group successfully created', id: group[0].id, name: group[0].groupname, createdby: group[0].createdby });
+                  });
+                }
+              });
             }
           });
         } else {
@@ -65,33 +73,33 @@ export default class GroupController {
         if (group.length === 0) {
           res.status(404).json({ message: 'Invalid group id supplied' });
         } else {
-          userDbInstance.getUserById(userId, (user) => {
-            if (user.length === 0) {
-              res.status(404).json({ message: 'Invalid user detected' });
-            } else {
-              jwt.verify(token, JWT_SECRET, (err, decode) => {
-                if (decode !== undefined) {
-                  if (decode.username !== group[0].createdby) {
-                    res.status(401).json({ message: 'Only the creator of groups can add members' });
-                  } else {
-                    if (Array.isArray(userId)) {
-                      if (userId.length === 1) {
-                        userGroupDbInstance.addUser(groupId, userId[0], (useR) => {
-                          if (useR[1] === true) {
-                            res.status(201).json({ message: 'User successfully added', userAdded: useR[0] });
-                          } else {
-                            res.status(409).json({ message: 'User already in the group' });
-                          }
-                        });
+          jwt.verify(token, JWT_SECRET, (err, decode) => {
+            if (decode !== undefined) {
+              if (decode.username !== group[0].createdby) {
+                res.status(401).json({ message: 'Only the creator of groups can add members' });
+              } else {
+                if (Array.isArray(userId)) {
+                  if (userId.length === 1) {
+                    userGroupDbInstance.addUser(groupId, userId[0], (useR) => {
+                      if (useR[1] === true) {
+                        res.status(201).json({ message: 'User successfully added', userAdded: useR[0] });
                       } else {
-                        userId.forEach((id) => {
-                          userGroupDbInstance.addUser(groupId, id, () => {
-                          });
-                        });
+                        res.status(409).json({ message: 'User already in the group' });
                       }
-                      res.status(201).json({ message: 'Users successfully added' });
-                    }
-                    if (!Array.isArray(userId)) {
+                    });
+                  } else {
+                    userId.forEach((id) => {
+                      userGroupDbInstance.addUser(groupId, id, () => {
+                      });
+                    });
+                    res.status(201).json({ message: 'Users successfully added' });
+                  }
+                }
+                if (!Array.isArray(userId)) {
+                  userDbInstance.getUserById(userId, (user) => {
+                    if (user.length === 0) {
+                      res.status(404).json({ message: 'Invalid user detected' });
+                    } else {
                       userGroupDbInstance.addUser(groupId, userId, (userr) => {
                         if (userr[1] === true) {
                           res.status(201).json({ message: 'User successfully added', userAdded: userr[0] });
@@ -100,11 +108,11 @@ export default class GroupController {
                         }
                       });
                     }
-                  }
-                } else {
-                  res.status(401).json({ message: 'Access denied!. Kindly login before adding user' });
+                  });
                 }
-              });
+              }
+            } else {
+              res.status(401).json({ message: 'Access denied!. Kindly login before adding user' });
             }
           });
         }

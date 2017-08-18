@@ -8,6 +8,7 @@
     "test": "jest",
     "server-pre-test": "nyc --reporter=html --reporter=text mocha --compilers js:babel-core/register ./server/tests/**/*.js --timeout 100000",
     "clean-db": "sequelize db:migrate:undo:all && sequelize db:migrate",
+    "clean-db-prod": "NODE_ENV=production sequelize db:migrate:undo:all && NODE_ENV=production sequelize db:migrate",
     "setup-test": "NODE_ENV=test npm run clean-db && NODE_ENV=test sequelize db:seed:all",
     "server-test": "npm run setup-test && npm run server-pre-test",
     "start": "babel-node -- server/server.js",

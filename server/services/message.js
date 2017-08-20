@@ -1,12 +1,12 @@
 import db from '../models';
 
-const Message = db.Message;
+const Messages = db.Message;
 
 /**
- * class MessageClass
+ * class Message: interracts with the Message table
  * @class
  */
-export default class MessageClass {
+export default class Message {
   /**
  * @description: save message to database
  * @param {Number} groupId the id of the group to post to
@@ -17,13 +17,13 @@ export default class MessageClass {
  * @return {Object} insertedData
  */
   static postMessage(groupId, postedby, message, priority, done) {
-    return Message.create({
+    return Messages.create({
       groupId,
       postedby,
       message,
       priority
-    }).then((group) => {
-      done(group);
+    }).then((msg) => {
+      done(msg);
     }).catch((err) => {
       done({ err });
     });
@@ -36,7 +36,7 @@ export default class MessageClass {
  * @return {Object} retrievedData
  */
   static getMessageById(messageId, done) {
-    Message.findAll({
+    Messages.findAll({
       where: {
         id: messageId
       }
@@ -48,12 +48,12 @@ export default class MessageClass {
   }
   /**
  * @description: delete a message of message id
- * @param {Number} messageId
+ * @param {Number} messageId id of the message to delete
  * @param {Function} done callback
  * @return {Object} deletedData
  */
   static deleteMessage(messageId, done) {
-    Message.destroy({
+    Messages.destroy({
       where: {
         id: messageId
       }

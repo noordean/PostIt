@@ -18,8 +18,10 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(webpackMiddleware(webpack(webpackConfig)));
-app.use(webpackHotMiddleware(webpack(webpackConfig)));
+if (process.env.NODE_ENV !== 'test') {
+  app.use(webpackMiddleware(webpack(webpackConfig)));
+  app.use(webpackHotMiddleware(webpack(webpackConfig)));
+}
 
 app.listen(process.env.PORT || 3333, () => {
   console.log('app running...');

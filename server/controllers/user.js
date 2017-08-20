@@ -1,140 +1,106 @@
 import dotenv from 'dotenv';
-import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import userDbInstance from '../services/user';
-import groupDbInstance from '../services/group';
-import groupUserDbInstance from '../services/groupuser';
+import user from '../services/user';
+import group from '../services/group';
+import groupUser from '../services/groupuser';
+import authenticate from '../helpers/authenticate';
 
 dotenv.config();
 const salt = bcrypt.genSaltSync(10);
-const JWT_SECRET = process.env.JWT_SECRET;
 /**
- * class UserController
+ * class User: controls all user routes
  * @class
  */
-export default class UserController {
+export default class User {
   /**
- * @description: controls api/user/signup
- * @param {Object} req
- * @param {Object} res
- * @return {Object} api response
+ * @description: controls a user's registration through route POST: api/user/signup
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * @return {Object} response containing the registered user
  */
   static signUp(req, res) {
-    const username = req.body.username;
-    const password = req.body.password;
-    const email = req.body.email;
-    const phoneNumber = req.body.phoneNumber;
-    if (password === undefined) {
-      res.status(400).json({ message: 'Password must be supplied' });
-    } else if (/^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z\d]{5,12}$/.test(password) === false) {
-      res.json({ message: 'Password must be alphanumeric and should contain 5-12 characters' });
-    } else {
-      const hashedPassword = bcrypt.hashSync(password, salt);
-      userDbInstance.saveUser(username, hashedPassword, email, phoneNumber, (user) => {
-        if (user instanceof Object) {
-          if (Array.isArray(user)) {
-            if (user[1] === false) {
-              res.status(409).json({ message: 'You already have an existing account. Kindly go and login' });
-            } else {
-              res.status(201).json({ message: 'Registration successful', id: user[0].id, username: user[0].username, email: user[0].email });
-            }
+    const [username, password, email, phoneNumber] = [req.body.username,
+      req.body.password, req.body.email, req.body.phoneNumber];
+    const hashedPassword = bcrypt.hashSync(password, salt);
+    user.saveUser(username, hashedPassword, email, phoneNumber, (users) => {
+      if (users instanceof Object) {
+        if (Array.isArray(users)) {
+          if (users[1] === false) {
+            res.status(409).json({ message: 'You already have an existing account. Kindly go and login' });
           } else {
-            res.status(500).json({ message: 'Sorry, an unexpected error occurred' });
+            res.status(201).json({ message: 'Registration successful', user: { id: users[0].id, username: users[0].username, email: users[0].email } });
           }
         } else {
-          res.status(400).json({ message: user });
+          res.status(500).json({ message: 'Sorry, an unexpected error occurred' });
         }
-      });
-    }
+      } else {
+        res.status(400).json({ message: users });
+      }
+    });
   }
 
   /**
- * @description: controls api/user/signin
- * @param {Object} req
- * @param {Object} res
- * @return {Object} api response
+ * @description: controls a user's login through route POST: api/user/signin
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * @return {Object} response containing the logged-in user
  */
   static signIn(req, res) {
-    const username = req.body.username;
-    const password = req.body.password;
-    if (username === undefined || password === undefined) {
-      res.json({ message: 'You need to provide username and password' });
-    } else {
-      userDbInstance.getUser(username, (user) => {
-        if (user.length === 0) {
-          res.status(404).json({ message: 'Invalid user!' });
-        } else {
-          let token = '';
-          if (bcrypt.compareSync(password, user[0].password)) {
-            const payload = { username };
-            token = jwt.sign(payload, JWT_SECRET, {
-              expiresIn: '720h'
-            });
-            res.status(200).json({ message: 'You are now logged in', id: user[0].id, user: username, email: user[0].email, token });
-          } else {
-            res.status(400).json({ message: 'Incorrect password' });
-          }
-        }
-        if (user instanceof Object && !Array.isArray(user)) {
-          res.status(500).json({ message: 'Sorry, unexpected error occurred' });
-        }
-      });
-    }
+    const [username, password] = [req.body.username, req.body.password];
+    user.getUser(username, (users) => {
+      if (users.length === 0) {
+        res.status(404).json({ message: 'Invalid user!' });
+      } else if (bcrypt.compareSync(password, users[0].password)) {
+        const token = authenticate.generateToken({ username, id: users[0].id });
+        res.status(200).json({ message: 'You are now logged in', user: { id: users[0].id, user: username, email: users[0].email, token } });
+      } else {
+        res.status(401).json({ message: 'Incorrect password' });
+      }
+      if (users instanceof Object && !Array.isArray(users)) {
+        res.status(500).json({ message: 'Sorry, unexpected error occurred' });
+      }
+    });
   }
 
   /**
- * @description: controls api/users to get all users
- * @param {Object} req
- * @param {Object} res
- * @return {Object} response
+ * @description: retrieves all users through route GET: api/users
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * @return {Object} response containing all users
  */
   static getAllUsers(req, res) {
-    const token = req.headers.token;
     const userrs = req.headers.userrs;
-    if (token === undefined) {
-      res.status(400).json({ message: 'You need to supply your login token' });
+    if (userrs === undefined) {
+      res.status(400).json({ message: 'users to ignore should be supplied' });
     } else {
-      jwt.verify(token, JWT_SECRET, (err, decode) => {
-        if (decode === undefined) {
-          res.status(401).json({ message: 'Access denied!. Kindly login' });
-        } else {
-          userDbInstance.getAllUsers(userrs, (users) => {
-            res.status(200).json({ message: users });
-          });
-        }
+      user.getAllUsers(userrs, (users) => {
+        res.status(200).json({ users });
       });
     }
   }
 
   /**
- * @description: controls api/users to get all users
- * @param {Object} req
- * @param {Object} res
- * @return {Object} response
+ * @description: retrieves all users in a group through route GET: api/group/:groupID/user
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * @return {Object} response containing all users of a group
  */
   static getGroupUsers(req, res) {
     const groupId = req.params.groupID;
-    const token = req.headers.token;
-    if (token === undefined || groupId === undefined) {
-      res.status(400).json({ message: 'You need to supply your login token and the groupId' });
+    if (groupId === undefined) {
+      res.status(400).json({ message: 'groupId must be supplied' });
     } else {
-      jwt.verify(token, JWT_SECRET, (err, decode) => {
-        if (decode === undefined) {
-          res.status(401).json({ message: 'Access denied!. Kindly login' });
+      group.getGroupById(groupId, (groups) => {
+        if (groups.length === 0) {
+          res.status(404).json({ message: 'Invalid group id' });
         } else {
-          groupDbInstance.getGroupById(groupId, (group) => {
-            if (group.length === 0) {
-              res.status(404).json({ message: 'Invalid group id' });
-            } else {
-              groupUserDbInstance.getGroupUsersId(groupId, (user) => {
-                if (user.length > 0) {
-                  userDbInstance.getGroupUsers(user, (username) => {
-                    res.status(200).json({ message: username });
-                  });
-                } else {
-                  res.status(404).json({ message: 'This group does not contain any member' });
-                }
+          groupUser.getGroupUsersId(groupId, (users) => {
+            if (users.length > 0) {
+              user.getGroupUsers(users, (usernames) => {
+                res.status(200).json({ users: usernames });
               });
+            } else {
+              res.status(404).json({ message: 'This group does not contain any member' });
             }
           });
         }

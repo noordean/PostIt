@@ -2,10 +2,10 @@ import db from '../models';
 
 const GroupUser = db.GroupUser;
 /**
- * class UserGroupClass
+ * class UserGroup: interract with the GroupUser table
  * @class
  */
-export default class UserGroupClass {
+export default class UserGroup {
   /**
  * @description: add user to group
  * @param {Integer} groupId the id of group to add to
@@ -46,7 +46,7 @@ export default class UserGroupClass {
 
   /**
  * @description: add user to group
- * @param {Integer} userId the id of group to get users from
+ * @param {Integer} userId id of the user to get 
  * @param {Function} done callback
  * @return {Object} retrievedData
  */
@@ -54,6 +54,26 @@ export default class UserGroupClass {
     return GroupUser.findAll({
       where: {
         userId
+      }
+    }).then((result) => {
+      done(result);
+    }).catch((err) => {
+      done({ err });
+    });
+  }
+
+  /**
+ * @description: add user to group
+ * @param {Integer} userId id of the user to get
+ * @param {Integer} groupId the id of group to get user from
+ * @param {Function} done callback
+ * @return {Object} retrievedData
+ */
+  static getUser(userId, groupId, done) {
+    return GroupUser.findAll({
+      where: {
+        userId,
+        groupId
       }
     }).then((result) => {
       done(result);

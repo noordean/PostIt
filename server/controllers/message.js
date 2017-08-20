@@ -1,84 +1,59 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-import groupDbInstance from '../services/group';
-import messageDbInstance from '../services/message';
+import group from '../services/group';
+import message from '../services/message';
+import groupUser from '../services/groupuser';
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
 
 /**
- * class MessageController
+ * class Message: controls all message routes
  * @class
  */
-export default class MessageController {
+export default class Message {
   /**
- * @description: controls api/group/:groupID/message
- * @param {Object} req
- * @param {Object} res
- * @return {Object} response
+ * @description: posts a message to a group through route POST: api/group/:groupID/message
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * @return {Object} response containing the posted message
  */
   static postMessageToGroup(req, res) {
-    const groupID = req.params.groupID;
-    const message = req.body.message;
-    const priority = req.body.priority;
-    const token = req.body.token;
-    const expectedPriority = ['Normal', 'Urgent', 'Critical'];
-    if (groupID === undefined || message === undefined || token === undefined || priority === undefined) {
-      res.status(400).json({ message: 'You need to provide the group-id, priority, your logged-in token and the message' });
-    } else if (groupID.trim().length === 0 || message.trim().length === 0) {
-      res.status(400).json({ message: 'group-id or message cannot be empty' });
-    } else if (isNaN(groupID)) {
-      res.status(400).json({ message: 'The supplied id must be an integer' });
-    } else if (expectedPriority.indexOf(priority) === -1) {
-      res.status(400).json({ message: 'Priority can either be Normal, Urgent or Critical' });
-    } else {
-      groupDbInstance.getGroupById(groupID, (group) => {
-        if (group.length === 0) {
-          res.status(404).json({ message: 'Invalid group id' });
-        } else {
-          jwt.verify(token, JWT_SECRET, (err, decode) => {
-            if (decode !== undefined) {
-              messageDbInstance.postMessage(groupID, decode.username, message, priority, (msg) => {
-                res.status(201).json({ message: 'Message posted successfully', groupID: msg.groupId, postedby: msg.postedby, content: msg.message });
-              });
-            } else {
-              res.status(401).json({ message: 'Access denied!. Kindly login before posting message' });
-            }
-          });
-        }
-      });
-    }
+    const [groupID, mssg, priority, decode] = [req.params.groupID, req.body.message,
+      req.body.priority, jwt.verify(req.headers.token || req.body.token, JWT_SECRET)];
+    group.getGroupById(groupID, (groups) => {
+      if (groups.length === 0) {
+        res.status(404).json({ message: 'Invalid group id' });
+      } else {
+        groupUser.getUser(decode.id, groupID, (member) => {
+          if (member.length > 0) {
+            message.postMessage(groupID, decode.username, mssg, priority, (msg) => {
+              res.status(201).json({ message: 'Message posted successfully', Message: { postedby: msg.postedby, content: msg.message } });
+            });
+          } else {
+            res.status(401).json({ message: 'You do not belong to this group' });
+          }
+        });
+      }
+    });
   }
 
   /**
- * @description: controls api/message/:messageID
- * @param {Object} req
- * @param {Object} res
- * @return {Object} response
+ * @description: delete a message through route DELETE: api/message/:messageID
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * @return {Object} response containing the number of deleted messages
  */
   static deleteMessage(req, res) {
     const messageID = req.params.messageID;
-    const token = req.body.token;
-    if (messageID === undefined || messageID.trim().length === 0 || token === undefined) {
-      res.json({ message: 'Message-id and your logged-in token must be provided' });
-    } else if (isNaN(messageID)) {
-      res.json({ message: 'The supplied id must be integer' });
-    } else {
-      messageDbInstance.getMessageById(messageID, (msg) => {
-        if (msg.length === 0) {
-          res.json({ message: 'Invalid message id' });
-        } else {
-          jwt.verify(token, JWT_SECRET, (err, decode) => {
-            if (decode !== undefined) {
-              messageDbInstance.deleteMessage(messageID, () => {
-                res.status(200).json({ message: 'message deleted' });
-              });
-            } else {
-              res.json({ message: 'Access denied!. Kindly login before viewing messages' });
-            }
-          });
-        }
-      });
-    }
+    message.getMessageById(messageID, (msg) => {
+      if (msg.length === 0) {
+        res.json({ message: 'Invalid message id' });
+      } else {
+        message.deleteMessage(messageID, () => {
+          res.status(200).json({ message: 'message deleted' });
+        });
+      }
+    });
   }
 }

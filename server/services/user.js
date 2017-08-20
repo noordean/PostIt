@@ -2,22 +2,23 @@ import Sequelize from 'sequelize';
 import db from '../models';
 
 const validationError = Sequelize.ValidationError;
-const User = db.User;
+const Users = db.User;
 /**
- * class User
+ * class User: interracts with User table
  * @class
  */
-export default class UserClass {
+export default class User {
   /**
  * @description: saves user to database
- * @param {String} username
- * @param {String} password
- * @param {String} email
- * @param {Function} done
+ * @param {String} username username of the user
+ * @param {String} password password of the user
+ * @param {String} email email of the user
+ * @param {String} phoneNumber phone number of the user
+ * @param {Function} done callback function
  * @return {Object} savedData
  */
   static saveUser(username, password, email, phoneNumber, done) {
-    return User.findOrCreate({
+    return Users.findOrCreate({
       where: {
         username
       },
@@ -43,12 +44,12 @@ export default class UserClass {
 
   /**
  * @description: retrieves user using the username
- * @param {String} userName
- * @param {Function} done
+ * @param {String} userName username of the user
+ * @param {Function} done callback function
  * @return {Object} retrievedData
  */
   static getUser(userName, done) {
-    User.findAll({ where: { username: userName } }).then((data) => {
+    Users.findAll({ where: { username: userName } }).then((data) => {
       done(data);
     }).catch((err) => {
       done({ err });
@@ -57,12 +58,12 @@ export default class UserClass {
 
   /**
  * @description: retrieves users using userId
- * @param {Integer} userId
- * @param {Function} done
+ * @param {Integer} userId id of the user
+ * @param {Function} done callback function
  * @return {Object} retrievedData
  */
   static getUserById(userId, done) {
-    User.findAll({ where: { id: userId } }).then((group) => {
+    Users.findAll({ where: { id: userId } }).then((group) => {
       done(group);
     });
   }
@@ -75,7 +76,7 @@ export default class UserClass {
  */
   static getAllUsers(usernames, done) {
     const users = usernames.split(' ');
-    User.findAll({
+    Users.findAll({
       where: {
         username: {
           $notIn: users
@@ -90,8 +91,8 @@ export default class UserClass {
 
   /**
  * @description: retrieves usernames of all members with userIDs
- * @param {Number} userIDs
- * @param {Function} done
+ * @param {Number} userIDs id's of the users
+ * @param {Function} done callback function
  * @return {Object} retrievedData
  */
   static getGroupUsers(userIDs, done) {
@@ -99,7 +100,7 @@ export default class UserClass {
     userIDs.forEach((user) => {
       IDs.push(user.userId);
     });
-    User.findAll({
+    Users.findAll({
       where: { id: IDs }
     }).then((data) => {
       done(data);
@@ -110,11 +111,20 @@ export default class UserClass {
 
   /**
  * @description: delete a user using the username
- * @param {String} userName
+ * @param {String} userName username of the user
+ * @param {Function} done callback function
  * @return {Object} deletedData
  */
-  static deleteUser(userName) {
-    User.destroy({ where: { username: userName } });
+  static deleteUser(userName, done) {
+    Users.destroy({
+      where: {
+        username: userName
+      }
+    }).then((user) => {
+      done(user);
+    }).catch((err) => {
+      done({ err });
+    });
   }
 }
 

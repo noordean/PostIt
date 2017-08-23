@@ -15,25 +15,22 @@ export default class GroupActions {
   * @memberof GroupActions
   */
   static createGroup(groupName, description, token) {
-    return (dispatch) => {
-      dispatch({ type: 'CREATE_GROUP_BEGINS' });
-      return axios.post('/api/group', {
+    return dispatch => axios.post('/api/v1/group', {
         groupName,
         description,
         token
       })
         .then((response) => {
-          dispatch({ type: 'GROUP_CREATED', payload: response.data });
+          dispatch({ type: 'GROUP_CREATED', payload: response.data.group });
         })
         .catch((err) => {
           if (err.response.data.message) {
             dispatch({ type: 'CREATE_GROUP_UNSUCCESSFUL', payload: err.response.data.message });
           } else {
-            dispatch({ type: 'CREATE_GROUP_REJECTED', payload: err });
+            dispatch({ type: 'CREATE_GROUP_REJECTED' });
           }
         });
-    };
-  }
+    }
 
   /**
   * Request to the API to get certain list of groups a user belongs to
@@ -47,23 +44,19 @@ export default class GroupActions {
   * @memberof GroupActions
   */
   static getGroups(userId, limit, offset, token) {
-    return (dispatch) => {
-      dispatch({ type: 'GET_GROUPS_BEGINS' });
-      return axios.get(`/api/user/${userId}/${limit}/${offset}/groups`, {
-        headers: {
-          token
-        }
+    return dispatch => axios.get(`/api/v1/user/${userId}/groups?limit=${limit}&offset=${offset}`, {
+      headers: {
+        token
+      }})
+      .then((response) => {
+        dispatch({ type: 'GOT_GROUPS', payload: response.data.groups.rows, pageCount: response.data.groups.count });
       })
-        .then((response) => {
-          dispatch({ type: 'GOT_GROUPS', payload: response.data });
-        })
-        .catch((err) => {
-          if (err.response.data.message) {
-            dispatch({ type: 'GET_GROUPS_FAILED', payload: err.response.data });
-          } else {
-            dispatch({ type: 'GET_GROUPS_REJECTED', payload: err });
-          }
-        });
-    };
-  }
+      .catch((err) => {
+        if (err.response.data.message) {
+          dispatch({ type: 'GET_GROUPS_FAILED', payload: err.response.data.message });
+        } else {
+          dispatch({ type: 'GET_GROUPS_REJECTED' });
+        }
+      });
+    }
 }

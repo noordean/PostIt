@@ -10,11 +10,10 @@ $(document).ready(() => {
     closeOnClick: false
   });
   $('.collapsible').collapsible();
-
   // getting username from database to fill autocomplete input
   const users = {};
   $('#addMembers').click(() => {
-    axios.get('/api/users', {
+    axios.get('/api/v1/users', {
       headers: {
         userrs: $('#getMembers').val(),
         token: JSON.parse(localStorage.user).token
@@ -22,13 +21,13 @@ $(document).ready(() => {
     })
       .then((response) => {
         const autoCompleteValues = {};
-        response.data.message.forEach((user) => {
+        response.data.users.forEach((user) => {
           autoCompleteValues[user.username] = null;
           users[user.username] = user.id;
         });
         $('.chips-autocomplete').material_chip({
-          placeholder: 'Enter a username',
-          secondaryPlaceholder: 'Add more members',
+          placeholder: 'Add more members',
+          secondaryPlaceholder: 'Enter a username',
           autocompleteOptions: {
             data: autoCompleteValues,
             limit: Infinity,

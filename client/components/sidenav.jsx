@@ -2,20 +2,74 @@ import React, {Component} from "react";
 import {bindActionCreators} from 'redux';
 import {Link} from 'react-router';
 import {connect} from 'react-redux';
+import PropTypes from 'prop-types';
+
 import UserActions from '../actions/user';
 
 class SideNav extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      responseMsg: '',
+      groupMembers: []
+    }
+  }
+
+  componentDidMount() {
+    this.getMembersHandler();
+  }
+
+  getMembersHandler() {
+    this.props.getGroupMembers(localStorage.groupID, JSON.parse(localStorage.user).token)
+    .then(() => {
+      if (this.props.member.members.length > 0) {
+        const newMembers = this.props.member.members.map((user) => {
+          return user.username;
+        });
+        this.setState({
+          groupMembers: newMembers
+        });
+      }
+    })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props !== nextProps) {
+    const newMembers = nextProps.member.members.map((user) => {
+      return user.username;
+    });
+      this.setState({
+        groupMembers: newMembers,
+        responseMsg: nextProps.member.responseMsg
+      });
+    }
+  }
+
   addMembersHandler(event) {
     event.preventDefault();
     const selectedMembers = this.refs.usersSelectedInput.value.split(' ');
     if (selectedMembers.length === 0) {
       this.refs.errMsg.innerHTML = "Kindly select members to add"
     } else {
+      this.setState({
+        responseMsg: 'Processing...'
+      });
       this.props.addGroupMembers(localStorage.groupID, selectedMembers, JSON.parse(localStorage.user).token)
       .then(() => {
-        const expectedMsg = this.props.addMembers.reqStatus.message;
-        if (expectedMsg === 'Users successfully added' || expectedMsg === 'User successfully added') {
-          window.location.reload()
+        if (this.props.member.reqError) {
+          this.setState({
+            responseMsg: 'Sorry, members could not be added'
+         })
+        } else if (this.props.member.responseMsg !== '') {
+          this.setState({
+            responseMsg: this.props.member.responseMsg
+          })
+        } else {
+          this.setState({
+            responseMsg: 'Members added successfully'
+          })
+          this.getMembersHandler();
+          $('#modal2').modal('close');
         }
       })
       this.refs.errMsg.innerHTML = '';
@@ -23,30 +77,19 @@ class SideNav extends Component {
   }
 
   render() {
-    let errorMsg = <div className="center"></div>
-		if (this.props.addMembers.reqProcessing) {
-			errorMsg = <div className="center">Adding members...</div>;
-		}
-		if (this.props.addMembers.reqProcessed) {
-			if (this.props.addMembers.reqStatus.message === 'Users successfully added') {
-			  errorMsg = <div className="center">{this.props.addMembers.reqStatus.message}</div>;
-			} else {
-			  errorMsg = <div className="center">{this.props.addMembers.reqStatus.message}</div>;
-			}
-		}
-		if (this.props.addMembers.reqError !== null) {
-			errorMsg = <div className="center">An unexpected error occured. Kindly check your internet connection</div>;
-		}
-    const members = this.props.members.map((member, index) => {
-      return <li key={index}><a href="#">{member}</a></li>
-    });
+    let members;
+    if (this.state.groupMembers.length > 0) {
+      members = this.state.groupMembers.map((member, index) => {
+        return <li key={index}><a href="#">{member}</a></li>
+      });
+    }
     return (
         <div>
             <div id="modal2" className="modal">
             <div className="modal-content">
               <form className="group-form">
                 <div className="center" ref="errMsg"></div>
-                {errorMsg}
+                  <div className="center">{this.state.responseMsg}</div>
                   <div className="input-field row">
                     <div id="chips" className="chips chips-autocomplete"></div>
                   </div>
@@ -63,7 +106,7 @@ class SideNav extends Component {
             <li><Link className="waves-effect waves-light btn modal-trigger red darken-4" to="/dashboard">Dashboard</Link></li>
             <li><a className="waves-effect waves-light btn modal-trigger red darken-4" href="#modal2" id="addMembers">Add members</a></li>
             <li><i className="material-icons prefix">account_circle</i><a className='dropdown-button' href="" data-activates='dropdown3'>Members<i className="material-icons right">arrow_drop_down</i></a></li>
-            <li><input type="hidden" ref="getMembersInput" id="getMembers" value={this.props.members.join(' ')}/></li>
+            <li><input type="hidden" ref="getMembersInput" id="getMembers" value={this.state.groupMembers.join(' ')}/></li>
             <li><input type="hidden" ref="usersSelectedInput" id="getChips"/></li>
           </ul>
           <ul id='dropdown3' className='dropdown-content'>
@@ -75,14 +118,23 @@ class SideNav extends Component {
   }
 }
 
+
+SideNav.propTypes = {
+  member: PropTypes.object,
+	addGroupMembers: PropTypes.func,
+	getGroupMembers: PropTypes.func
+}
+
 const mapStateToProps = (state) => {
   return {
-    addMembers: state.addMembers
+    member: state.member
   };
 }
 
 const matchDispatchToProps = (dispatch) => {
-  return bindActionCreators({ addGroupMembers: UserActions.addGroupMembers}, dispatch);
+  return bindActionCreators({
+    addGroupMembers: UserActions.addGroupMembers,
+    getGroupMembers: UserActions.getGroupMembers}, dispatch);
 }
 
 export default connect(mapStateToProps, matchDispatchToProps)(SideNav);

@@ -28,7 +28,7 @@ export default class Message {
         groupUser.getUser(decode.id, groupID, (member) => {
           if (member.length > 0) {
             message.postMessage(groupID, decode.username, mssg, priority, (msg) => {
-              res.status(201).json({ message: 'Message posted successfully', Message: { postedby: msg.postedby, content: msg.message } });
+              res.status(201).json({ message: 'Message posted successfully', Message: msg });
             });
           } else {
             res.status(401).json({ message: 'You do not belong to this group' });

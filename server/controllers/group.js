@@ -30,7 +30,7 @@ export default class Group {
             res.status(409).json({ message: 'Invalid user detected' });
           } else {
             groupUser.addUser(groups[0].id, users[0].id, () => {
-              res.status(201).json({ message: 'Group successfully created', group: { id: groups[0].id, name: groups[0].groupname, createdby: groups[0].createdby } });
+              res.status(201).json({ message: 'Group successfully created', group: { id: groups[0].id, name: groups[0].groupname, createdby: groups[0].createdby, description: groups[0].description } });
             });
           }
         });
@@ -51,25 +51,22 @@ export default class Group {
     group.getGroupById(groupId, (groups) => {
       if (groups.length === 0) {
         res.status(404).json({ message: 'Invalid group id supplied' });
+      } else if (decode.username !== groups[0].createdby) {
+        res.status(401).json({ message: 'Only the creator of groups can add members' });
+      } else if (userId.length === 1) {
+        groupUser.addUser(groupId, userId[0], (useR) => {
+          if (useR[1] === true) {
+            res.status(201).json({ message: 'User successfully added', user: useR[0] });
+          } else {
+            res.status(409).json({ message: 'User already in the group' });
+          }
+        });
       } else {
-        if (decode.username !== groups[0].createdby) {
-          res.status(401).json({ message: 'Only the creator of groups can add members' });
-        }
-        if (userId.length === 1) {
-          groupUser.addUser(groupId, userId[0], (useR) => {
-            if (useR[1] === true) {
-              res.status(201).json({ message: 'User successfully added', user: useR[0] });
-            } else {
-              res.status(409).json({ message: 'User already in the group' });
-            }
+        userId.forEach((id) => {
+          groupUser.addUser(groupId, id, () => {
           });
-        } else {
-          userId.forEach((id) => {
-            groupUser.addUser(groupId, id, () => {
-            });
-          });
-          res.status(201).json({ message: 'Users successfully added' });
-        }
+        });
+        res.status(201).json({ message: 'Users successfully added' });
       }
     });
   }

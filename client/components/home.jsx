@@ -1,5 +1,6 @@
 import React, {Component} from "react";
-import Dashboard from './dashboard';
+
+import Dashboard from './dashboard.jsx';
 
 export default class Home extends Component{
   render(){

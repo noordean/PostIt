@@ -1,12 +1,19 @@
-import 'babel-polyfill';
 import React, {Component} from "react";
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import UsersActions from '../actions/user';
 import {Link} from 'react-router';
+import PropTypes from 'prop-types';
+
+import UsersActions from '../actions/user';
+
 
 class SignUp extends Component{
-
+	constructor(props) {
+		super(props);
+		this.state = {
+			signUpResponse: ''
+		}
+	}
 	registerHandler(event) {
 		event.preventDefault();
 		const username = this.refs.usernameInput.value;
@@ -18,7 +25,24 @@ class SignUp extends Component{
 			this.refs.clientError.innerHTML = 'The two passwords did not match';
 		} else {
 			this.refs.clientError.innerHTML = '';
-		  this.props.registerUser(username, email, password, phone);
+		  this.props.registerUser(username, email, password, phone)
+			.then(() => {
+				if (this.props.userRegistration.reqStatus.message === 'Registration successful') {
+					this.refs.formElement.reset();
+					this.setState({
+						signUpResponse: this.props.userRegistration.reqStatus.message
+					})
+				} else {
+					this.setState({
+						signUpResponse: this.props.userRegistration.reqStatus.message
+					});
+				}
+				if (this.props.userRegistration.reqError) {
+					this.setState({
+						signUpResponse: 'Sorry, unexpected error occured'
+					})
+				}
+			});
 		}
 	}
   
@@ -31,25 +55,15 @@ class SignUp extends Component{
 	}
 
 	render() {
-		let errorMsg = <div></div>;
-		if (this.props.userRegistration.reqProcessing) {
-			errorMsg = <div className="error-message">Registering user...</div>;
-		}
-		if (this.props.userRegistration.reqProcessed) {
-			if (this.props.userRegistration.reqStatus.message === 'Registration successful') {
-			  errorMsg = <div className="error-message gr">{this.props.userRegistration.reqStatus.message}, Click <Link to="/signin"> here </Link> to login</div>;
-			} else {
-			  errorMsg = <div className="error-message re">{this.props.userRegistration.reqStatus.message}</div>;
-			}
-		}
-		if (this.props.userRegistration.reqError !== null) {
-			errorMsg = <div className="error-message re">An unexpected error occured. Kindly check your internet connection</div>;
+		let errorMsg = <div>{this.state.signUpResponse}</div>
+		if (this.state.signUpResponse === 'Registration successful') {
+			errorMsg = <div>Registration successful, click <Link to='/signin'>here</Link> to login</div>
 		}
     return (
 						<div className="container">
   						<div id="register-page" className="row">
     						<div className="col s12 z-depth-4 card-panel">
-      						<form className="register-form" onSubmit={this.registerHandler.bind(this)}>
+      						<form className="register-form" onSubmit={this.registerHandler.bind(this)} ref="formElement">
         						<div className="row">
           						<div className="input-field col s12 center">
 												<img id="reg-img" src="client/src/public/image/regsiter.jpg" alt="register img" className="circle responsive-img valign profile-image-login"/>
@@ -104,6 +118,11 @@ class SignUp extends Component{
 					</div>
     );
   }
+}
+
+SignUp.propTypes = {
+  userRegistration: PropTypes.object,
+	registerUser: PropTypes.func
 }
 
 const mapStateToProps = (state) => {

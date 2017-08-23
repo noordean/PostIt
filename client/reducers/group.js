@@ -1,8 +1,7 @@
 const initialState = {
-  reqStatus: {},
-  reqProcessing: false,
-  reqProcessed: false,
-  reqError: null
+  groups: [],
+  responseMsg: '',
+  reqError: false
 };
 
 /**
@@ -18,43 +17,20 @@ export default class GroupReducers {
   * @returns {Object} current state
   * @memberof GroupReducers
   */
-  static createGroup(state = {
-    groupStatus: {},
-    groupProcessing: false,
-    groupProcessed: false,
-    groupError: null
-  }, action) {
+  static groupReducer(state = initialState, action) {
     switch (action.type) {
-      case 'CREATE_GROUP_BEGINS':
-        return Object.assign({}, state, { groupProcessing: true });
-      case 'GROUP_CREATED':
-      case 'CREATE_GROUP_UNSUCCESSFUL':
-        return Object.assign({}, state, { groupStatus: action.payload, groupProcessed: true });
-      case 'CREATE_GROUP_REJECTED':
-        return Object.assign({}, state, { groupError: action.payload });
-      default:
-        return state;
-    }
-  }
-
-  /**
-  * Reducer for getting groups for a user
-  *
-  * @static
-  * @param {Object} state The initial state
-  * @param {Object} action The dispatched action
-  * @returns {Object} current state
-  * @memberof GroupReducers
-  */
-  static getGroups(state = initialState, action) {
-    switch (action.type) {
-      case 'GET_GROUPS_BEGINS':
-        return Object.assign({}, state, { reqProcessing: true });
       case 'GOT_GROUPS':
+        return { ...state, groups: action.payload, pageCount: action.pageCount, responseMsg: '' };
+      case 'GROUP_CREATED':
+        const newState = { ...state, responseMsg: '' };
+        newState.groups = [...newState.groups, action.payload]
+        return newState;
+      case 'CREATE_GROUP_UNSUCCESSFUL':
       case 'GET_GROUPS_FAILED':
-        return Object.assign({}, state, { reqStatus: action.payload, reqProcessed: true });
+        return { ...state, responseMsg: action.payload }
+      case 'CREATE_GROUP_REJECTED':
       case 'GET_GROUPS_REJECTED':
-        return Object.assign({}, state, { reqError: action.payload });
+        return { ...state, reqError: true }
       default:
         return state;
     }

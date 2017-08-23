@@ -1,8 +1,7 @@
 const initialState = {
-  reqStatus: {},
-  reqProcessing: false,
-  reqProcessed: false,
-  reqError: null
+  responseMsg: '',
+  messages: [],
+  reqError: false
 };
 
 /**
@@ -18,38 +17,20 @@ export default class MessageReducers {
   * @returns {Object} current state
   * @memberof MessageReducers
   */
-  static postMessage(state = initialState, action) {
+  static messageReducer(state = initialState, action) {
     switch (action.type) {
-      case 'POST_MESSAGE_BEGINS':
-        return Object.assign({}, state, { reqProcessing: true });
-      case 'MESSAGE_POSTED':
-      case 'POST_MESSAGE_FAILED':
-        return Object.assign({}, state, { reqStatus: action.payload, reqProcessed: true });
-      case 'POST_MESSAGE_REJECTED':
-        return Object.assign({}, state, { reqError: action.payload });
-      default:
-        return state;
-    }
-  }
-
-  /**
-  * Reducer for getting total number of messages of a group
-  *
-  * @static
-  * @param {Object} state The initial state
-  * @param {Object} action The dispatched action
-  * @returns {Object} current state
-  * @memberof MessageReducers
-  */
-  static getMessages(state = initialState, action) {
-    switch (action.type) {
-      case 'GET_ALL_MESSAGES_BEGINS':
-        return Object.assign({}, state, { reqProcessing: true });
       case 'GOT_ALL_MESSAGES':
+        return { ...state, messages: action.payload, responseMsg: '' }
+      case 'MESSAGE_POSTED':
+        const newState = { ...state, responseMsg: '' };
+        newState.messages = [...newState.messages, action.payload]
+        return newState;
       case 'GET_ALL_MESSAGES_FAILED':
-        return Object.assign({}, state, { reqStatus: action.payload, reqProcessed: true });
+      case 'POST_MESSAGE_FAILED':
+        return { ...state, responseMsg: action.payload }
+      case 'POST_MESSAGE_REJECTED':
       case 'GET_ALL_MESSAGES_REJECTED':
-        return Object.assign({}, state, { reqError: action.payload });
+        return { ...state, reqError: true }
       default:
         return state;
     }

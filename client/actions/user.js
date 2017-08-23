@@ -16,9 +16,7 @@ export default class UserActions {
   * @memberof UserActions
   */
   static registerUser(username, email, password, phoneNumber) {
-    return (dispatch) => {
-      dispatch({ type: 'REGISTRATION_BEGINS' });
-      return axios.post('/api/user/signup', {
+    return dispatch => axios.post('/api/v1/user/signup', {
         username,
         email,
         password,
@@ -31,11 +29,10 @@ export default class UserActions {
           if (err.response.data.message) {
             dispatch({ type: 'REGISTRATION_UNSUCCESSFUL', payload: err.response.data });
           } else {
-            dispatch({ type: 'REGISTRATION_REJECTED', payload: err });
+            dispatch({ type: 'REGISTRATION_REJECTED' });
           }
         });
-    };
-  }
+    }
 
   /**
   * Request to the API to log a user in
@@ -47,23 +44,20 @@ export default class UserActions {
   * @memberof UserActions
   */
   static loginUser(username, password) {
-    return (dispatch) => {
-      dispatch({ type: 'LOGIN_BEGINS' });
-      return axios.post('api/user/signin', {
-        username,
-        password
+    return dispatch => axios.post('api/v1/user/signin', {
+      username,
+      password
+    })
+      .then((response) => {
+        dispatch({ type: 'LOGIN_SUCCESSFUL', payload: response.data });
       })
-        .then((response) => {
-          dispatch({ type: 'LOGIN_SUCCESSFUL', payload: response.data });
-        })
-        .catch((err) => {
-          if (err.response.data.message) {
-            dispatch({ type: 'LOGIN_UNSUCCESSFUL', payload: err.response.data });
-          } else {
-            dispatch({ type: 'LOGIN_REJECTED', payload: err });
-          }
-        });
-    };
+      .catch((err) => {
+        if (err.response.data.message) {
+          dispatch({ type: 'LOGIN_UNSUCCESSFUL', payload: err.response.data });
+        } else {
+          dispatch({ type: 'LOGIN_REJECTED' });
+        }
+      });
   }
 
   /**
@@ -76,24 +70,21 @@ export default class UserActions {
   * @memberof UserActions
   */
   static getGroupMembers(groupID, token) {
-    return (dispatch) => {
-      dispatch({ type: 'GET_MEMBERS_BEGINS' });
-      return axios.get(`/api/group/${groupID}/user`, {
-        headers: {
-          token
-        }
+    return dispatch => axios.get(`/api/v1/group/${groupID}/user`, {
+      headers: {
+        token
+      }
+    })
+      .then((response) => {
+        dispatch({ type: 'GOT_MEMBERS', payload: response.data.users });
       })
-        .then((response) => {
-          dispatch({ type: 'GOT_MEMBERS', payload: response.data });
-        })
-        .catch((err) => {
-          if (err.response.data.message) {
-            dispatch({ type: 'GET_MEMBERS_FAILED', payload: err.response.data });
-          } else {
-            dispatch({ type: 'GET_MEMBERS_REJECTED', payload: err });
-          }
-        });
-    };
+      .catch((err) => {
+        if (err.response.data.message) {
+          dispatch({ type: 'GET_MEMBERS_FAILED', payload: err.response.data.message });
+        } else {
+          dispatch({ type: 'GET_MEMBERS_REJECTED' });
+        }
+      });
   }
 
   /**
@@ -107,24 +98,21 @@ export default class UserActions {
   * @memberof UserActions
   */
   static addGroupMembers(groupID, userId, token) {
-    return (dispatch) => {
-      dispatch({ type: 'ADD_MEMBERS_BEGINS' });
-      return axios.post(`/api/group/${groupID}/user`, {
+    return dispatch => axios.post(`/api/v1/group/${groupID}/user`, {
         groupID,
         userId,
         token
       })
         .then((response) => {
-          dispatch({ type: 'MEMBERS_ADDED', payload: response.data });
+          dispatch({ type: 'MEMBERS_ADDED', payload: response.data.message });
         })
         .catch((err) => {
           if (err.response.data.message) {
-            dispatch({ type: 'ADD_MEMBERS_FAILED', payload: err.response.data });
+            dispatch({ type: 'ADD_MEMBERS_FAILED', payload: err.response.data.message });
           } else {
-            dispatch({ type: 'ADD_MEMBERS_REJECTED', payload: err });
+            dispatch({ type: 'ADD_MEMBERS_REJECTED' });
           }
         });
-    };
-  }
+   }
 }
 

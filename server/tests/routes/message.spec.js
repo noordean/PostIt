@@ -161,7 +161,7 @@ describe('PostIt Endpoints', () => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('Message posted successfully');
-          res.body.Message.content.should.be.eql('Hello guyz');
+          res.body.Message.message.should.be.eql('Hello guyz');
           done();
         });
     });

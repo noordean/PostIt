@@ -1,15 +1,21 @@
-import React, {Component} from "react";
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
-import {Link} from 'react-router';
+import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { Link } from 'react-router';
 import PropTypes from 'prop-types';
 
 import GroupActions from '../actions/group';
 import Home from './home.jsx';
-import SideNav from './sidenav.jsx';
 import Paginate from './paginate.jsx';
 
+/**
+  * @class Dashboard
+  */
 class Dashboard extends Component {
+/**
+  * @constructor
+  * @param {String} props
+  */
   constructor(props) {
     super(props);
     this.state = {
@@ -17,17 +23,11 @@ class Dashboard extends Component {
       groupCount: 0,
       groupLimit: 6,
       groups: []
-    }
+    };
   }
-  setGroupIDHandler(groupID, groupName) {
-    localStorage.setItem('groupID', groupID);
-    localStorage.setItem('groupName', groupName);
-  }
+
   componentDidMount() {
-    this.setState({
-      responseMsg: 'Processing...'
-    });
-    this.props.getGroups(JSON.parse(localStorage.user).id, this.state.groupLimit, 0, JSON.parse(localStorage.user).token)
+    this.props.getGroups(JSON.parse(localStorage.user).id, this.state.groupLimit, 0)
     .then(() => {
       if (this.props.group.groups.length > 0) {
         this.setState({
@@ -39,7 +39,7 @@ class Dashboard extends Component {
         this.setState({
           responseMsg: this.props.group.responseMsg
         });
-      } else if (this.props.group.reqError) {
+      } else if (this.props.group.error) {
         this.setState({
           responseMsg: 'Sorry, groups could not be fetched'
         })
@@ -56,10 +56,15 @@ class Dashboard extends Component {
     }
   }
 
+  setGroupIDHandler(groupID, groupName) {
+    localStorage.setItem('groupID', groupID);
+    localStorage.setItem('groupName', groupName);
+  }
+
   handlePageClick(data) {
     let selected = data.selected;
     let offset = Math.ceil(selected * this.state.groupLimit);
-    this.props.getGroups(JSON.parse(localStorage.user).id, this.state.groupLimit, offset, JSON.parse(localStorage.user).token)
+    this.props.getGroups(JSON.parse(localStorage.user).id, this.state.groupLimit, offset)
     .then(() => {
       this.setState({
         groups: this.props.group.groups
@@ -72,7 +77,9 @@ class Dashboard extends Component {
     if (!localStorage.user) {
       dashboard = <Home/>;
     } else {
-      if (this.state.groups.length > 0) {
+      if (this.props.group.loading) {
+        dashboard = <div className="text center">Loading...</div>
+      } else if (this.state.groups.length > 0) {
         dashboard = this.state.groups.map((group) => {
           return (<div className="col s12 m6" key={group.id}>
                   <div className="card">
@@ -89,17 +96,17 @@ class Dashboard extends Component {
         } else {
          dashboard = <div className="center">{this.state.responseMsg}</div>
       }
-    } 
+    }
 
     return (
-    <div className="row group-cards">
-      {dashboard}
-      <div id="paginate">
-        <Paginate 
-          count={this.state.groupCount}
-          LIMIT={this.state.groupLimit}
-          clickHandler={this.handlePageClick.bind(this)}
-        />
+      <div className="row group-cards">
+        {dashboard}
+        <div id="paginate">
+          <Paginate 
+            count={this.state.groupCount}
+            LIMIT={this.state.groupLimit}
+            clickHandler={this.handlePageClick.bind(this)}
+          />
       </div>
     </div>
     );

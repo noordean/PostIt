@@ -20,7 +20,7 @@ class SideNav extends Component {
   }
 
   getMembersHandler() {
-    this.props.getGroupMembers(localStorage.groupID, JSON.parse(localStorage.user).token)
+    this.props.getGroupMembers(localStorage.groupID)
     .then(() => {
       if (this.props.member.members.length > 0) {
         const newMembers = this.props.member.members.map((user) => {
@@ -32,7 +32,7 @@ class SideNav extends Component {
       }
     })
   }
-
+  
   componentWillReceiveProps(nextProps) {
     if (this.props !== nextProps) {
     const newMembers = nextProps.member.members.map((user) => {
@@ -77,6 +77,14 @@ class SideNav extends Component {
   }
 
   render() {
+    $('.modal').modal();
+    $('.button-collapse').sideNav({
+    menuWidth: 240,
+    closeOnClick: false
+    });
+    $('.collapsible').collapsible();
+    $('.dropdown-button').dropdown();
+    
     let members;
     if (this.state.groupMembers.length > 0) {
       members = this.state.groupMembers.map((member, index) => {

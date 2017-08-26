@@ -14,23 +14,26 @@ export default class GroupActions {
   * @returns {Object} dispatch object
   * @memberof GroupActions
   */
-  static createGroup(groupName, description, token) {
-    return dispatch => axios.post('/api/v1/group', {
+  static createGroup(groupName, description) {
+    return (dispatch) => {
+      dispatch({ type: 'CREATE_GROUP_BEGINS' });
+      return axios.post('/api/v1/group', {
         groupName,
-        description,
-        token
+        description
       })
         .then((response) => {
-          dispatch({ type: 'GROUP_CREATED', payload: response.data.group });
+          dispatch({ type: 'CREATE_GROUP_SUCCESSFUL', groups: response.data.group });
         })
         .catch((err) => {
           if (err.response.data.message) {
-            dispatch({ type: 'CREATE_GROUP_UNSUCCESSFUL', payload: err.response.data.message });
+            dispatch({ type: 'CREATE_GROUP_UNSUCCESSFUL', errorMessage: err.response.data.message });
           } else {
             dispatch({ type: 'CREATE_GROUP_REJECTED' });
           }
         });
-    }
+    };
+  }
+
 
   /**
   * Request to the API to get certain list of groups a user belongs to
@@ -43,20 +46,20 @@ export default class GroupActions {
   * @returns {Object} dispatch object
   * @memberof GroupActions
   */
-  static getGroups(userId, limit, offset, token) {
-    return dispatch => axios.get(`/api/v1/user/${userId}/groups?limit=${limit}&offset=${offset}`, {
-      headers: {
-        token
-      }})
-      .then((response) => {
-        dispatch({ type: 'GOT_GROUPS', payload: response.data.groups.rows, pageCount: response.data.groups.count });
-      })
-      .catch((err) => {
-        if (err.response.data.message) {
-          dispatch({ type: 'GET_GROUPS_FAILED', payload: err.response.data.message });
-        } else {
-          dispatch({ type: 'GET_GROUPS_REJECTED' });
-        }
-      });
-    }
+  static getGroups(userId, limit, offset) {
+    return (dispatch) => {
+      dispatch({ type: 'GET_GROUPS_BEGINS' });
+      return axios.get(`/api/v1/user/${userId}/groups?limit=${limit}&offset=${offset}`)
+        .then((response) => {
+          dispatch({ type: 'GET_GROUPS_SUCCESSFUL', groups: response.data.groups.rows, pageCount: response.data.groups.count });
+        })
+        .catch((err) => {
+          if (err.response.data.message) {
+            dispatch({ type: 'GET_GROUPS_UNSUCCESSFUL', errorMessage: err.response.data.message });
+          } else {
+            dispatch({ type: 'GET_GROUPS_REJECTED' });
+          }
+        });
+    };
+  }
 }

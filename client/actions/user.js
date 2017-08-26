@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import authorization from '../utils/authorization';
 /**
  * @class UserActions
  */
@@ -16,7 +16,9 @@ export default class UserActions {
   * @memberof UserActions
   */
   static registerUser(username, email, password, phoneNumber) {
-    return dispatch => axios.post('/api/v1/user/signup', {
+    return (dispatch) => {
+      dispatch({ type: 'REGISTRATION_BEGINS' });
+      return axios.post('/api/v1/user/signup', {
         username,
         email,
         password,
@@ -32,7 +34,8 @@ export default class UserActions {
             dispatch({ type: 'REGISTRATION_REJECTED' });
           }
         });
-    }
+    };
+  }
 
   /**
   * Request to the API to log a user in
@@ -44,20 +47,24 @@ export default class UserActions {
   * @memberof UserActions
   */
   static loginUser(username, password) {
-    return dispatch => axios.post('api/v1/user/signin', {
-      username,
-      password
-    })
-      .then((response) => {
-        dispatch({ type: 'LOGIN_SUCCESSFUL', payload: response.data });
+    return (dispatch) => {
+      dispatch({ type: 'LOGIN_BEGINS' });
+      return axios.post('api/v1/user/signin', {
+        username,
+        password
       })
-      .catch((err) => {
-        if (err.response.data.message) {
-          dispatch({ type: 'LOGIN_UNSUCCESSFUL', payload: err.response.data });
-        } else {
-          dispatch({ type: 'LOGIN_REJECTED' });
-        }
-      });
+        .then((response) => {
+          dispatch({ type: 'LOGIN_SUCCESSFUL', payload: response.data });
+          authorization(response.data.user.token);
+        })
+        .catch((err) => {
+          if (err.response.data.message) {
+            dispatch({ type: 'LOGIN_UNSUCCESSFUL', payload: err.response.data });
+          } else {
+            dispatch({ type: 'LOGIN_REJECTED' });
+          }
+        });
+    };
   }
 
   /**
@@ -69,12 +76,8 @@ export default class UserActions {
   * @returns {Object} dispatch object
   * @memberof UserActions
   */
-  static getGroupMembers(groupID, token) {
-    return dispatch => axios.get(`/api/v1/group/${groupID}/user`, {
-      headers: {
-        token
-      }
-    })
+  static getGroupMembers(groupID) {
+    return dispatch => axios.get(`/api/v1/group/${groupID}/user`)
       .then((response) => {
         dispatch({ type: 'GOT_MEMBERS', payload: response.data.users });
       })
@@ -97,22 +100,21 @@ export default class UserActions {
   * @returns {Object} dispatch object
   * @memberof UserActions
   */
-  static addGroupMembers(groupID, userId, token) {
+  static addGroupMembers(groupID, userId) {
     return dispatch => axios.post(`/api/v1/group/${groupID}/user`, {
-        groupID,
-        userId,
-        token
+      groupID,
+      userId
+    })
+      .then((response) => {
+        dispatch({ type: 'MEMBERS_ADDED', payload: response.data.message });
       })
-        .then((response) => {
-          dispatch({ type: 'MEMBERS_ADDED', payload: response.data.message });
-        })
-        .catch((err) => {
-          if (err.response.data.message) {
-            dispatch({ type: 'ADD_MEMBERS_FAILED', payload: err.response.data.message });
-          } else {
-            dispatch({ type: 'ADD_MEMBERS_REJECTED' });
-          }
-        });
-   }
+      .catch((err) => {
+        if (err.response.data.message) {
+          dispatch({ type: 'ADD_MEMBERS_FAILED', payload: err.response.data.message });
+        } else {
+          dispatch({ type: 'ADD_MEMBERS_REJECTED' });
+        }
+      });
+  }
 }
 

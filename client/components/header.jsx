@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, { Component } from 'react';
 import {Link} from 'react-router';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
@@ -23,22 +23,12 @@ class Header extends Component {
     browserHistory.push('/');
     window.location.reload();
   }
-  componentWillReceiveProps(nextProps) {
-    if (this.props !== nextProps) {
-      this.setState({
-        responseMsg: nextProps.group.responseMsg
-      });
-    }
-  }
+
   createGroup(event) {
     event.preventDefault();
     const groupName = this.refs.groupNameInput.value;
     const description = this.refs.descriptionInput.value;
-    const token = JSON.parse(localStorage.user).token;
-    this.setState({
-      responseMsg: 'Processing...'
-    })
-    this.props.createGroup(groupName, description, token)
+    this.props.createGroup(groupName, description)
     .then(() => {
       if (this.props.group.reqError) {
         this.setState({
@@ -48,19 +38,28 @@ class Header extends Component {
         this.setState({
           responseMsg: this.props.group.responseMsg
         })
+      } else if (this.props.group.loading) {
+        this.setState({
+          responseMsg: 'Creating group...'
+        })
       } else {
-        this.props.getGroups(JSON.parse(localStorage.user).id, this.state.groupLimit, 0, JSON.parse(localStorage.user).token);
+        responseMsg: 'Group created successfully'
+        this.refs.createForm.reset();
+        this.props.getGroups(JSON.parse(localStorage.user).id, this.state.groupLimit, 0);
         $('#modal1').modal('close');
       }
     });
   }
+
   render() {
+    $('.modal').modal();
+    $('.dropdown-button').dropdown();
     const errorMsg = <div className="center">{this.state.responseMsg}</div>;
     const userHeader =  (
           <div>
             <div id="modal1" className="modal">
               <div className="modal-content">
-                <form className="group-form">
+                <form className="group-form" ref="createForm">
                   <div className="row">
                     {errorMsg}
                     <div className="input-field col s12">

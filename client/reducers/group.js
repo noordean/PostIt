@@ -1,7 +1,8 @@
 const initialState = {
   groups: [],
   responseMsg: '',
-  reqError: false
+  loading: false,
+  error: false
 };
 
 /**
@@ -19,18 +20,21 @@ export default class GroupReducers {
   */
   static groupReducer(state = initialState, action) {
     switch (action.type) {
-      case 'GOT_GROUPS':
-        return { ...state, groups: action.payload, pageCount: action.pageCount, responseMsg: '' };
-      case 'GROUP_CREATED':
-        const newState = { ...state, responseMsg: '' };
-        newState.groups = [...newState.groups, action.payload]
+      case 'CREATE_GROUP_BEGINS':
+      case 'GET_GROUPS_BEGINS':
+        return { ...state, loading: true };
+      case 'GET_GROUPS_SUCCESSFUL':
+        return { ...state, groups: action.groups, pageCount: action.pageCount, responseMsg: '', loading: false };
+      case 'CREATE_GROUP_SUCCESSFUL':
+        const newState = { ...state, responseMsg: '', loading: false };
+        newState.groups = [...newState.groups, action.groups]
         return newState;
       case 'CREATE_GROUP_UNSUCCESSFUL':
-      case 'GET_GROUPS_FAILED':
-        return { ...state, responseMsg: action.payload }
+      case 'GET_GROUPS_UNSUCCESSFUL':
+        return { ...state, responseMsg: action.errorMessage, loading: false }
       case 'CREATE_GROUP_REJECTED':
       case 'GET_GROUPS_REJECTED':
-        return { ...state, reqError: true }
+        return { ...state, error: true, responseMsg: '', loading: false }
       default:
         return state;
     }

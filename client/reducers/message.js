@@ -1,7 +1,8 @@
 const initialState = {
+  loading: true,
   responseMsg: '',
   messages: [],
-  reqError: false
+  error: false
 };
 
 /**
@@ -19,18 +20,21 @@ export default class MessageReducers {
   */
   static messageReducer(state = initialState, action) {
     switch (action.type) {
-      case 'GOT_ALL_MESSAGES':
-        return { ...state, messages: action.payload, responseMsg: '' }
-      case 'MESSAGE_POSTED':
-        const newState = { ...state, responseMsg: '' };
-        newState.messages = [...newState.messages, action.payload]
+      case 'POST_MESSAGE_BEGINS':
+      case 'GET_MESSAGES_BEGINS':
+        return { ...state, loading: true };
+      case 'GET_MESSAGES_SUCCESSFUL':
+        return { ...state, messages: action.payload, responseMsg: '', loading: false };
+      case 'POST_MESSAGE_SUCCESSFUL':
+        const newState = { ...state, responseMsg: '', loading: false };
+        newState.messages = [...newState.messages, action.payload];
         return newState;
-      case 'GET_ALL_MESSAGES_FAILED':
-      case 'POST_MESSAGE_FAILED':
-        return { ...state, responseMsg: action.payload }
+      case 'GET_MESSAGES_UNSUCCESSFUL':
+      case 'POST_MESSAGE_UNSUCCESSFUL':
+        return { ...state, responseMsg: action.payload, loading: false };
       case 'POST_MESSAGE_REJECTED':
-      case 'GET_ALL_MESSAGES_REJECTED':
-        return { ...state, reqError: true }
+      case 'GET_MESSAGES_REJECTED':
+        return { ...state, error: true, loading: false, responseMsg: '' };
       default:
         return state;
     }

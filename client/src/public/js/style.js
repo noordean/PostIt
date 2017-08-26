@@ -1,15 +1,6 @@
 import axios from 'axios';
 
 $(document).ready(() => {
-  $('.slider').slider({ full_width: true });
-  $('.modal').modal();
-  // side nav
-  $('.dropdown-button').dropdown();
-  $('.button-collapse').sideNav({
-    menuWidth: 240,
-    closeOnClick: false
-  });
-  $('.collapsible').collapsible();
   // getting username from database to fill autocomplete input
   const users = {};
   $('#addMembers').click(() => {

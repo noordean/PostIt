@@ -15,24 +15,26 @@ export default class MessageActions {
   * @returns {Object} dispatch object
   * @memberof MessageActions
   */
-  static postGroupMessage(groupID, message, priority, token) {
-    return dispatch => axios.post(`/api/v1/group/${groupID}/message`, {
+  static postGroupMessage(groupID, message, priority) {
+    return (dispatch) => {
+      dispatch({ type: 'POST_MESSAGE_BEGINS' });
+      return axios.post(`/api/v1/group/${groupID}/message`, {
         groupID,
         message,
-        priority,
-        token
+        priority
       })
         .then((response) => {
-          dispatch({ type: 'MESSAGE_POSTED', payload: response.data.Message });
+          dispatch({ type: 'POST_MESSAGE_SUCCESSFULL', payload: response.data.Message });
         })
         .catch((err) => {
           if (err.response.data.message) {
-            dispatch({ type: 'POST_MESSAGE_FAILED', payload: err.response.data.message });
+            dispatch({ type: 'POST_MESSAGE_UNSUCCESSFULL', payload: err.response.data.message });
           } else {
             dispatch({ type: 'POST_MESSAGE_REJECTED' });
           }
         });
-    }
+    };
+  }
 
   /**
   * Request to the API to get total number of messages of a group
@@ -43,21 +45,20 @@ export default class MessageActions {
   * @returns {Object} dispatch object
   * @memberof MessageActions
   */
-  static getMessages(groupID, token) {
-    return dispatch => axios.get(`/api/v1/group/${groupID}/messages`, {
-        headers: {
-          token
-        }
-      })
+  static getMessages(groupID) {
+    return (dispatch) => {
+      dispatch({ type: 'GET_MESSAGES_BEGINS' });
+      return axios.get(`/api/v1/group/${groupID}/messages`)
         .then((response) => {
-          dispatch({ type: 'GOT_ALL_MESSAGES', payload: response.data.messages });
+          dispatch({ type: 'GET_MESSAGES_SUCCESSFUL', payload: response.data.messages });
         })
         .catch((err) => {
           if (err.response.data.message) {
-            dispatch({ type: 'GET_ALL_MESSAGES_FAILED', payload: err.response.data.message });
+            dispatch({ type: 'GET_MESSAGES_UNSUCCESSFUL', payload: err.response.data.message });
           } else {
-            dispatch({ type: 'GET_ALL_MESSAGES_REJECTED' });
+            dispatch({ type: 'GET_MESSAGES_REJECTED' });
           }
         });
+    };
   }
 }

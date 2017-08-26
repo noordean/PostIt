@@ -3,7 +3,7 @@ import React, {Component} from "react";
 import Dashboard from './dashboard.jsx';
 
 export default class Home extends Component{
-  render(){
+  render() {
     if (localStorage.user) {
       return <Dashboard/>
     }

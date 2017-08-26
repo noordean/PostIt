@@ -19,7 +19,7 @@ class MessageBoard extends Component {
   }
 
   getMessagesHandler() {
-    this.props.getMessages(localStorage.groupID)
+    this.props.getMessages(this.props.params.groupID)
     .then(() => {
       if (this.props.groupMessages.messages.length > 0) {
         this.setState({
@@ -29,7 +29,7 @@ class MessageBoard extends Component {
         this.setState({
           responseMsg: 'Sorry, messages could not be fetched'
         })
-      } else if (this.props.groupMessages.responseMsg !== 0) {
+      } else if (this.props.groupMessages.responseMsg !== '') {
         this.setState({
           responseMsg: this.props.groupMessages.responseMsg
         })
@@ -82,9 +82,11 @@ class MessageBoard extends Component {
     if (!localStorage.user) {
       return <Home/>
     }
-    const msgError = <div className="center">{this.state.processing}</div>
+    
     let messageBoard;
-    if (this.props.groupMessages.loading) {
+    if (this.state.responseMsg !== '') {
+      messageBoard = <div className="center">{this.state.responseMsg}</div>;
+    } else if (this.props.groupMessages.loading) {
       messageBoard = <div className="center">Loading messages...</div>
     } else {
     if (this.state.messages.length > 0) {
@@ -114,12 +116,11 @@ class MessageBoard extends Component {
 
     return (
       <div>
-        <SideNav groupName={localStorage.groupName}/>
+        <SideNav groupName={this.props.params.groupName} groupID={this.props.params.groupID}/>
         <div className="row group-cards">
           <div className="col s3">
           </div>
           <div className="col s9">
-            {msgError}
           <div id="msgarea">
             {messageBoard}
           </div>

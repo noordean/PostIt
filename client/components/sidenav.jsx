@@ -20,7 +20,7 @@ class SideNav extends Component {
   }
 
   getMembersHandler() {
-    this.props.getGroupMembers(localStorage.groupID)
+    this.props.getGroupMembers(this.props.groupID)
     .then(() => {
       if (this.props.member.members.length > 0) {
         const newMembers = this.props.member.members.map((user) => {
@@ -54,7 +54,7 @@ class SideNav extends Component {
       this.setState({
         responseMsg: 'Processing...'
       });
-      this.props.addGroupMembers(localStorage.groupID, selectedMembers, JSON.parse(localStorage.user).token)
+      this.props.addGroupMembers(this.props.groupID, selectedMembers, JSON.parse(localStorage.user).token)
       .then(() => {
         if (this.props.member.reqError) {
           this.setState({

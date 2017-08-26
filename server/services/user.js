@@ -69,6 +69,32 @@ export default class User {
   }
 
   /**
+ * @description: retrieves users using email
+ * @param {Integer} email email of the user
+ * @param {Function} done callback function
+ * @return {Object} retrievedData
+ */
+  static getUserByEmail(email, done) {
+    Users.findAll({ where: { email } }).then((group) => {
+      done(group);
+    });
+  }
+
+  /**
+ * @description: updates user's password
+ * @param {string} password password of the user
+ * @param {string} email email of the user
+ * @param {Function} done callback function
+ * @return {Object} retrievedData
+ */
+  static updatePassword(password, email, done) {
+    Users.update({ password }, { where: { email } }).then((user) => {
+      done(user);
+    }).catch((error) => {
+      done({ error });
+    });
+  }
+  /**
  * @description: retrieves all users
  * @param {Array} usernames usernames to be excluded
  * @param {Function} done callback function

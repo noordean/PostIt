@@ -116,5 +116,62 @@ export default class UserActions {
         }
       });
   }
+
+  /**
+  * Request to the API to send confirmation mail to reset password
+  *
+  * @static
+  * @param {String} recepient The email of the user
+  * @param {String} password The password of the user
+  * @returns {Object} dispatched object
+  * @memberof UserActions
+  */
+  static sendPasswordResetMail(recepient, password) {
+    return (dispatch) => {
+      dispatch({ type: 'RESET_PASSWORD_BEGINS' });
+      return axios.post('/api/v1/user/email', {
+        recepient,
+        password
+      })
+        .then((response) => {
+          dispatch({ type: 'RESET_PASSWORD_SUCCESSFUL', payload: response.data.message });
+        })
+        .catch((err) => {
+          if (err.response.status === 500 || err.response.status === 400
+          || err.response.status === 404) {
+            dispatch({ type: 'RESET_PASSWORD_UNSUCCESSFUL', payload: err.response.data.message });
+          } else {
+            dispatch({ type: 'RESET_PASSWORD_REJECTED' });
+          }
+        });
+    };
+  }
+
+  /**
+  * Request to the API to verify the url sent to user's email
+  *
+  * @static
+  * @param {String} mailToken The token attached to the url
+  * @returns {Object} dispatched object
+  * @memberof UserActions
+  */
+  static verifyPasswordReset(mailToken) {
+    return (dispatch) => {
+      dispatch({ type: 'VERIFY_PASSWORD_BEGINS' });
+      return axios.post('/api/v1/user/email/verify', {
+        mailToken
+      })
+        .then((response) => {
+          dispatch({ type: 'VERIFY_PASSWORD_SUCCESSFUL', payload: response.data.message });
+        })
+        .catch((err) => {
+          if (err.response.status === 401) {
+            dispatch({ type: 'VERIFY_PASSWORD_UNSUCCESSFUL', payload: err.response.data.message });
+          } else {
+            dispatch({ type: 'VERIFY_PASSWORD_REJECTED' });
+          }
+        });
+    };
+  }
 }
 

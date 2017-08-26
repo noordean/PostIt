@@ -1,11 +1,14 @@
 import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs';
+import nodemailer from 'nodemailer';
+import jwt from 'jsonwebtoken';
 import user from '../services/user';
 import group from '../services/group';
 import groupUser from '../services/groupuser';
 import authenticate from '../helpers/authenticate';
 
 dotenv.config();
+const JWT_SECRET = process.env.JWT_SECRET;
 const salt = bcrypt.genSaltSync(10);
 /**
  * class User: controls all user routes
@@ -106,5 +109,71 @@ export default class User {
         }
       });
     }
+  }
+
+  /**
+ * @description: send mail to users through api/v1/user/email
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * @return {Object} response containing all users of a group
+ */
+  static sendMail(req, res) {
+    const recepient = req.body.recepient;
+    const newPassword = req.body.password;
+    const token = authenticate.generateToken({ password: newPassword, email: recepient });
+    if (recepient === undefined || newPassword === undefined) {
+      res.status(400).json({ message: 'Both email and password must be supplied' });
+    } else if (recepient.trim().length === 0 || newPassword.trim().length === 0) {
+      res.status(400).json({ message: 'Both email and password are required' });
+    } else {
+      user.getUserByEmail((recepient), (users) => {
+        if (users.length === 0) {
+          res.status(404).json({ message: 'Email not found' });
+        } else {
+          const transporter = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            auth: {
+              user: process.env.MAIL_USERNAME,
+              pass: process.env.MAIL_PASSWORD
+            }
+          });
+          const mailOptions = {
+            from: '"PostIt" <noreply@postit.com>',
+            to: recepient,
+            subject: 'Password Reset',
+            text: '',
+            html: `<b>Hello!</b><br> Your new password is: ${newPassword}<br><p>Kindly follow this link to complete the process of reseting your password: http://localhost:3333/reset-password/${token}</p>`
+          };
+          transporter.sendMail(mailOptions, (error) => {
+            if (error) {
+              res.status(500).json({ message: 'Sorry, mail could not be sent' });
+            }
+            res.status(200).json({ message: 'A message has been sent to your mail to continue the process' });
+          });
+        }
+      });
+    }
+  }
+
+  /**
+ * @description: send mail to users through api/v1/user/email/verify
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * @return {Object} response containing all users of a group
+ */
+  static verifyPasswordReset(req, res) {
+    const mailToken = req.headers.mailToken || req.body.mailToken;
+    jwt.verify(mailToken, JWT_SECRET, (err, decode) => {
+      if (decode === undefined) {
+        res.status(401).json({ message: 'Access denied!. Invalid url detected' });
+      } else {
+        const hashedPassword = bcrypt.hashSync(decode.password, salt);
+        user.updatePassword(hashedPassword, decode.email, () => {
+          res.status(200).json({ message: 'Password changed successfully' });
+        });
+      }
+    });
   }
 }

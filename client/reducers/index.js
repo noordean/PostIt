@@ -8,5 +8,7 @@ export default combineReducers({
   userLogin: UserReducers.login,
   group: GroupReducers.groupReducer,
   member: UserReducers.groupMembers,
-  messages: MessageReducers.messageReducer
+  messages: MessageReducers.messageReducer,
+  sentMail: UserReducers.sendPasswordResetMail,
+  verifyMailUrl: UserReducers.verifyPasswordReset
 });

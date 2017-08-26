@@ -9,9 +9,15 @@ import Signup from './components/signup.jsx';
 import Signin from './components/signin.jsx';
 import Dashboard from './components/dashboard.jsx';
 import MessageBoard from './components/messageboard.jsx';
+import authorization from './utils/authorization';
 require('./src/public/js/style.js');
 
 import {Router, Route, IndexRoute, browserHistory} from 'react-router';
+
+
+if (localStorage.user) {
+  authorization(JSON.parse(localStorage.user).token);
+}
 
 ReactDOM.render(<Provider store={store}>
  <Router history={browserHistory}>

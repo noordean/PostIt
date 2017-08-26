@@ -12,30 +12,26 @@ class MessageBoard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      processing: '',
+      responseMsg: '',
       msgStatus: 'Normal',
       messages: []
     }
   }
 
   getMessagesHandler() {
-    this.setState({
-      processing: 'Loading messages...'
-    })
-    this.props.getMessages(localStorage.groupID, JSON.parse(localStorage.user).token)
+    this.props.getMessages(localStorage.groupID)
     .then(() => {
       if (this.props.groupMessages.messages.length > 0) {
         this.setState({
           messages: this.props.groupMessages.messages,
-          processing: ''
         });
-      } else if (this.props.groupMessages.reqError) {
+      } else if (this.props.groupMessages.error) {
         this.setState({
-          processing: 'Sorry, messages could not be fetched'
+          responseMsg: 'Sorry, messages could not be fetched'
         })
       } else if (this.props.groupMessages.responseMsg !== 0) {
         this.setState({
-          processing: this.props.groupMessages.responseMsg
+          responseMsg: this.props.groupMessages.responseMsg
         })
       }
     })
@@ -49,24 +45,19 @@ class MessageBoard extends Component {
     event.preventDefault();
     const msg = encodeURI(this.refs.msgInput.value);
     if (this.refs.msgInput.value.trim().length !== 0) {
-      this.setState({
-        processing: 'Posting message...'
-      })
-      this.props.postGroupMessage(localStorage.groupID, msg, this.state.msgStatus, JSON.parse(localStorage.user).token)
+      this.props.postGroupMessage(localStorage.groupID, msg, this.state.msgStatus)
       .then(() => {
         this.refs.msgInput.value = '';
        if (this.props.groupMessages.responseMsg !== '') {
           this.setState({
-            processing: this.props.groupMessages.responseMsg
+            responseMsg: this.props.groupMessages.responseMsg
           })
-        } else if (this.props.groupMessages.reqError) {
+        } else if (this.props.groupMessages.error) {
           this.setState({
-            processing: 'Sorry, message could not be posted'
+            responseMsg: 'Sorry, message could not be posted'
           })
         } else {
-          this.setState({
-            processing: ''
-          })
+          this.getMessagesHandler();
         }
       })
     }
@@ -76,7 +67,7 @@ class MessageBoard extends Component {
     if (this.props !== nextProps) {
       this.setState({
         messages: nextProps.groupMessages.messages,
-        processing: nextProps.groupMessages.responseMsg
+        responseMsg: nextProps.groupMessages.responseMsg
       });
     }
   }
@@ -93,6 +84,9 @@ class MessageBoard extends Component {
     }
     const msgError = <div className="center">{this.state.processing}</div>
     let messageBoard;
+    if (this.props.groupMessages.loading) {
+      messageBoard = <div className="center">Loading messages...</div>
+    } else {
     if (this.state.messages.length > 0) {
       messageBoard = this.state.messages.map((message, index) => {
       return (
@@ -116,6 +110,7 @@ class MessageBoard extends Component {
     } else {
       messageBoard = <div className="center">This group does not contain any message</div>
     }
+  }
 
     return (
       <div>

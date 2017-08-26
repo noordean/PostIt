@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/noordean/PostIt.svg?branch=server)](https://travis-ci.org/noordean/PostIt)
-[![Coverage Status](https://coveralls.io/repos/github/noordean/PostIt/badge.svg?branch=development)](https://coveralls.io/github/noordean/PostIt?branch=server)
+[![Build Status](https://travis-ci.org/noordean/PostIt.svg?branch=development)](https://travis-ci.org/noordean/PostIt)
+[![Coverage Status](https://coveralls.io/repos/github/noordean/PostIt/badge.svg?branch=development)](https://coveralls.io/github/noordean/PostIt?branch=development)
 [![Code Climate](https://codeclimate.com/github/noordean/PostIt/badges/gpa.svg)](https://codeclimate.com/github/noordean/PostIt)
 # PostIt
 PostIt is a simple application that allows friends and colleagues create groups for notifications. This application allows people to register, create group, add other users to the created group, and then send messages out to members of the group whenever they want. PostIt enhances group-work among people as group members can easily reach out to one another.

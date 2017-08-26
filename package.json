@@ -63,6 +63,7 @@
     "jsonwebtoken": "^7.4.1",
     "mocha": "^3.4.2",
     "node-sass": "^4.5.3",
+    "nodemailer": "^4.0.1",
     "nyc": "^11.1.0",
     "pg": "^6.4.1",
     "pg-hstore": "^2.3.2",

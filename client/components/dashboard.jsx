@@ -56,11 +56,6 @@ class Dashboard extends Component {
     }
   }
 
-  setGroupIDHandler(groupID, groupName) {
-    localStorage.setItem('groupID', groupID);
-    localStorage.setItem('groupName', groupName);
-  }
-
   handlePageClick(data) {
     let selected = data.selected;
     let offset = Math.ceil(selected * this.state.groupLimit);
@@ -88,7 +83,7 @@ class Dashboard extends Component {
                       <p>{group.description}</p>
                     </div>
                     <div className="card-action grey lighten-4">
-                      <Link to="message-board" className="red-text text-accent-1" onClick={this.setGroupIDHandler.bind(this, group.id, group.groupname)}>View Message Board</Link>
+                      <Link to={`message-board/${group.id}/${group.groupname}`} className="red-text text-accent-1">View Message Board</Link>
                     </div>
                   </div>
                 </div>);
@@ -123,11 +118,12 @@ const mapStateToProps = (state) => {
   return {
     group: state.group
   };
-}
+};
 
 const matchDispatchToProps = (dispatch) => {
   return bindActionCreators({
     getGroups: GroupActions.getGroups
   }, dispatch);
-}
+};
+
 export default connect(mapStateToProps, matchDispatchToProps)(Dashboard);

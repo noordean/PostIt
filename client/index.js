@@ -9,6 +9,8 @@ import Signup from './components/signup.jsx';
 import Signin from './components/signin.jsx';
 import Dashboard from './components/dashboard.jsx';
 import MessageBoard from './components/messageboard.jsx';
+import ConfirmResetPassword from './components/confirmResetPassword.jsx';
+
 import authorization from './utils/authorization';
 require('./src/public/js/style.js');
 
@@ -20,15 +22,16 @@ if (localStorage.user) {
 }
 
 ReactDOM.render(<Provider store={store}>
- <Router history={browserHistory}>
-   <Route path="/" component={Inndex}>
-     <IndexRoute component={Home}/>
-     <Route path="signup" component={Signup}/>
-     <Route path="signin" component={Signin}/>
-     <Route path="dashboard" component={Dashboard}/>
-     <Route path="message-board" component={MessageBoard}/>
-   </Route>  
- </Router>
+  <Router history={browserHistory}>
+    <Route path="/" component={Inndex}>
+      <IndexRoute component={Home} />
+      <Route path="signup" component={Signup} />
+      <Route path="signin" component={Signin} />
+      <Route path="dashboard" component={Dashboard} />
+      <Route path="message-board/:groupID/:groupName" component={MessageBoard} />
+      <Route path="reset-password/:token" component={ConfirmResetPassword} />
+    </Route>
+  </Router>
 </Provider>,
-document.getElementById("root")
+document.getElementById('root')
 );

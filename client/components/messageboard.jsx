@@ -45,7 +45,7 @@ class MessageBoard extends Component {
     event.preventDefault();
     const msg = encodeURI(this.refs.msgInput.value);
     if (this.refs.msgInput.value.trim().length !== 0) {
-      this.props.postGroupMessage(localStorage.groupID, msg, this.state.msgStatus)
+      this.props.postGroupMessage(this.props.params.groupID, msg, this.state.msgStatus)
       .then(() => {
         this.refs.msgInput.value = '';
        if (this.props.groupMessages.responseMsg !== '') {

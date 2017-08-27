@@ -43,6 +43,40 @@ export default class User {
   }
 
   /**
+ * @description: saves user to database
+ * @param {String} username username of the user
+ * @param {String} password password of the user
+ * @param {String} email email of the user
+ * @param {String} phoneNumber phone number of the user
+ * @param {Function} done callback function
+ * @return {Object} savedData
+ */
+  static saveUserFromGoogle(username, password, email, phoneNumber, done) {
+    return Users.findOrCreate({
+      where: {
+        username
+      },
+      defaults: {
+        password,
+        email,
+        phoneNumber
+      }
+    }).then((user) => {
+      done(user);
+    }).catch((err) => {
+      if (err instanceof validationError) {
+        if (err.errors[0].message === '') {
+          done(`${err.errors[0].path} must be supplied`);
+        } else {
+          done(err.errors[0].message);
+        }
+      } else {
+        done({ err });
+      }
+    });
+  }
+
+  /**
  * @description: retrieves user using the username
  * @param {String} userName username of the user
  * @param {Function} done callback function
@@ -101,7 +135,7 @@ export default class User {
  * @return {Object} retrievedData
  */
   static getAllUsers(usernames, done) {
-    const users = usernames.split(' ');
+    const users = usernames.split('-');
     Users.findAll({
       where: {
         username: {

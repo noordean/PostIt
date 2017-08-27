@@ -128,4 +128,28 @@ export default class UserReducers {
         return state;
     }
   }
+
+  /**
+  * Reducer for regsitering users that sign in with google
+  *
+  * @static
+  * @param {Object} state The initial state
+  * @param {Object} action The dispatched action
+  * @returns {Object} current state
+  * @memberof UserReducers
+  */
+  static registerUserFromGoogle(state = { response: [], loading: false, error: false }, action) {
+    switch (action.type) {
+      case 'REGISTER_GOOGLE_USER_BEGINS':
+        return { ...state, loading: true };
+      case 'REGISTER_GOOGLE_USER_SUCCESSFUL':
+        return { ...state, response: action.payload, loading: false };
+      case 'REGISTER_GOOGLE_USER_UNSUCCESSFUL':
+        return { ...state, response: action.payload, loading: false };
+      case 'REGISTER_GOOGLE_USER_REJECTED':
+        return { ...state, error: true };
+      default:
+        return state;
+    }
+  }
 }

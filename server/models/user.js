@@ -4,13 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     username: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
-      validate: {
-        is: {
-          args: /^[a-z]{5,12}$/i,
-          msg: 'Username should contain only letters and must have between 5-12 characters'
-        }
-      }
+      unique: true
     },
     password: {
       type: DataTypes.STRING,

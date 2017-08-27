@@ -173,5 +173,34 @@ export default class UserActions {
         });
     };
   }
+
+  /**
+  * Request to the API to register user with google+
+  *
+  * @static
+  * @param {String} username The username gotten from the user's credential
+  * @param {String} email The email gotten from the user's credential
+  * @returns {Object} dispatched object
+  * @memberof UserActions
+  */
+  static registerUserFromGoogle(username, email) {
+    return (dispatch) => {
+      dispatch({ type: 'REGISTER_GOOGLE_USER_BEGINS' });
+      return axios.post('/api/v1/user/signup/google', {
+        username,
+        email
+      })
+        .then((response) => {
+          dispatch({ type: 'REGISTER_GOOGLE_USER_SUCCESSFUL', payload: response.data });
+        })
+        .catch((err) => {
+          if (err.response.status === 409) {
+            dispatch({ type: 'REGISTER_GOOGLE_USER_UNSUCCESSFUL', payload: err.response.data });
+          } else {
+            dispatch({ type: 'REGISTER_GOOGLE_USER_REJECTED' });
+          }
+        });
+    };
+  }
 }
 

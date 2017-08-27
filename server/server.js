@@ -1,12 +1,14 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import path from 'path';
+import dotenv from 'dotenv';
 import webpack from 'webpack';
 import webpackMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import router from './routes/route';
 import webpackConfig from '../webpack.config';
 
+dotenv.config();
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());

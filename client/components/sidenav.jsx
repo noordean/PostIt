@@ -114,7 +114,7 @@ class SideNav extends Component {
             <li><Link className="waves-effect waves-light btn modal-trigger red darken-4" to="/dashboard">Dashboard</Link></li>
             <li><a className="waves-effect waves-light btn modal-trigger red darken-4" href="#modal2" id="addMembers">Add members</a></li>
             <li><i className="material-icons prefix">account_circle</i><a className='dropdown-button' href="" data-activates='dropdown3'>Members<i className="material-icons right">arrow_drop_down</i></a></li>
-            <li><input type="hidden" ref="getMembersInput" id="getMembers" value={this.state.groupMembers.join(' ')}/></li>
+            <li><input type="hidden" ref="getMembersInput" id="getMembers" value={this.state.groupMembers.join('-')}/></li>
             <li><input type="hidden" ref="usersSelectedInput" id="getChips"/></li>
           </ul>
           <ul id='dropdown3' className='dropdown-content'>

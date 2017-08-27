@@ -14,7 +14,7 @@ import Paginate from './paginate.jsx';
 class Dashboard extends Component {
 /**
   * @constructor
-  * @param {String} props
+  * @param {object} props
   */
   constructor(props) {
     super(props);
@@ -112,7 +112,7 @@ class Dashboard extends Component {
 Dashboard.propTypes = {
   group: PropTypes.object,
 	getGroups: PropTypes.func
-}
+};
 
 const mapStateToProps = (state) => {
   return {

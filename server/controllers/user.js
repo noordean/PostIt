@@ -16,7 +16,7 @@ const salt = bcrypt.genSaltSync(10);
  */
 export default class User {
   /**
- * @description: controls a user's registration through route POST: api/user/signup
+ * @description: controls a user's registration through route POST: api/v1/user/signup
  * @param {Object} req request object
  * @param {Object} res response object
  * @return {Object} response containing the registered user
@@ -25,21 +25,25 @@ export default class User {
     const [username, password, email, phoneNumber] = [req.body.username,
       req.body.password, req.body.email, req.body.phoneNumber];
     const hashedPassword = bcrypt.hashSync(password, salt);
-    user.saveUser(username, hashedPassword, email, phoneNumber, (users) => {
-      if (users instanceof Object) {
-        if (Array.isArray(users)) {
-          if (users[1] === false) {
-            res.status(409).json({ message: 'You already have an existing account. Kindly go and login' });
+    if (/^[a-zA-Z]{5,12}$/.test(username) === false) {
+      res.status(400).json({ message: 'Username should contain only letters and must have between 5-12 characters' })
+    } else {
+      user.saveUser(username, hashedPassword, email, phoneNumber, (users) => {
+        if (users instanceof Object) {
+          if (Array.isArray(users)) {
+            if (users[1] === false) {
+              res.status(409).json({ message: 'You already have an existing account. Kindly go and login' });
+            } else {
+              res.status(201).json({ message: 'Registration successful', user: { id: users[0].id, username: users[0].username, email: users[0].email } });
+            }
           } else {
-            res.status(201).json({ message: 'Registration successful', user: { id: users[0].id, username: users[0].username, email: users[0].email } });
+            res.status(500).json({ message: 'Sorry, an unexpected error occurred' });
           }
         } else {
-          res.status(500).json({ message: 'Sorry, an unexpected error occurred' });
+          res.status(400).json({ message: users });
         }
-      } else {
-        res.status(400).json({ message: users });
-      }
-    });
+      });
+    }
   }
 
   /**
@@ -173,6 +177,28 @@ export default class User {
         user.updatePassword(hashedPassword, decode.email, () => {
           res.status(200).json({ message: 'Password changed successfully' });
         });
+      }
+    });
+  }
+
+  /**
+ * @description: registers users that logs in with google through api/v1/user/signup/google
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * @return {Object} response containing all users of a group
+ */
+  static registerUserFromGoogle(req, res) {
+    const [username, email, phoneNumber, password] = [req.body.username, req.body.email, '07065834175', 'default123'];
+    user.saveUserFromGoogle(username, password, email, phoneNumber, (users) => {
+      if (users === 'email must be unique') {
+        user.getUserByEmail(email, (userrs) => {
+          const token = authenticate.generateToken({ username: userrs[0].username,
+            id: userrs[0].id });
+          res.status(409).json({ message: 'Email already existing', user: { id: userrs[0].id, user: userrs[0].username, email: userrs[0].email, token } });
+        });
+      } else {
+        const token = authenticate.generateToken({ username: users[0].username, id: users[0].id });
+        res.status(201).json({ message: 'User registered successfully', user: { id: users[0].id, user: users[0].username, email: users[0].email, token } });
       }
     });
   }

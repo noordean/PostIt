@@ -1,7 +1,8 @@
-import React, {Component} from "react";
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
-import {Link} from 'react-router';
+import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { Link } from 'react-router';
+import GoogleLogin from './googleLogin.jsx';
 import PropTypes from 'prop-types';
 
 import UsersActions from '../actions/user';
@@ -35,6 +36,10 @@ class SignIn extends Component {
         });
       }
     })
+  }
+  openResetPassword(event) {
+    event.preventDefault();
+    $('#modal3').modal('open');
   }
   componentWillUnmount() {
     this.setState({
@@ -74,16 +79,19 @@ class SignIn extends Component {
                 </div>
               </div>
               <div className="row">
-                <div className="input-field col s12">
+                <div className="input-field col s6">
                   <input type="submit" value="Login" className="btn col s12 red darken-4"/>
+                </div>
+                <div className="input-field col s6">
+                  <GoogleLogin/>
                 </div>
               </div>
               <div className="row">
               <div className="input-field col s6 m6 l6">
-                <p className="margin medium-small"><a href="#">Register Now!</a></p>
+                <p className="margin medium-small"><Link to="/signup">Register Now!</Link></p>
               </div>
               <div className="input-field col s6 m6 l6">
-                <p className="margin right-align medium-small"><a href="#">Forgot password ?</a></p>
+                <p className="margin right-align medium-small"><a href="#" onClick={this.openResetPassword.bind(this)}>Forgot password ?</a></p>
               </div>          
             </div>
           </form>

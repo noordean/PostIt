@@ -119,9 +119,9 @@ export default class User {
  * @description: send mail to users through api/v1/user/email
  * @param {Object} req request object
  * @param {Object} res response object
- * @return {Object} response containing all users of a group
+ * @return {Object} response
  */
-  static sendMail(req, res) {
+  static sendMailForPasswordReset(req, res) {
     const recepient = req.body.recepient;
     const newPassword = req.body.password;
     const token = authenticate.generateToken({ password: newPassword, email: recepient });
@@ -165,7 +165,7 @@ export default class User {
  * @description: send mail to users through api/v1/user/email/verify
  * @param {Object} req request object
  * @param {Object} res response object
- * @return {Object} response containing all users of a group
+ * @return {Object} response
  */
   static verifyPasswordReset(req, res) {
     const mailToken = req.headers.mailToken || req.body.mailToken;
@@ -185,10 +185,10 @@ export default class User {
  * @description: registers users that logs in with google through api/v1/user/signup/google
  * @param {Object} req request object
  * @param {Object} res response object
- * @return {Object} response containing all users of a group
+ * @return {Object} response
  */
   static registerUserFromGoogle(req, res) {
-    const [username, email, phoneNumber, password] = [req.body.username, req.body.email, '07065834175', 'default123'];
+    const [username, email, phoneNumber, password] = [req.body.username, req.body.email, Math.ceil(Math.random() * 100000000000), 'default123'];
     user.saveUserFromGoogle(username, password, email, phoneNumber, (users) => {
       if (users === 'email must be unique') {
         user.getUserByEmail(email, (userrs) => {
@@ -200,6 +200,39 @@ export default class User {
         const token = authenticate.generateToken({ username: users[0].username, id: users[0].id });
         res.status(201).json({ message: 'User registered successfully', user: { id: users[0].id, user: users[0].username, email: users[0].email, token } });
       }
+    });
+  }
+
+  /**
+ * @description: send mail to users through api/v1/users/email
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * @return {Object} response
+ */
+  static sendMailForNotification(req, res) {
+    const [recepients, grup, message, poster] = [req.body.recepients, req.body.group,
+      req.body.message, req.body.poster];
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.MAIL_USERNAME,
+        pass: process.env.MAIL_PASSWORD
+      }
+    });
+    const mailOptions = {
+      from: '"PostIt" <noreply@postit.com>',
+      to: recepients,
+      subject: 'Message Notification',
+      text: '',
+      html: `<b>Hello!</b><br><br> You have a new message in <b>${grup}</b>, from <b>${poster}</b>.<br><br><i>${message}</i></p>`
+    };
+    transporter.sendMail(mailOptions, (error) => {
+      if (error) {
+        res.status(500).json({ message: 'Sorry, mail could not be sent' });
+      }
+      res.status(200).json({ message: 'Mail notification sent' });
     });
   }
 }

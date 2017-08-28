@@ -7,26 +7,39 @@ import GoogleLogin from 'react-google-login';
 import UserActions from '../actions/user';
 import authorization from '../utils/authorization';
 
+/**
+  * @class LoginWithGoogle
+  */
 class LoginWithGoogle extends Component {
+/**
+  * @constructor
+  * @param {object} props
+  */
   constructor(props) {
     super(props);
     this.responseGoogle = this.responseGoogle.bind(this);
   }
 
+  /**
+  * description: redirects after google signup is successful
+  * @param {object} response google object information
+  * @return {void} void
+  */
   responseGoogle(response) {
-    console.log(response)
     const username = response.profileObj.name;
     const email = response.profileObj.email;
     this.props.registerUserFromGoogle(username, email)
-    .then(() => {
-      console.log(this.props.userFromGoogle.response.user);
-      console.log('nuru testing')
-      localStorage.setItem('user', JSON.stringify(this.props.userFromGoogle.response.user));
-      authorization(this.props.userFromGoogle.response.user.token);
-      browserHistory.push('/dashboard');
-    })
+      .then(() => {
+        localStorage.setItem('user', JSON.stringify(this.props.userFromGoogle.response.user));
+        authorization(this.props.userFromGoogle.response.user.token);
+        browserHistory.push('/dashboard');
+      });
   }
 
+  /**
+  * description: render the google button
+  * @return {void} void
+  */
   render() {
     return (
       <GoogleLogin

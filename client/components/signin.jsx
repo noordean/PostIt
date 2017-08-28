@@ -8,50 +8,80 @@ import PropTypes from 'prop-types';
 import UsersActions from '../actions/user';
 import { browserHistory } from 'react-router';
 
+/**
+  * @class Dashboard
+  */
 class SignIn extends Component {
+/**
+  * @constructor
+  * @param {object} props
+  */
   constructor(props) {
     super(props);
     this.state = {
       loginResponse: ''
-    }
+    };
+    this.loginHandler = this.loginHandler.bind(this);
+    this.openResetPassword = this.openResetPassword.bind(this);
   }
-  loginHandler(event) {
-    event.preventDefault();
-    const username = this.refs.usernameInput.value;
-    const password = this.refs.passwordInput.value;
-    this.props.loginUser(username, password)
-    .then(() => {
-      if (this.props.userLogin.reqStatus.message === 'You are now logged in') {
-       localStorage.setItem('user', JSON.stringify(this.props.userLogin.reqStatus.user));
-        browserHistory.push('/dashboard');
-        // window.location.reload();
-      } else {
-        this.setState({
-          loginResponse: this.props.userLogin.reqStatus.message
-        });
-      }
-      if (this.props.userLogin.reqError) {
-        this.setState({
-          loginResponse: 'Sorry, unexpected error occurred'
-        });
-      }
-    })
-  }
-  openResetPassword(event) {
-    event.preventDefault();
-    $('#modal3').modal('open');
-  }
+
+  /**
+  * description: executes just before the component gets mounted
+  * @return {void} void
+  */
   componentWillUnmount() {
     this.setState({
       loginResponse: ''
     });
   }
+
+  /**
+  * description: controls user login
+  * @param {object} event event object
+  * @return {void} void
+  */
+  loginHandler(event) {
+    event.preventDefault();
+    const username = this.refs.usernameInput.value;
+    const password = this.refs.passwordInput.value;
+    this.props.loginUser(username, password)
+      .then(() => {
+        if (this.props.userLogin.reqStatus.message === 'You are now logged in') {
+          localStorage.setItem('user', JSON.stringify(this.props.userLogin.reqStatus.user));
+          browserHistory.push('/dashboard');
+        } else {
+          this.setState({
+            loginResponse: this.props.userLogin.reqStatus.message
+          });
+        }
+        if (this.props.userLogin.reqError) {
+          this.setState({
+            loginResponse: 'Sorry, unexpected error occurred'
+          });
+        }
+      });
+  }
+
+  /**
+  * description: opens the resetPassword modal
+  * @param {object} event event object
+  * @return {void} void
+  */
+  openResetPassword(event) {
+    event.preventDefault();
+    $('#modal3').modal('open');
+  }
+
+  /**
+  * description: renders the component
+  * @return {void} void
+  */
   render() {
     return (
       <div className="container">
         <div id="login-page" className="row">
           <div className="col s12 z-depth-4 card-panel">
-            <form className="login-form" onSubmit={this.loginHandler.bind(this)}>
+            <form className="login-form" onSubmit={this.loginHandler}>
               <div className="row">
                 <div className="input-field col s12 center">
                   <img id="login-img" src="/public/image/login.jpg" alt="" className="circle responsive-img valign profile-image-login"/>
@@ -80,24 +110,28 @@ class SignIn extends Component {
               </div>
               <div className="row">
                 <div className="input-field col s6">
-                  <input type="submit" value="Login" className="btn col s12 red darken-4"/>
+                  <input type="submit" value="Login" className="btn col s12 red darken-4" />
                 </div>
                 <div className="input-field col s6">
-                  <GoogleLogin/>
+                  <GoogleLogin />
                 </div>
               </div>
               <div className="row">
-              <div className="input-field col s6 m6 l6">
-                <p className="margin medium-small"><Link to="/signup">Register Now!</Link></p>
+                <div className="input-field col s6 m6 l6">
+                  <p className="margin medium-small"><Link to="/signup">Register Now!</Link></p>
+                </div>
+                <div className="input-field col s6 m6 l6">
+                  <p className="margin right-align medium-small">
+                    <a href="##" onClick={this.openResetPassword}>
+                      Forgot password ?
+                    </a>
+                  </p>
+                </div>
               </div>
-              <div className="input-field col s6 m6 l6">
-                <p className="margin right-align medium-small"><a href="#" onClick={this.openResetPassword.bind(this)}>Forgot password ?</a></p>
-              </div>          
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
     );
   }
 }
@@ -112,10 +146,10 @@ const mapStateToProps = (state) => {
   return {
     userLogin: state.userLogin
   };
-}
+};
 
 const matchDispatchToProps = (dispatch) => {
-  return bindActionCreators({ loginUser: UsersActions.loginUser}, dispatch);
-}
+  return bindActionCreators({ loginUser: UsersActions.loginUser }, dispatch);
+};
 
 export default connect(mapStateToProps, matchDispatchToProps)(SignIn);

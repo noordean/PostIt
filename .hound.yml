@@ -4,4 +4,4 @@ eslint:
   ignore_file: .eslintignore
   exclude:
   - 'node_modules/**'
-  - 'coverage/**'
+  - 'coverage/**' 

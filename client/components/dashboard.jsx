@@ -24,29 +24,39 @@ class Dashboard extends Component {
       groupLimit: 6,
       groups: []
     };
+    this.handlePageClick = this.handlePageClick.bind(this);
   }
 
+  /**
+  * description: controls what happens after component get rendered
+  * @return {void} void
+  */
   componentDidMount() {
     this.props.getGroups(JSON.parse(localStorage.user).id, this.state.groupLimit, 0)
-    .then(() => {
-      if (this.props.group.groups.length > 0) {
-        this.setState({
-          groups: this.props.group.groups,
-          responseMsg: '',
-          groupCount: this.props.group.pageCount
-        });
-      } else if (this.props.group.responseMsg !== '') {
-        this.setState({
-          responseMsg: this.props.group.responseMsg
-        });
-      } else if (this.props.group.error) {
-        this.setState({
-          responseMsg: 'Sorry, groups could not be fetched'
-        })
-      }
-    })
+      .then(() => {
+        if (this.props.group.groups.length > 0) {
+          this.setState({
+            groups: this.props.group.groups,
+            responseMsg: '',
+            groupCount: this.props.group.pageCount
+          });
+        } else if (this.props.group.responseMsg !== '') {
+          this.setState({
+            responseMsg: this.props.group.responseMsg
+          });
+        } else if (this.props.group.error) {
+          this.setState({
+            responseMsg: 'Sorry, groups could not be fetched'
+          });
+        }
+      });
   }
 
+  /**
+  * description: controls what happens when state is about to change
+  * @param {object} nextProps The next state
+  * @return {void} void
+  */
   componentWillReceiveProps(nextProps) {
     if (this.props !== nextProps) {
       this.setState({
@@ -56,54 +66,61 @@ class Dashboard extends Component {
     }
   }
 
+  /**
+  * description: controls pagination
+  * @param {object} data The pagination object
+  * @return {void} void
+  */
   handlePageClick(data) {
-    let selected = data.selected;
-    let offset = Math.ceil(selected * this.state.groupLimit);
+    const selected = data.selected;
+    const offset = Math.ceil(selected * this.state.groupLimit);
     this.props.getGroups(JSON.parse(localStorage.user).id, this.state.groupLimit, offset)
-    .then(() => {
-      this.setState({
-        groups: this.props.group.groups
-      })
-    })
+      .then(() => {
+        this.setState({
+          groups: this.props.group.groups
+        });
+      });
   }
 
+  /**
+  * description: renders the component
+  * @return {void} void
+  */
   render() {
     let dashboard;
     if (!localStorage.user) {
-      dashboard = <Home/>;
+      dashboard = <Home />;
+    } else if (this.props.group.loading) {
+      dashboard = <div className="text center">Loading...</div>;
+    } else if (this.state.groups.length > 0) {
+      dashboard = this.state.groups.map((group) => {
+        return (<div className="col s12 m6" key={group.id}>
+          <div className="card">
+            <div className="card-content grey lighten-4 text">
+              <span className="card-title">{group.groupname}</span>
+              <p>{group.description}</p>
+            </div>
+            <div className="card-action grey lighten-4">
+              <Link to={`message-board/${group.id}/${group.groupname}`} className="red-text text-accent-1">View Message Board</Link>
+            </div>
+          </div>
+        </div>);
+      });
     } else {
-      if (this.props.group.loading) {
-        dashboard = <div className="text center">Loading...</div>
-      } else if (this.state.groups.length > 0) {
-        dashboard = this.state.groups.map((group) => {
-          return (<div className="col s12 m6" key={group.id}>
-                  <div className="card">
-                    <div className="card-content grey lighten-4 text">
-                      <span className="card-title">{group.groupname}</span>
-                      <p>{group.description}</p>
-                    </div>
-                    <div className="card-action grey lighten-4">
-                      <Link to={`message-board/${group.id}/${group.groupname}`} className="red-text text-accent-1">View Message Board</Link>
-                    </div>
-                  </div>
-                </div>);
-              });
-        } else {
-         dashboard = <div className="center">{this.state.responseMsg}</div>
-      }
+      dashboard = <div className="center">{this.state.responseMsg}</div>;
     }
 
     return (
       <div className="row group-cards">
         {dashboard}
         <div id="paginate">
-          <Paginate 
+          <Paginate
             count={this.state.groupCount}
             LIMIT={this.state.groupLimit}
-            clickHandler={this.handlePageClick.bind(this)}
+            clickHandler={this.handlePageClick}
           />
+        </div>
       </div>
-    </div>
     );
   }
 }

@@ -20,12 +20,12 @@ export default class UserReducers {
   static register(state = initialState, action) {
     switch (action.type) {
       case 'REGISTRATION_BEGINS':
-        return { ...state, reqStatus: action.payload, loading: true }
+        return { ...state, reqStatus: action.payload, loading: true };
       case 'REGISTRATION_SUCCESSFUL':
       case 'REGISTRATION_UNSUCCESSFUL':
-        return { ...state, reqStatus: action.payload }
+        return { ...state, reqStatus: action.payload };
       case 'REGISTRATION_REJECTED':
-        return { ...state, reqError: true }
+        return { ...state, reqError: true };
       default:
         return state;
     }
@@ -43,12 +43,12 @@ export default class UserReducers {
   static login(state = initialState, action) {
     switch (action.type) {
       case 'LOGIN_BEGINS':
-        return { ...state, reqStatus: action.payload, loading: true }  
+        return { ...state, reqStatus: action.payload, loading: true };
       case 'LOGIN_SUCCESSFUL':
       case 'LOGIN_UNSUCCESSFUL':
-        return { ...state, reqStatus: action.payload }
+        return { ...state, reqStatus: action.payload };
       case 'LOGIN_REJECTED':
-        return { ...state, reqError: true }
+        return { ...state, reqError: true };
       default:
         return state;
     }
@@ -148,6 +148,30 @@ export default class UserReducers {
         return { ...state, response: action.payload, loading: false };
       case 'REGISTER_GOOGLE_USER_REJECTED':
         return { ...state, error: true };
+      default:
+        return state;
+    }
+  }
+
+  /**
+  * Reducer for sending mail for notification
+  *
+  * @static
+  * @param {Object} state The initial state
+  * @param {Object} action The dispatched action
+  * @returns {Object} current state
+  * @memberof UserReducers
+  */
+  static sendMailForNotification(state = { responseMsg: '', loading: false, error: false }, action) {
+    switch (action.type) {
+      case 'SEND_EMAIL_NOTIFICATION_BEGINS':
+        return { ...state, responseMsg: '', loading: true };
+      case 'SEND_EMAIL_NOTIFICATION_SUCCESSFUL':
+        return { ...state, responseMsg: action.payload, loading: false };
+      case 'SEND_EMAIL_NOTIFICATION_UNSUCCESSFUL':
+        return { ...state, responseMsg: action.payload, loading: false };
+      case 'SEND_EMAIL_NOTIFICATION_REJECTED':
+        return { ...state, responseMsg: '', error: true };
       default:
         return state;
     }

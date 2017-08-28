@@ -202,5 +202,39 @@ export default class UserActions {
         });
     };
   }
+
+  /**
+  * Request to the API to send mail for notification
+  *
+  * @static
+  * @param {String} recepients The emails of the users to send to
+  * @param {String} group The group name
+  * @param {String} message The message posted 
+  * @param {String} poster username of the poster  
+  * @returns {string} dispatched object
+  * @memberof UserActions
+  */
+  static sendMailForNotification(recepients, group, message, poster) {
+    return (dispatch) => {
+      dispatch({ type: 'SEND_EMAIL_NOTIFICATION_BEGINS' });
+      return axios.post('/api/v1/users/email', {
+        recepients,
+        group,
+        message,
+        poster
+      })
+        .then((response) => {
+          dispatch({ type: 'SEND_EMAIL_NOTIFICATION_SUCCESSFUL', payload: response.data.message });
+        })
+        .catch((err) => {
+          if (err.response.status === 500 || err.response.status === 400
+          || err.response.status === 404) {
+            dispatch({ type: 'SEND_EMAIL_NOTIFICATION_UNSUCCESSFUL', payload: err.response.data.message });
+          } else {
+            dispatch({ type: 'SEND_EMAIL_NOTIFICATION_REJECTED' });
+          }
+        });
+    };
+  }
 }
 

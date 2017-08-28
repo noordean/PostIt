@@ -8,61 +8,38 @@ import MessageActions from '../actions/message';
 import SideNav from './sidenav.jsx';
 import Home from './home.jsx';
 
+/**
+  * @class MessageBoard
+  */
 class MessageBoard extends Component {
+/**
+  * @constructor
+  * @param {object} props
+  */
   constructor(props) {
     super(props);
     this.state = {
       responseMsg: '',
       msgStatus: 'Normal',
       messages: []
-    }
+    };
+    this.getMsgStatus = this.getMsgStatus.bind(this);
+    this.postMessageHandler = this.postMessageHandler.bind(this);
   }
 
-  getMessagesHandler() {
-    this.props.getMessages(this.props.params.groupID)
-    .then(() => {
-      if (this.props.groupMessages.messages.length > 0) {
-        this.setState({
-          messages: this.props.groupMessages.messages,
-        });
-      } else if (this.props.groupMessages.error) {
-        this.setState({
-          responseMsg: 'Sorry, messages could not be fetched'
-        })
-      } else if (this.props.groupMessages.responseMsg !== '') {
-        this.setState({
-          responseMsg: this.props.groupMessages.responseMsg
-        })
-      }
-    })
-  }
- 
+  /**
+  * description: executes immediately after the component mounts
+  * @return {void} void
+  */
   componentDidMount() {
     this.getMessagesHandler();
   }
 
-  postMessageHandler(event) {
-    event.preventDefault();
-    const msg = encodeURI(this.refs.msgInput.value);
-    if (this.refs.msgInput.value.trim().length !== 0) {
-      this.props.postGroupMessage(this.props.params.groupID, msg, this.state.msgStatus)
-      .then(() => {
-        this.refs.msgInput.value = '';
-       if (this.props.groupMessages.responseMsg !== '') {
-          this.setState({
-            responseMsg: this.props.groupMessages.responseMsg
-          })
-        } else if (this.props.groupMessages.error) {
-          this.setState({
-            responseMsg: 'Sorry, message could not be posted'
-          })
-        } else {
-          this.getMessagesHandler();
-        }
-      })
-    }
-  }
-
+  /**
+  * description: executes when the state changes
+  * @param {object} nextProps the next state
+  * @return {void} void
+  */
   componentWillReceiveProps(nextProps) {
     if (this.props !== nextProps) {
       this.setState({
@@ -72,81 +49,193 @@ class MessageBoard extends Component {
     }
   }
 
+  /**
+  * description: gets all messages for a group
+  * @return {void} void
+  */
+  getMessagesHandler() {
+    this.props.getMessages(this.props.params.groupID)
+      .then(() => {
+        if (this.props.groupMessages.messages.length > 0) {
+          this.setState({
+            messages: this.props.groupMessages.messages,
+          });
+        } else if (this.props.groupMessages.error) {
+          this.setState({
+            responseMsg: 'Sorry, messages could not be fetched'
+          });
+        } else if (this.props.groupMessages.responseMsg !== '') {
+          this.setState({
+            responseMsg: this.props.groupMessages.responseMsg
+          });
+        }
+      });
+  }
+
+  /**
+  * description: gets the message status, either normal, urgent or critical
+  * @param {event} event the event being executed
+  * @return {void} void
+  */
   getMsgStatus(event) {
     this.setState({
       msgStatus: event.target.value
     });
   }
 
+  /**
+  * description: posts message to a group
+  * @param {event} event the event being executed
+  * @return {void} void
+  */
+  postMessageHandler(event) {
+    event.preventDefault();
+    const msg = encodeURI(this.refs.msgInput.value);
+    if (this.refs.msgInput.value.trim().length !== 0) {
+      this.props.postGroupMessage(this.props.params.groupID, msg, this.state.msgStatus)
+        .then(() => {
+          this.refs.msgInput.value = '';
+          if (this.props.groupMessages.responseMsg !== '') {
+            this.setState({
+              responseMsg: this.props.groupMessages.responseMsg
+            });
+          } else if (this.props.groupMessages.error) {
+            this.setState({
+              responseMsg: 'Sorry, message could not be posted'
+            });
+          } else {
+            this.props.getMessages(this.props.params.groupID)
+              .then(() => {
+                if (this.props.groupMessages.messages[this.props.groupMessages.messages.length - 1].priority !== 'Normal') {
+                  this.sendMailNotification(this.props.member.members, decodeURI(msg));
+                }
+              });
+          }
+        });
+    }
+  }
+
+  /**
+  * description: sends email notification to group members
+  * @param {array} members the current group members
+  * @param {string} message the resent message posted
+  * @return {void} void
+  */
+  sendMailNotification(members, message) {
+    const allMembers = members.map((member) => {
+      return member.email;
+    });
+    const recepients = allMembers.filter((member) => {
+      return member !== JSON.parse(localStorage.user).email;
+    });
+    const recepientsInStr = recepients.join(', ');
+    const groupName = this.props.params.groupName;
+    const poster = JSON.parse(localStorage.user).user;
+    this.props.sendMailForNotification(recepientsInStr, groupName, message, poster);
+  }
+
+  /**
+  * description: renders the component
+  * @return {void} void
+  */
   render() {
     if (!localStorage.user) {
-      return <Home/>
+      return <Home />;
     }
-    
+
     let messageBoard;
     if (this.state.responseMsg !== '') {
       messageBoard = <div className="center">{this.state.responseMsg}</div>;
     } else if (this.props.groupMessages.loading) {
       messageBoard = <div className="center">Loading messages...</div>
-    } else {
-    if (this.state.messages.length > 0) {
-      messageBoard = this.state.messages.map((message, index) => {
-      return (
-        <div  key={index}>
-          <div className="row">
-            <div className="col s10">
-              <h6 className="media-heading">{message.postedby}</h6>
-              <p className="col-lg-10" className="msgTxt">{decodeURI(message.message)}</p>
-            </div>
-            <div className="col s2">
-              <div>
-                <div><small className="pull-right time"><i className="fa fa-clock-o"></i>{new Date(message.createdAt).toLocaleString()}</small></div>
-                <div><small className="pull-right time red-text"><i className="fa fa-clock-o"></i>{message.priority}</small></div>
+    } else if (this.state.messages.length > 0) {
+      messageBoard = this.state.messages.map((message) => {
+        return (
+          <div key={message.id}>
+            <div className="row">
+              <div className="col s10">
+                <h6 className="media-heading">{message.postedby}</h6>
+                <p className="col-lg-10" className="msgTxt">{decodeURI(message.message)}</p>
+              </div>
+              <div className="col s2">
+                <div>
+                  <div>
+                    <small className="pull-right time">
+                      <i className="fa fa-clock-o" />
+                      {new Date(message.createdAt).toLocaleString()}
+                    </small>
+                  </div>
+                  <div>
+                    <small className="pull-right time red-text">
+                      <i className="fa fa-clock-o" />
+                      {message.priority}
+                    </small>
+                  </div>
+                </div>
               </div>
             </div>
+            <hr />
           </div>
-          <hr/>
-        </div>
         );
       });
     } else {
       messageBoard = <div className="center">This group does not contain any message</div>
     }
-  }
 
     return (
       <div>
         <SideNav groupName={this.props.params.groupName} groupID={this.props.params.groupID}/>
         <div className="row group-cards">
-          <div className="col s3">
-          </div>
+          <div className="col s3" />
           <div className="col s9">
-          <div id="msgarea">
-            {messageBoard}
-          </div>
-           <div className="row" id="postArea">
+            <div id="msgarea">
+              {messageBoard}
+            </div>
+            <div className="row" id="postArea">
               <form className="col s12" id="textareaForm">
                 <div className="row">
                   <div className="input-field col s8">
-                    <textarea id="textarea1" ref="msgInput"></textarea>
+                    <textarea id="textarea1" ref="msgInput" />
                     <label htmlFor="textarea1">Message</label>
                   </div>
                   <div className="col s2">
                     <p>
-                      <input name="group1" type="radio" id="test1" value="Normal" onClick={this.getMsgStatus.bind(this)}/>
+                      <input
+                        name="group1"
+                        type="radio"
+                        id="test1"
+                        value="Normal"
+                        onClick={this.getMsgStatus}
+                      />
                       <label htmlFor="test1">Normal</label>
                     </p>
                     <p>
-                      <input name="group1" type="radio" id="test2" value="Urgent" onClick={this.getMsgStatus.bind(this)}/>
+                      <input
+                        name="group1"
+                        type="radio"
+                        id="test2"
+                        value="Urgent"
+                        onClick={this.getMsgStatus}
+                      />
                       <label htmlFor="test2">Urgent</label>
                     </p>
                     <p>
-                      <input name="group1" type="radio" id="test3" value="Critical" onClick={this.getMsgStatus.bind(this)}/>
+                      <input
+                        name="group1"
+                        type="radio"
+                        id="test3"
+                        value="Critical"
+                        onClick={this.getMsgStatus}
+                      />
                       <label htmlFor="test3">Critical</label>
                     </p>
                   </div>
                   <div className="input-field col s2">
-                    <a href="#" className="btn waves-effect waves-light col s12 red darken-4" onClick={this.postMessageHandler.bind(this)}>Post</a>
+                    <a
+                      href="##"
+                      className="btn waves-effect waves-light col s12 red darken-4"
+                      onClick={this.postMessageHandler}
+                    >Post</a>
                   </div>
                 </div>
               </form>
@@ -159,21 +248,23 @@ class MessageBoard extends Component {
 }
 
 MessageBoard.propTypes = {
-  groupMessages: PropTypes.object,
-	getMessages: PropTypes.func,
-	postGroupMessage: PropTypes.func
-}
+  groupMessages: PropTypes.object.isRequired,
+  getMessages: PropTypes.func.isRequired,
+  postGroupMessage: PropTypes.func.isRequired
+};
 
 const mapStateToProps = (state) => {
   return {
-      groupMessages: state.messages
+    groupMessages: state.messages,
+    member: state.member
   };
-}
+};
 
 const matchDispatchToProps = (dispatch) => {
   return bindActionCreators({
     getMessages: MessageActions.getMessages,
-    postGroupMessage: MessageActions.postGroupMessage}, dispatch);
-}
+    sendMailForNotification: UserActions.sendMailForNotification,
+    postGroupMessage: MessageActions.postGroupMessage }, dispatch);
+};
 
 export default connect(mapStateToProps, matchDispatchToProps)(MessageBoard);

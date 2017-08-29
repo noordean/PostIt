@@ -48,7 +48,7 @@ export default class Message {
     const messageID = req.params.messageID;
     message.getMessageById(messageID, (msg) => {
       if (msg.length === 0) {
-        res.json({ message: 'Invalid message id' });
+        res.status(404).json({ message: 'Invalid message id' });
       } else {
         message.deleteMessage(messageID, () => {
           res.status(200).json({ message: 'message deleted' });

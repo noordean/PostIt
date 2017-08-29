@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs';
 import nodemailer from 'nodemailer';
 import jwt from 'jsonwebtoken';
+import Jusibe from 'node-jusibe';
 import user from '../services/user';
 import group from '../services/group';
 import groupUser from '../services/groupuser';
@@ -153,8 +154,9 @@ export default class User {
           transporter.sendMail(mailOptions, (error) => {
             if (error) {
               res.status(500).json({ message: 'Sorry, mail could not be sent' });
+            } else {
+              res.status(200).json({ message: 'A message has been sent to your mail to continue the process' });
             }
-            res.status(200).json({ message: 'A message has been sent to your mail to continue the process' });
           });
         }
       });
@@ -188,7 +190,8 @@ export default class User {
  * @return {Object} response
  */
   static registerUserFromGoogle(req, res) {
-    const [username, email, phoneNumber, password] = [req.body.username, req.body.email, Math.ceil(Math.random() * 100000000000), 'default123'];
+    const [username, email, phoneNumber, password] = [req.body.username, req.body.email,
+      Math.ceil(Math.random() * 100000000000), null];
     user.saveUserFromGoogle(username, password, email, phoneNumber, (users) => {
       if (users === 'email must be unique') {
         user.getUserByEmail(email, (userrs) => {
@@ -231,8 +234,29 @@ export default class User {
     transporter.sendMail(mailOptions, (error) => {
       if (error) {
         res.status(500).json({ message: 'Sorry, mail could not be sent' });
+      } else {
+        res.status(200).json({ message: 'Mail notification sent' });
       }
-      res.status(200).json({ message: 'Mail notification sent' });
     });
   }
+
+  /**
+ * @description: send sms to users through api/v1/users/sms
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * @return {Object} response
+ */
+  static sendSmsForNotification(req, res) {
+    const members = req.body.members;
+    const jusibe = new Jusibe(process.env.JUSIBE_PUBLIC_KEY, process.env.JUSIBE_ACCESS_TOKEN);
+    if (Array.isArray(members)) {
+      if (members.length > 0) {
+        members.forEach((member) => {
+          jusibe.sendMessage(member);
+        });
+        res.status(200).json({ message: 'SMS sent!' });
+      }
+    }
+  }
 }
+

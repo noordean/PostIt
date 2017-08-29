@@ -60,7 +60,7 @@ describe('PostIt Endpoints', () => {
           description: 'for test'
         })
         .end((err, res) => {
-          res.should.have.status(412);
+          res.should.have.status(401);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('Your login token must be provided');
@@ -124,7 +124,7 @@ describe('PostIt Endpoints', () => {
       chai.request(app)
         .delete('/api/v1/group/3')
         .end((err, res) => {
-          res.should.have.status(412);
+          res.should.have.status(401);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('Your login token must be provided');
@@ -184,6 +184,21 @@ describe('PostIt Endpoints', () => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('Group deleted');
+          done();
+        });
+    });
+  });
+
+  describe('GET api/user/:userID/groups', () => {
+    it('should respond with error message if invalid id is defined', (done) => {
+      chai.request(app)
+        .get('/api/v1/user/14575893/groups?limit=6&offset=0')
+        .set('token', sentToken)
+        .end((err, res) => {
+          res.should.have.status(404);
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.message.should.be.eql('Invalid user id');
           done();
         });
     });

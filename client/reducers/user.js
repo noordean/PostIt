@@ -176,4 +176,28 @@ export default class UserReducers {
         return state;
     }
   }
+
+  /**
+  * Reducer for sending mail for notification
+  *
+  * @static
+  * @param {Object} state The initial state
+  * @param {Object} action The dispatched action
+  * @returns {Object} current state
+  * @memberof UserReducers
+  */
+  static sendSmsForNotification(state = { responseMsg: '', loading: false, error: false }, action) {
+    switch (action.type) {
+      case 'SEND_SMS_NOTIFICATION_BEGINS':
+        return { ...state, responseMsg: '', loading: true };
+      case 'SEND_SMS_NOTIFICATION_SUCCESSFUL':
+        return { ...state, responseMsg: action.payload, loading: false };
+      case 'SEND_SMS_NOTIFICATION_UNSUCCESSFUL':
+        return { ...state, responseMsg: action.payload, loading: false };
+      case 'SEND_SMS_NOTIFICATION_REJECTED':
+        return { ...state, responseMsg: '', error: true };
+      default:
+        return state;
+    }
+  }
 }

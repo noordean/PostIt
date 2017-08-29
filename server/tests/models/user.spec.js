@@ -57,5 +57,14 @@ describe('<Unit Test>', () => {
         });
       });
     });
+    describe('Method updateUser', () => {
+      it('should be able update user password', (done) => {
+        user.updatePassword('newPass123', 'toBeDelted@gmail.com', (users) => {
+          users.length.should.eql(1);
+          users[0].should.eql(1);
+          done();
+        });
+      });
+    });
   });
 });

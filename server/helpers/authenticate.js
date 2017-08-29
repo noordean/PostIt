@@ -37,7 +37,7 @@ export default class Authenticate {
         return next();
       });
     } else {
-      return res.status(412).json({ message: 'Your login token must be provided' });
+      return res.status(401).json({ message: 'Your login token must be provided' });
     }
   }
 }

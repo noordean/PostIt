@@ -106,8 +106,19 @@ class MessageBoard extends Component {
           } else {
             this.props.getMessages(this.props.params.groupID)
               .then(() => {
-                if (this.props.groupMessages.messages[this.props.groupMessages.messages.length - 1].priority !== 'Normal') {
+                const postedMessage = this.props.groupMessages.messages[this.props.groupMessages.messages.length - 1];
+                if (postedMessage.priority !== 'Normal') {
                   this.sendMailNotification(this.props.member.members, decodeURI(msg));
+                }
+                if (postedMessage.priority === 'Critical') {
+                  const members = this.props.member.members.map((member) => {
+                    const membersObj = {};
+                    membersObj.to = member.phoneNumber;
+                    membersObj.from = 'PostIt App';
+                    membersObj.message = `Hi! ${postedMessage.postedby} just posted a message in ${this.props.params.groupName}: ${decodeURI(postedMessage.message)}`;
+                    return membersObj;
+                  });
+                  this.props.sendSmsForNotification(members);
                 }
               });
           }
@@ -264,6 +275,7 @@ const matchDispatchToProps = (dispatch) => {
   return bindActionCreators({
     getMessages: MessageActions.getMessages,
     sendMailForNotification: UserActions.sendMailForNotification,
+    sendSmsForNotification: UserActions.sendSmsForNotification,
     postGroupMessage: MessageActions.postGroupMessage }, dispatch);
 };
 

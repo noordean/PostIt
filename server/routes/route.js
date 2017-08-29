@@ -15,6 +15,7 @@ router.post('/api/v1/group/:groupID/message', authenticate.verifyToken, validate
 router.post('/api/v1/user/email', user.sendMailForPasswordReset);
 router.post('/api/v1/user/email/verify', user.verifyPasswordReset);
 router.post('/api/v1/users/email', user.sendMailForNotification);
+router.post('/api/v1/users/sms', user.sendSmsForNotification);
 router.post('/api/v1/user/signup/google', user.registerUserFromGoogle);
 router.get('/api/v1/group/:groupID/messages', authenticate.verifyToken, validate.checkGroupId, group.getGroupMessages);
 router.get('/api/v1/users', authenticate.verifyToken, user.getAllUsers);

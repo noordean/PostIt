@@ -60,7 +60,7 @@ describe('PostIt Endpoints', () => {
           description: 'for test'
         })
         .end((err, res) => {
-          res.should.have.status(412);
+          res.should.have.status(401);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('Your login token must be provided');
@@ -124,7 +124,7 @@ describe('PostIt Endpoints', () => {
       chai.request(app)
         .delete('/api/v1/group/3')
         .end((err, res) => {
-          res.should.have.status(412);
+          res.should.have.status(401);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('Your login token must be provided');

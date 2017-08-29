@@ -77,7 +77,7 @@ export default class UserActions {
   * @memberof UserActions
   */
   static getGroupMembers(groupID) {
-    return dispatch => axios.get(`/api/v1/group/${groupID}/user`)
+    return dispatch => axios.get(`/api/v1/group/${groupID}/users`)
       .then((response) => {
         dispatch({ type: 'GOT_MEMBERS', payload: response.data.users });
       })

@@ -424,7 +424,7 @@ describe('PostIt Endpoints', () => {
   describe('GET api/group/:groupID/user', () => {
     it('should respond with success message if correct details are supplied', (done) => {
       chai.request(app)
-        .get('/api/v1/group/1/user')
+        .get('/api/v1/group/1/users')
         .set('token', sentToken)
         .end((err, res) => {
           res.should.have.status(200);
@@ -436,7 +436,7 @@ describe('PostIt Endpoints', () => {
     });
     it('should respond with error message if invalid group id is supplied', (done) => {
       chai.request(app)
-        .get('/api/v1/group/1537625/user')
+        .get('/api/v1/group/1537625/users')
         .set('token', sentToken)
         .end((err, res) => {
           res.should.have.status(404);
@@ -448,7 +448,7 @@ describe('PostIt Endpoints', () => {
     });
     it('should respond with error message if login token is not defined', (done) => {
       chai.request(app)
-        .get('/api/v1/group/1/user')
+        .get('/api/v1/group/1/users')
         .end((err, res) => {
           res.should.have.status(412);
           res.body.should.be.a('object');
@@ -459,13 +459,75 @@ describe('PostIt Endpoints', () => {
     });
     it('should respond with error message if incorrect login token is supplied', (done) => {
       chai.request(app)
-        .get('/api/v1/group/1/user')
+        .get('/api/v1/group/1/users')
         .set('token', 'incorrectToken')
         .end((err, res) => {
           res.should.have.status(401);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('Access denied!. Kindly login');
+          done();
+        });
+    });
+  });
+
+  describe('POST api/v1/user/email/verify', () => {
+    it('should respond with error message if invalid token is supplied', (done) => {
+      chai.request(app)
+        .post('/api/v1/user/email/verify')
+        .set('mailToken', 'invalidToken')
+        .end((err, res) => {
+          res.should.have.status(401);
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.message.should.be.eql('Access denied!. Invalid url detected');
+          done();
+        });
+    });
+  });
+
+  describe('POST api/v1/user/signup/google', () => {
+    it('should respond with success message if correct details are supplied', (done) => {
+      chai.request(app)
+        .post('/api/v1/user/signup/google')
+        .send({
+          username: 'from google',
+          email: 'fromGoogle@gmail.com'
+        })
+        .end((err, res) => {
+          res.should.have.status(201);
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.should.have.property('user');
+          res.body.message.should.be.eql('User registered successfully');
+          res.body.user.user.should.be.eql('from google');
+          done();
+        });
+    });
+  });
+
+  describe('GET api/v1/users', () => {
+    it('should respond with error message if invalid token is provided', (done) => {
+      chai.request(app)
+        .get('/api/v1/users')
+        .set('token', 'invalidToken')
+        .end((err, res) => {
+          res.should.have.status(401);
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.message.should.be.eql('Access denied!. Kindly login');
+          done();
+        });
+    });
+    it('should respond with error message if userrs is not provided', (done) => {
+      chai.request(app)
+        .get('/api/v1/users')
+        .set('token', sentToken)
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.message.should.be.eql('users to ignore should be supplied');
           done();
         });
     });

@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs';
 import nodemailer from 'nodemailer';
 import jwt from 'jsonwebtoken';
+import Jusibe from 'node-jusibe';
 import user from '../services/user';
 import group from '../services/group';
 import groupUser from '../services/groupuser';
@@ -87,7 +88,7 @@ export default class User {
   }
 
   /**
- * @description: retrieves all users in a group through route GET: api/group/:groupID/users
+ * @description: retrieves all users in a group through route GET: api/group/:groupID/user
  * @param {Object} req request object
  * @param {Object} res response object
  * @return {Object} response containing all users of a group
@@ -235,4 +236,24 @@ export default class User {
       res.status(200).json({ message: 'Mail notification sent' });
     });
   }
+
+  /**
+ * @description: send sms to users through api/v1/users/sms
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * @return {Object} response
+ */
+  static sendSmsForNotification(req, res) {
+    const members = req.body.members;
+    const jusibe = new Jusibe(process.env.JUSIBE_PUBLIC_KEY, process.env.JUSIBE_ACCESS_TOKEN);
+    if (Array.isArray(members)) {
+      if (members.length > 0) {
+        members.forEach((member) => {
+          jusibe.sendMessage(member);
+        });
+        res.status(200).json({ message: 'SMS sent!' });
+      }
+    }
+  }
 }
+

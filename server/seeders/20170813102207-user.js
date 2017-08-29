@@ -11,6 +11,14 @@ module.exports = {
       phoneNumber: '07012345678',
       createdAt: new Date(),
       updatedAt: new Date()
+    },
+    {
+      username: 'toDelete',
+      password: hashedPassword,
+      email: 'toBeDelted@gmail.com',
+      phoneNumber: '07032345678',
+      createdAt: new Date(),
+      updatedAt: new Date()
     }], {});
   },
   down(queryInterface) {

@@ -22,6 +22,13 @@ describe('<Unit Test>', () => {
           done();
         });
       });
+      it('should be able to delete a message by messageId', (done) => {
+        message.deleteMessage(2, (msg) => {
+          msg.should.eql(1);
+          done();
+        });
+      });
     });
   });
 });
+

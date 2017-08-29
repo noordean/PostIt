@@ -30,7 +30,7 @@ describe('PostIt Endpoints', () => {
           priority: 'Critical'
         })
         .end((err, res) => {
-          res.should.have.status(412);
+          res.should.have.status(401);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('Your login token must be provided');
@@ -222,7 +222,7 @@ describe('PostIt Endpoints', () => {
       chai.request(app)
         .get('/api/v1/group/1/messages')
         .end((err, res) => {
-          res.should.have.status(412);
+          res.should.have.status(401);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('Your login token must be provided');

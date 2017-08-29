@@ -12,5 +12,6 @@ export default combineReducers({
   sentMail: UserReducers.sendPasswordResetMail,
   verifyMailUrl: UserReducers.verifyPasswordReset,
   userFromGoogle: UserReducers.registerUserFromGoogle,
-  notificationMail: UserReducers.sendMailForNotification
+  notificationMail: UserReducers.sendMailForNotification,
+  notificationSms: UserReducers.sendSmsForNotification
 });

@@ -8,6 +8,14 @@ module.exports = {
       groupId: 1,
       createdAt: new Date(),
       updatedAt: new Date()
+    },
+    {
+      postedby: 'existing',
+      message: 'to be deleted',
+      priority: 'Urgent',
+      groupId: 1,
+      createdAt: new Date(),
+      updatedAt: new Date()
     }], {});
   },
   down(queryInterface) {

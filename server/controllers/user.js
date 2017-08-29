@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import Jusibe from 'node-jusibe';
 import user from '../services/user';
 import group from '../services/group';
-import groupUser from '../services/groupUser';
+import groupUser from '../services/groupuser';
 import authenticate from '../helpers/authenticate';
 
 dotenv.config();

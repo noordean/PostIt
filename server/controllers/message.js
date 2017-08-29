@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import group from '../services/group';
 import message from '../services/message';
-import groupUser from '../services/groupUser';
+import groupUser from '../services/groupuser';
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;

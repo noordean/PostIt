@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import group from '../services/group';
-import groupUser from '../services/groupuser';
+import groupUser from '../services/groupUser';
 import user from '../services/user';
 
 dotenv.config();

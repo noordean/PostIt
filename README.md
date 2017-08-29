@@ -21,17 +21,20 @@ PostIt has the following API features:
 #### Users
 - It allows user to create account
 - It allows user to login
-- It allows user to create groups, post message to the created groups
+- It allows user to create groups and post messages to the created groups
 
 #### Groups
-- It allows groups to be created for users to share messages
-- Only the group creator can add members to a group
+- Groups can be created by users to share messages
+- Members can be added to group. Only the group creator can add members to a group
 - Only unique groups can be created
 
 #### Messages
-- It allows users to post messages to the created groups
+- Messages are posted based on priority levels, that is: Critical, Urgent and Normal
+- SMS and email notification is sent to group members for Critical messages
+- Email notification is sent to group members for Urgent messages
+- In-app notification is sent to group members for Normal messages
 - Only the members of a group can post message into a group
-
+ 
 ## Installation
 - Clone this repository to have the app on your machine with ```git clone https://github.com/noordean/PostIt.git```
 - Change directory to the app's root with ```cd PostIt```
@@ -42,20 +45,47 @@ PostIt has the following API features:
 
 ### To test the API with postman:
 - run ```npm start```
-- then visit ```http://localhost:3333```, you should see 'PostIt API running...' 
+- then visit ```http://localhost:3333``` to view PostIt action. 
 
-It is also hosted on heroku at <a href="https://full-ostit.herokuapp.com/" target="_blank">PostIt API</a>.
+It is also hosted on heroku at <a href="https://full-postit.herokuapp.com/" target="_blank">PostIt API</a>.
 
 The API contains different endpoints with their respective payloads as stated below:
 
 | Endpoints                    | Functions                                                               | Payloads                 | Request Methods |
 |------------------------------|-------------------------------------------------------------------------|--------------------------|-----------------|
-| /api/v1/user/signup             | It allows users to register                                             | username, email and password    | POST            |
-| /api/v1/user/signin             | It gives users access to login                                          | username and password    | POST            |
-| /api/v1/group                   | It allows users to create group for notifications                       | groupName and createdBy | POST            |
-| /api/v1/group/:groupID/user     | It allows users to add another user to a created group of id groupID    | username                 | POST            |
-| /api/v1/group/:groupID/message  | It allows users to post message to a created group of id groupID        | message and postedBy     | POST            |
-| /api/v1/group/:groupID/messages | It allows users to retrieve messages from a created group of id groupID | No payload               | GET             |
+| /api/v1/user/signup             | It allows users to register                                | username, email, phoneNumber and password    | POST            |
+| /api/v1/user/signin             | It logs users into the app                                       | username and password    | POST            |
+| /api/v1/group                   | It allows users to create group for notifications                    | groupName and description | POST            |
+| /api/v1/group/:groupID/user     | It allows users to add another user to a created group of id groupID | userId                | POST            |
+| /api/v1/group/:groupID/message  | It posts message to group with id groupID                              | message and priority     | POST            |
+| /api/v1/group/:groupID/messages | It get all messages from group with id groupID                          | No payload               | GET             |
+| /api/v1/user/email            | It sends mail to users for password reset                      | email and password               | POST            |
+| /api/v1/users             | It gets all users                      | No payload               | GET            |
+| /api/v1/group/:groupID             | It deletes a group of id groupID                      | No payload               | DELETE            |
+| /api/v1/message/:messageID             | It deletes a message of id messageID                      | No payload               | DELETE            |
 
-## Note:
-- The client part is still in progress, and yet to be completed
+#### Note: Login token must be supplied in the headers before accessing all the routes except ```/api/v1/user/signup``` and ```/api/v1/user/signin```
+
+
+## Technologies Used
+* [NodeJS:](https://nodejs.org/en/) is an open-source, cross-platform JavaScript run-time environment for executing JavaScript code on the server-side.
+* [Javascript ES6:](https://en.wikipedia.org/wiki/ECMAScript) ES6 is the sixth major release of the javascript language specification. It enables features like constants, arrow functions, template literals, spread opeartor, etc.
+* [React:](https://facebook.github.io/react/tutorial/tutorial.html) Facebook open source, efficient, javascript library for building front-end projects.
+* [PostgreSQL:](https://www.postgresql.org/) PostgreSQL is a powerful, open source object-relational database system (ORDBMS) that offers modern database features such as complex queries, foreign keys, etc.
+* [Sequelize:](http://docs.sequelizejs.com/) Sequelize is a promise-based ORM for Node.js that supports different dialects such PostgreSQL, MySQL, and SQLite.
+* [Babel:](https://babeljs.io/)  Babel transpiles es6 codes to es5.
+* [Webpack:](https://webpack.github.io/docs/what-is-webpack.html) Webpack is used to bundle modules and does tasks automation.
+* [Axios:](https://www.npmjs.com/package/axios) Axios is an http client library used in consuming API.
+
+## Coding Style
+- Airbnb
+
+## How to Contribute
+- Fork this repository.
+- Clone it.
+- Create your feature branch on your local machine with ```git checkout -b your-feature-branch```
+- Push your changes to your remote branch with ```git push origin your-feature-branch```
+- Open a pull request to the master branch, and describe how your feature works
+
+#### The full API documentation can be viewed
+<a href="https://app.swaggerhub.com/apis/postit1/PostIt/1.0.0" target="_blank">here</a>

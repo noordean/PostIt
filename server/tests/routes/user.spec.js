@@ -486,26 +486,6 @@ describe('PostIt Endpoints', () => {
     });
   });
 
-  describe('POST api/v1/user/signup/google', () => {
-    it('should respond with success message if correct details are supplied', (done) => {
-      chai.request(app)
-        .post('/api/v1/user/signup/google')
-        .send({
-          username: 'from google',
-          email: 'fromGoogle@gmail.com'
-        })
-        .end((err, res) => {
-          res.should.have.status(201);
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.should.have.property('user');
-          res.body.message.should.be.eql('User registered successfully');
-          res.body.user.user.should.be.eql('from google');
-          done();
-        });
-    });
-  });
-
   describe('GET api/v1/users', () => {
     it('should respond with error message if invalid token is provided', (done) => {
       chai.request(app)
@@ -528,6 +508,82 @@ describe('PostIt Endpoints', () => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('users to ignore should be supplied');
+          done();
+        });
+    });
+  });
+
+  describe('POST api/v1/user/email', () => {
+    it('should respond with error message if recepient is not supplied', (done) => {
+      chai.request(app)
+        .post('/api/v1/user/email')
+        .send({
+          password: 'newPassword'
+        })
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.message.should.be.eql('Both email and password must be supplied');
+          done();
+        });
+    });
+    it('should respond with error message if new password is not supplied', (done) => {
+      chai.request(app)
+        .post('/api/v1/user/email')
+        .send({
+          recepient: 'existing@gmail.com'
+        })
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.message.should.be.eql('Both email and password must be supplied');
+          done();
+        });
+    });
+    it('should respond with error message if recepient is empty', (done) => {
+      chai.request(app)
+        .post('/api/v1/user/email')
+        .send({
+          recepient: '',
+          password: 'newPass123'
+        })
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.message.should.be.eql('Both email and password are required');
+          done();
+        });
+    });
+    it('should respond with error message if password is empty', (done) => {
+      chai.request(app)
+        .post('/api/v1/user/email')
+        .send({
+          recepient: 'existing@gmail.com',
+          password: ''
+        })
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.message.should.be.eql('Both email and password are required');
+          done();
+        });
+    });
+    it('should respond with error message if recepient is not found', (done) => {
+      chai.request(app)
+        .post('/api/v1/user/email')
+        .send({
+          recepient: 'notFound@gmail.com',
+          password: 'newPass123'
+        })
+        .end((err, res) => {
+          res.should.have.status(404);
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.message.should.be.eql('Email not found');
           done();
         });
     });

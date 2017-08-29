@@ -87,7 +87,7 @@ export default class User {
   }
 
   /**
- * @description: retrieves all users in a group through route GET: api/group/:groupID/user
+ * @description: retrieves all users in a group through route GET: api/group/:groupID/users
  * @param {Object} req request object
  * @param {Object} res response object
  * @return {Object} response containing all users of a group

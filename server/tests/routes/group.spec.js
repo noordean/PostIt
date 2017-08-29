@@ -188,4 +188,19 @@ describe('PostIt Endpoints', () => {
         });
     });
   });
+
+  describe('GET api/user/:userID/groups', () => {
+    it('should respond with error message if invalid id is defined', (done) => {
+      chai.request(app)
+        .get('/api/v1/user/14575893/groups?limit=6&offset=0')
+        .set('token', sentToken)
+        .end((err, res) => {
+          res.should.have.status(404);
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.message.should.be.eql('Invalid user id');
+          done();
+        });
+    });
+  });
 });

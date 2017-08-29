@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import Jusibe from 'node-jusibe';
 import user from '../services/user';
 import group from '../services/group';
-import groupUser from '../services/groupuser';
+import groupUser from '../services/groupUser';
 import authenticate from '../helpers/authenticate';
 
 dotenv.config();
@@ -154,8 +154,9 @@ export default class User {
           transporter.sendMail(mailOptions, (error) => {
             if (error) {
               res.status(500).json({ message: 'Sorry, mail could not be sent' });
+            } else {
+              res.status(200).json({ message: 'A message has been sent to your mail to continue the process' });
             }
-            res.status(200).json({ message: 'A message has been sent to your mail to continue the process' });
           });
         }
       });
@@ -189,7 +190,8 @@ export default class User {
  * @return {Object} response
  */
   static registerUserFromGoogle(req, res) {
-    const [username, email, phoneNumber, password] = [req.body.username, req.body.email, Math.ceil(Math.random() * 100000000000), 'default123'];
+    const [username, email, phoneNumber, password] = [req.body.username, req.body.email,
+      Math.ceil(Math.random() * 100000000000), null];
     user.saveUserFromGoogle(username, password, email, phoneNumber, (users) => {
       if (users === 'email must be unique') {
         user.getUserByEmail(email, (userrs) => {
@@ -232,8 +234,9 @@ export default class User {
     transporter.sendMail(mailOptions, (error) => {
       if (error) {
         res.status(500).json({ message: 'Sorry, mail could not be sent' });
+      } else {
+        res.status(200).json({ message: 'Mail notification sent' });
       }
-      res.status(200).json({ message: 'Mail notification sent' });
     });
   }
 

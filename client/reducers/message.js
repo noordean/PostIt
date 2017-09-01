@@ -1,5 +1,5 @@
 const initialState = {
-  loading: true,
+  loading: false,
   responseMsg: '',
   messages: [],
   error: false
@@ -20,13 +20,14 @@ export default class MessageReducers {
   */
   static messageReducer(state = initialState, action) {
     switch (action.type) {
-      case 'POST_MESSAGE_BEGINS':
       case 'GET_MESSAGES_BEGINS':
         return { ...state, loading: true };
       case 'GET_MESSAGES_SUCCESSFUL':
         return { ...state, messages: action.payload, responseMsg: '', loading: false };
       case 'POST_MESSAGE_SUCCESSFUL':
-        const newState = { ...state, responseMsg: '', loading: false };
+        const newState = { ...state, responseMsg: '' };
+        console.log(action.payload);
+        console.log('hereeee inside reducer')
         newState.messages = [...newState.messages, action.payload];
         return newState;
       case 'GET_MESSAGES_UNSUCCESSFUL':

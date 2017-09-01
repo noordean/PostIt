@@ -1,4 +1,4 @@
-import moxios from 'moxios';
+/*import moxios from 'moxios';
 import thunk from 'redux-thunk';
 import configureMockStore from 'redux-mock-store';
 import GroupActions from '../../actions/group';

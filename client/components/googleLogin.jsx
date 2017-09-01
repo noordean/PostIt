@@ -43,9 +43,9 @@ class LoginWithGoogle extends Component {
   render() {
     return (
       <GoogleLogin
-        className='google-login'
-        clientId='865334857353-2cgfcv29lanb6k7rsdo4qubn6fp1dvm6.apps.googleusercontent.com'
-        buttonText='Login with Google'
+        className="google-login"
+        clientId="865334857353-2cgfcv29lanb6k7rsdo4qubn6fp1dvm6.apps.googleusercontent.com"
+        buttonText="Login with Google"
         onSuccess={this.responseGoogle}
         onFailure={this.responseGoogle}
       />
@@ -54,16 +54,12 @@ class LoginWithGoogle extends Component {
 }
 
 
-const mapStateToProps = (state) => {
-  return {
+const mapStateToProps = (state) => ({
     userFromGoogle: state.userFromGoogle
-  };
-};
+  });
 
-const matchDispatchToProps = (dispatch) => {
-  return bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
     registerUserFromGoogle: UserActions.registerUserFromGoogle
   }, dispatch);
-};
 
 export default connect(mapStateToProps, matchDispatchToProps)(LoginWithGoogle);

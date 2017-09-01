@@ -17,18 +17,19 @@ export default class MessageActions {
   */
   static postGroupMessage(groupID, message, priority) {
     return (dispatch) => {
-      dispatch({ type: 'POST_MESSAGE_BEGINS' });
       return axios.post(`/api/v1/group/${groupID}/message`, {
         groupID,
         message,
         priority
       })
         .then((response) => {
-          dispatch({ type: 'POST_MESSAGE_SUCCESSFULL', payload: response.data.Message });
+          dispatch({ type: 'POST_MESSAGE_SUCCESSFUL', payload: response.data.Message });
+        console.log(response.data);
+        console.log('hereeee inside action');
         })
         .catch((err) => {
           if (err.response.data.message) {
-            dispatch({ type: 'POST_MESSAGE_UNSUCCESSFULL', payload: err.response.data.message });
+            dispatch({ type: 'POST_MESSAGE_UNSUCCESSFUL', payload: err.response.data.message });
           } else {
             dispatch({ type: 'POST_MESSAGE_REJECTED' });
           }
@@ -37,7 +38,7 @@ export default class MessageActions {
   }
 
   /**
-  * Request to the API to get total number of messages of a group
+  * Request to the API to get all messages in a group
   *
   * @static
   * @param {Integer} groupID The id of the group to get message from

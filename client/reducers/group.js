@@ -31,10 +31,10 @@ export default class GroupReducers {
         return newState;
       case 'CREATE_GROUP_UNSUCCESSFUL':
       case 'GET_GROUPS_UNSUCCESSFUL':
-        return { ...state, responseMsg: action.errorMessage, loading: false }
+        return { ...state, responseMsg: action.errorMessage, loading: false };
       case 'CREATE_GROUP_REJECTED':
       case 'GET_GROUPS_REJECTED':
-        return { ...state, error: true, responseMsg: '', loading: false }
+        return { ...state, error: true, responseMsg: '', loading: false };
       default:
         return state;
     }

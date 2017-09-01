@@ -5,7 +5,7 @@
   "main": "server/server.js",
   "scripts": {
     "dev": "webpack-dev-server --content-base client/src --inline --hot",
-    "test": "jest",
+    "test": "jest --coverage client/test/reducers",
     "server-pre-test": "nyc --reporter=html --reporter=text mocha --compilers js:babel-core/register ./server/tests/**/*.js --timeout 10000",
     "clean-db": "sequelize db:migrate:undo:all && sequelize db:migrate",
     "clean-db-prod": "NODE_ENV=production sequelize db:migrate:undo:all && NODE_ENV=production sequelize db:migrate",

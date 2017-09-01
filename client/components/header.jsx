@@ -51,15 +51,15 @@ class Header extends Component {
         if (this.props.group.reqError) {
           this.setState({
             responseMsg: 'Sorry, group could not be created'
-          })
+          });
         } else if (this.props.group.responseMsg !== '') {
           this.setState({
             responseMsg: this.props.group.responseMsg
-          })
+          });
         } else if (this.props.group.loading) {
           this.setState({
             responseMsg: 'Creating group...'
-          })
+          });
         } else {
           responseMsg: 'Group created successfully'
           this.refs.createForm.reset();

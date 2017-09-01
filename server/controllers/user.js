@@ -27,7 +27,7 @@ export default class User {
       req.body.password, req.body.email, req.body.phoneNumber];
     const hashedPassword = bcrypt.hashSync(password, salt);
     if (/^[a-zA-Z]{5,12}$/.test(username) === false) {
-      res.status(400).json({ message: 'Username should contain only letters and must have between 5-12 characters' })
+      res.status(400).json({ message: 'Username should contain only letters and must have between 5-12 characters' });
     } else {
       user.saveUser(username, hashedPassword, email, phoneNumber, (users) => {
         if (users instanceof Object) {
@@ -153,6 +153,7 @@ export default class User {
           };
           transporter.sendMail(mailOptions, (error) => {
             if (error) {
+              console.log(error);
               res.status(500).json({ message: 'Sorry, mail could not be sent' });
             } else {
               res.status(200).json({ message: 'A message has been sent to your mail to continue the process' });

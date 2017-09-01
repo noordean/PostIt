@@ -104,23 +104,20 @@ class MessageBoard extends Component {
               responseMsg: 'Sorry, message could not be posted'
             });
           } else {
-            this.props.getMessages(this.props.params.groupID)
-              .then(() => {
-                const postedMessage = this.props.groupMessages.messages[this.props.groupMessages.messages.length - 1];
-                if (postedMessage.priority !== 'Normal') {
-                  this.sendMailNotification(this.props.member.members, decodeURI(msg));
-                }
-                if (postedMessage.priority === 'Critical') {
-                  const members = this.props.member.members.map((member) => {
-                    const membersObj = {};
-                    membersObj.to = member.phoneNumber;
-                    membersObj.from = 'PostIt App';
-                    membersObj.message = `Hi! ${postedMessage.postedby} just posted a message in ${this.props.params.groupName}: ${decodeURI(postedMessage.message)}`;
-                    return membersObj;
-                  });
-                  this.props.sendSmsForNotification(members);
-                }
+            const postedMessage = this.props.groupMessages.messages[this.props.groupMessages.messages.length - 1];
+            if (postedMessage.priority !== 'Normal') {
+              this.sendMailNotification(this.props.member.members, decodeURI(msg));
+            }
+            if (postedMessage.priority === 'Critical') {
+              const members = this.props.member.members.map((member) => {
+                const membersObj = {};
+                membersObj.to = member.phoneNumber;
+                membersObj.from = 'PostIt App';
+                membersObj.message = `Hi! ${postedMessage.postedby} just posted a message in ${this.props.params.groupName}: ${decodeURI(postedMessage.message)}`;
+                return membersObj;
               });
+              this.props.sendSmsForNotification(members);
+            }
           }
         });
     }
@@ -195,7 +192,7 @@ class MessageBoard extends Component {
 
     return (
       <div>
-        <SideNav groupName={this.props.params.groupName} groupID={this.props.params.groupID}/>
+        <SideNav groupName={this.props.params.groupName} groupID={this.props.params.groupID} />
         <div className="row group-cards">
           <div className="col s3" />
           <div className="col s9">

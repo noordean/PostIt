@@ -20,7 +20,7 @@ export default class UserReducers {
   static register(state = initialState, action) {
     switch (action.type) {
       case 'REGISTRATION_BEGINS':
-        return { ...state, reqStatus: action.payload, loading: true };
+        return { ...state, loading: true };
       case 'REGISTRATION_SUCCESSFUL':
       case 'REGISTRATION_UNSUCCESSFUL':
         return { ...state, reqStatus: action.payload };
@@ -43,7 +43,7 @@ export default class UserReducers {
   static login(state = initialState, action) {
     switch (action.type) {
       case 'LOGIN_BEGINS':
-        return { ...state, reqStatus: action.payload, loading: true };
+        return { ...state, loading: true };
       case 'LOGIN_SUCCESSFUL':
       case 'LOGIN_UNSUCCESSFUL':
         return { ...state, reqStatus: action.payload };

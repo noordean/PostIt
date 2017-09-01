@@ -238,13 +238,10 @@ export default class UserActions {
   }
 
   /**
-  * Request to the API to send mail for notification
+  * Request to the API to send sms for notification
   *
   * @static
-  * @param {String} recepients The emails of the users to send to
-  * @param {String} group The group name
-  * @param {String} message The message posted 
-  * @param {String} poster username of the poster  
+  * @param {String} members to send sms to  
   * @returns {string} dispatched object
   * @memberof UserActions
   */

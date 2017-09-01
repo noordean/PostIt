@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import group from '../services/group';
 import message from '../services/message';
 import groupUser from '../services/groupuser';
+import readMessageService from '../services/ReadMessage';
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -54,6 +55,52 @@ export default class Message {
           res.status(200).json({ message: 'message deleted' });
         });
       }
+    });
+  }
+
+  /**
+ * @description: adds a read message through api/v1/group/:groupId/message/archive
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * @return {Object} response containing the number of deleted messages
+ */
+  static archiveReadMessage(req, res) {
+    const groupId = req.params.groupId;
+    const messageIds = req.body.messageIds;
+    const userId = req.body.userId;
+    if (Array.isArray(messageIds)) {
+      messageIds.forEach((msgId) => {
+        readMessageService.addMessage(groupId, userId, msgId, () => {
+        });
+      });
+      res.status(201).json({ message: 'read messages added' });
+    } else {
+      res.status(400).json({ message: 'Please supply an array for messageIds' });
+    }
+  }
+
+  /**
+ * @description: adds a read message through route api/v1/group/:groupId/message/archive
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * @return {Object} response containing the number of deleted messages
+ */
+  static getArchivedMessages(req, res) {
+    const groupId = req.params.groupId;
+    const userId = req.query.userId;
+    readMessageService.getMessages(groupId, userId, (msgs) => {
+      const dueMessages = msgs.filter((msg) => {
+        return ((Date.now() - new Date(msg.createdAt).getTime() > 180000));
+      });
+      const dueMessagesIds = dueMessages.map((dueMsgs) => {
+        return dueMsgs.messageId;
+      });
+      group.getGroupMessages(groupId, (groupMessages) => {
+        const archivedMsgs = groupMessages.messages.filter((archMsgs) => {
+          return (dueMessagesIds.indexOf(archMsgs.id) !== -1);
+        });
+        res.status(200).json({ messages: archivedMsgs });
+      });
     });
   }
 }

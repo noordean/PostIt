@@ -23,6 +23,8 @@ router.get('/api/v1/group/:groupID/users', authenticate.verifyToken, user.getGro
 router.get('/api/v1/user/:userID/groups', authenticate.verifyToken, validate.checkUserId, group.getUserGroups);
 router.delete('/api/v1/group/:groupID', authenticate.verifyToken, validate.checkGroupId, group.deleteGroup);
 router.delete('/api/v1/message/:messageID', authenticate.verifyToken, validate.checkMessageId, message.deleteMessage);
+router.post('/api/v1/group/:groupId/message/archive', message.archiveReadMessage);
+router.get('/api/v1/group/:groupId/message/archive', message.getArchivedMessages);
 
 // router.get('*', (req, res) => {
 //   res.send('Page Not Found');

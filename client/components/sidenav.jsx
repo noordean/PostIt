@@ -157,6 +157,13 @@ class SideNav extends Component {
             </a>
           </li>
           <li>
+            <div>
+              <Link className="waves-effect waves-light btn archive red darken-4" to={`/archive-board/${this.props.groupID}`}>
+                View Archived Messages
+              </Link>
+            </div>
+          </li>
+          <li>
             <i className="material-icons prefix">account_circle</i>
             <a
               className='dropdown-button'
@@ -195,7 +202,7 @@ const mapStateToProps = (state) => {
 const matchDispatchToProps = (dispatch) => {
   return bindActionCreators({
     addGroupMembers: UserActions.addGroupMembers,
-    getGroupMembers: UserActions.getGroupMembers}, dispatch);
+    getGroupMembers: UserActions.getGroupMembers }, dispatch);
 };
 
 export default connect(mapStateToProps, matchDispatchToProps)(SideNav);

@@ -10,6 +10,7 @@ import Signin from './components/signin.jsx';
 import Dashboard from './components/dashboard.jsx';
 import MessageBoard from './components/messageboard.jsx';
 import ConfirmResetPassword from './components/confirmResetPassword.jsx';
+import ArchiveMessage from './components/archiveMessage.jsx';
 
 import authorization from './utils/authorization';
 require('./src/public/js/style.js');
@@ -30,6 +31,7 @@ ReactDOM.render(<Provider store={store}>
       <Route path="dashboard" component={Dashboard} />
       <Route path="message-board/:groupID/:groupName" component={MessageBoard} />
       <Route path="reset-password/:token" component={ConfirmResetPassword} />
+      <Route path="archive-board/:groupId" component={ArchiveMessage} />
     </Route>
   </Router>
 </Provider>,

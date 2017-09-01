@@ -1,8 +1,10 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
+
 import group from '../services/group';
 import groupUser from '../services/groupuser';
 import user from '../services/user';
+import readMessageService from '../services/ReadMessage';
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -84,7 +86,23 @@ export default class Group {
         res.status(404).json({ message: 'Invalid group id' });
       } else {
         group.getGroupMessages(groupID, (groupMessages) => {
-          res.status(200).json({ messages: groupMessages.messages });
+          if (req.query.userId !== undefined) {
+            const userId = req.query.userId;
+            readMessageService.getMessages(groupID, userId, (messages) => {
+              const dueMessages = messages.filter((msgs) => {
+                return ((Date.now() - new Date(msgs.createdAt).getTime() > 180000));
+              });
+              const dueMessagesIds = dueMessages.map((dueMsgs) => {
+                return dueMsgs.messageId;
+              });
+              const displayMessages = groupMessages.messages.filter((groupMsg) => {
+                return (dueMessagesIds.indexOf(groupMsg.id) === -1);
+              });
+              res.status(200).json({ messages: displayMessages });
+            });
+          } else {
+            res.status(200).json({ messages: groupMessages.messages });
+          }
         });
       }
     });

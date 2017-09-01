@@ -54,7 +54,7 @@ class MessageBoard extends Component {
   * @return {void} void
   */
   getMessagesHandler() {
-    this.props.getMessages(this.props.params.groupID)
+    this.props.getMessages(this.props.params.groupID, JSON.parse(localStorage.user).id)
       .then(() => {
         if (this.props.groupMessages.messages.length > 0) {
           this.setState({
@@ -69,6 +69,7 @@ class MessageBoard extends Component {
             responseMsg: this.props.groupMessages.responseMsg
           });
         }
+        this.archiveMessageHandler();
       });
   }
 
@@ -81,6 +82,20 @@ class MessageBoard extends Component {
     this.setState({
       msgStatus: event.target.value
     });
+  }
+
+
+  /**
+  * description: archives all read messages
+  * @return {void} void
+  */
+  archiveMessageHandler() {
+    if (this.state.messages.length > 0) {
+      const readMessageIds = this.state.messages.map((msgId) => {
+        return msgId.id;
+      });
+      this.props.archiveReadMessages(this.props.params.groupID, JSON.parse(localStorage.user).id, readMessageIds);
+    }
   }
 
   /**
@@ -104,23 +119,20 @@ class MessageBoard extends Component {
               responseMsg: 'Sorry, message could not be posted'
             });
           } else {
-            this.props.getMessages(this.props.params.groupID)
-              .then(() => {
-                const postedMessage = this.props.groupMessages.messages[this.props.groupMessages.messages.length - 1];
-                if (postedMessage.priority !== 'Normal') {
-                  this.sendMailNotification(this.props.member.members, decodeURI(msg));
-                }
-                if (postedMessage.priority === 'Critical') {
-                  const members = this.props.member.members.map((member) => {
-                    const membersObj = {};
-                    membersObj.to = member.phoneNumber;
-                    membersObj.from = 'PostIt App';
-                    membersObj.message = `Hi! ${postedMessage.postedby} just posted a message in ${this.props.params.groupName}: ${decodeURI(postedMessage.message)}`;
-                    return membersObj;
-                  });
-                  this.props.sendSmsForNotification(members);
-                }
+            const postedMessage = this.props.groupMessages.messages[this.props.groupMessages.messages.length - 1];
+            if (postedMessage.priority !== 'Normal') {
+              this.sendMailNotification(this.props.member.members, decodeURI(msg));
+            }
+            if (postedMessage.priority === 'Critical') {
+              const members = this.props.member.members.map((member) => {
+                const membersObj = {};
+                membersObj.to = member.phoneNumber;
+                membersObj.from = 'PostIt App';
+                membersObj.message = `Hi! ${postedMessage.postedby} just posted a message in ${this.props.params.groupName}: ${decodeURI(postedMessage.message)}`;
+                return membersObj;
               });
+              this.props.sendSmsForNotification(members);
+            }
           }
         });
     }
@@ -190,7 +202,7 @@ class MessageBoard extends Component {
         );
       });
     } else {
-      messageBoard = <div className="center">This group does not contain any message</div>
+      messageBoard = <div className="center">There is no recent message in this group</div>
     }
 
     return (
@@ -267,7 +279,8 @@ MessageBoard.propTypes = {
 const mapStateToProps = (state) => {
   return {
     groupMessages: state.messages,
-    member: state.member
+    member: state.member,
+    archiveMessage: state.archiveMessage
   };
 };
 
@@ -276,7 +289,8 @@ const matchDispatchToProps = (dispatch) => {
     getMessages: MessageActions.getMessages,
     sendMailForNotification: UserActions.sendMailForNotification,
     sendSmsForNotification: UserActions.sendSmsForNotification,
-    postGroupMessage: MessageActions.postGroupMessage }, dispatch);
+    postGroupMessage: MessageActions.postGroupMessage,
+    archiveReadMessages: MessageActions.archiveReadMessages }, dispatch);
 };
 
 export default connect(mapStateToProps, matchDispatchToProps)(MessageBoard);

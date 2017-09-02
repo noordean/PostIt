@@ -25,9 +25,11 @@ router.delete('/api/v1/group/:groupID', authenticate.verifyToken, validate.check
 router.delete('/api/v1/message/:messageID', authenticate.verifyToken, validate.checkMessageId, message.deleteMessage);
 router.post('/api/v1/group/:groupId/message/archive', message.archiveReadMessage);
 router.get('/api/v1/group/:groupId/message/archive', message.getArchivedMessages);
+router.get('/api/v1/message/:messageId/user', message.getReadMessageUser);
 
 // router.get('*', (req, res) => {
 //   res.send('Page Not Found');
 // });
+
 
 export default router;

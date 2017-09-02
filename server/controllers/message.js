@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import group from '../services/group';
 import message from '../services/message';
 import groupUser from '../services/groupuser';
+import userService from '../services/user';
 import readMessageService from '../services/ReadMessage';
 
 dotenv.config();
@@ -100,6 +101,28 @@ export default class Message {
           return (dueMessagesIds.indexOf(archMsgs.id) !== -1);
         });
         res.status(200).json({ messages: archivedMsgs });
+      });
+    });
+  }
+  /**
+ * @description: adds a read message through route api/v1/message/:messageId/user
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * @return {Object} response containing the number of deleted messages
+ */
+  static getReadMessageUser(req, res) {
+    const messageId = req.params.messageId;
+    const groupId = req.query.groupId;
+    readMessageService.getUsers(messageId, groupId, (users) => {
+      const readUsers = users.map((user) => {
+        return user.userId;
+      });
+      userService.getTotalUsers((user) => {
+        const displayUser = user.filter((userData) => {
+          return (readUsers.indexOf(userData.id) !== -1);
+        });
+        console.log(readUsers);
+        res.status(200).json({ users: displayUser });
       });
     });
   }

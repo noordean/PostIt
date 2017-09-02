@@ -200,4 +200,28 @@ export default class UserReducers {
         return state;
     }
   }
+
+  /**
+  * Reducer for sending mail for notification
+  *
+  * @static
+  * @param {Object} state The initial state
+  * @param {Object} action The dispatched action
+  * @returns {Object} current state
+  * @memberof UserReducers
+  */
+  static readMessages(state = { users: [], loading: false, error: false }, action) {
+    switch (action.type) {
+      case 'GET_READ_USERS_BEGINS':
+        return { ...state, loading: true };
+      case 'GET_READ_USERS_SUCCESSFUL':
+        return { ...state, users: action.payload, loading: false };
+      case 'GET_READ_USERS_UNSUCCESSFUL':
+        return { ...state, loading: false, error: true };
+      case 'GET_READ_USERS_REJECTED':
+        return { ...state, error: true };
+      default:
+        return state;
+    }
+  }
 }

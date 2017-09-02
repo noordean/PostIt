@@ -50,4 +50,25 @@ export default class ReadMessages {
       done({ err });
     });
   }
+
+  /**
+ * @description: add user to group
+ * 
+ * @param {integer} messageId id of the message to get users for
+ * @param {integer} groupId id of the group the message belongs
+ * @param {Function} done callback
+ * @return {Object} retrieved Data
+ */
+  static getUsers(messageId, groupId, done) {
+    ReadMessage.findAll({
+      where: {
+        messageId,
+        groupId
+      }
+    }).then((result) => {
+      done(result);
+    }).catch((err) => {
+      done({ err });
+    });
+  }
 }

@@ -241,9 +241,7 @@ export default class UserActions {
   * Request to the API to send mail for notification
   *
   * @static
-  * @param {String} recepients The emails of the users to send to
-  * @param {String} group The group name
-  * @param {String} message The message posted 
+  * @param {String} members users to send message to
   * @param {String} poster username of the poster  
   * @returns {string} dispatched object
   * @memberof UserActions
@@ -263,6 +261,32 @@ export default class UserActions {
             dispatch({ type: 'SEND_SMS_NOTIFICATION_UNSUCCESSFUL', payload: err.response.data.message });
           } else {
             dispatch({ type: 'SEND_SMS_NOTIFICATION_REJECTED' });
+          }
+        });
+    };
+  }
+
+  /**
+  * Request to the API to get messages of a group
+  *
+  * @static
+  * @param {Integer} messageId The id of the message to get readers for
+  * @param {Integer} groupId The id of the group the message belongs
+  * @returns {Object} dispatch object
+  * @memberof MessageActions
+  */
+  static getReadMessageUsers(messageId, groupId) {
+    return (dispatch) => {
+      dispatch({ type: 'GET_READ_USERS_BEGINS' });
+      return axios.get(`/api/v1/message/${messageId}/user?groupId=${groupId}`)
+        .then((response) => {
+          dispatch({ type: 'GET_READ_USERS_SUCCESSFUL', payload: response.data.users });
+        })
+        .catch((err) => {
+          if (err.response.data.message) {
+            dispatch({ type: 'GET_READ_USERS_UNSUCCESSFUL' });
+          } else {
+            dispatch({ type: 'GET_READ_USERS_REJECTED' });
           }
         });
     };

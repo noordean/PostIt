@@ -21,7 +21,8 @@ class MessageBoard extends Component {
     this.state = {
       responseMsg: '',
       msgStatus: 'Normal',
-      messages: []
+      messages: [],
+      readMessageUsers: []
     };
     this.getMsgStatus = this.getMsgStatus.bind(this);
     this.postMessageHandler = this.postMessageHandler.bind(this);
@@ -44,7 +45,8 @@ class MessageBoard extends Component {
     if (this.props !== nextProps) {
       this.setState({
         messages: nextProps.groupMessages.messages,
-        responseMsg: nextProps.groupMessages.responseMsg
+        responseMsg: nextProps.groupMessages.responseMsg,
+        readMessageUsers: nextProps.readMessages.users
       });
     }
   }
@@ -158,6 +160,23 @@ class MessageBoard extends Component {
   }
 
   /**
+  * description: posts message to a group
+  * @param {integer} messageId the id of the message to get users for
+  * @param {event} event the event being executed
+  * @return {void} void
+  */
+  openSeenMsgModal(messageId, event) {
+    event.preventDefault();
+    this.props.getReadMessageUsers(messageId, this.props.params.groupID)
+      .then(() => {
+        this.setState({
+          readMessageUsers: this.props.readMessages.users
+        });
+        $('#seenMsgModal').modal('open');
+      });
+  }
+
+  /**
   * description: renders the component
   * @return {void} void
   */
@@ -193,6 +212,9 @@ class MessageBoard extends Component {
                       <i className="fa fa-clock-o" />
                       {message.priority}
                     </small>
+                    <small className="seen">
+                      <a href="##" onClick={this.openSeenMsgModal.bind(this, message.id)}>seen by:</a>
+                    </small>
                   </div>
                 </div>
               </div>
@@ -205,63 +227,76 @@ class MessageBoard extends Component {
       messageBoard = <div className="center">There is no recent message in this group</div>
     }
 
+    let readMessageUsers = ['none'];
+    if (this.state.readMessageUsers.length !== 0) {
+      readMessageUsers = this.state.readMessageUsers.map((user) => {
+        return user.username;
+      });
+    }
     return (
       <div>
-        <SideNav groupName={this.props.params.groupName} groupID={this.props.params.groupID}/>
-        <div className="row group-cards">
-          <div className="col s3" />
-          <div className="col s9">
-            <div id="msgarea">
-              {messageBoard}
-            </div>
-            <div className="row" id="postArea">
-              <form className="col s12" id="textareaForm">
-                <div className="row">
-                  <div className="input-field col s8">
-                    <textarea id="textarea1" ref="msgInput" />
-                    <label htmlFor="textarea1">Message</label>
+        <div id="seenMsgModal" className="modal">
+          <div className="modal-content">
+            {readMessageUsers.join(', ')}
+          </div>
+        </div>
+        <div>
+          <SideNav groupName={this.props.params.groupName} groupID={this.props.params.groupID}/>
+          <div className="row group-cards">
+            <div className="col s3" />
+            <div className="col s9">
+              <div id="msgarea">
+                {messageBoard}
+              </div>
+              <div className="row" id="postArea">
+                <form className="col s12" id="textareaForm">
+                  <div className="row">
+                    <div className="input-field col s8">
+                      <textarea id="textarea1" ref="msgInput" />
+                      <label htmlFor="textarea1">Message</label>
+                    </div>
+                    <div className="col s2">
+                      <p>
+                        <input
+                          name="group1"
+                          type="radio"
+                          id="test1"
+                          value="Normal"
+                          onClick={this.getMsgStatus}
+                        />
+                        <label htmlFor="test1">Normal</label>
+                      </p>
+                      <p>
+                        <input
+                          name="group1"
+                          type="radio"
+                          id="test2"
+                          value="Urgent"
+                          onClick={this.getMsgStatus}
+                        />
+                        <label htmlFor="test2">Urgent</label>
+                      </p>
+                      <p>
+                        <input
+                          name="group1"
+                          type="radio"
+                          id="test3"
+                          value="Critical"
+                          onClick={this.getMsgStatus}
+                        />
+                        <label htmlFor="test3">Critical</label>
+                      </p>
+                    </div>
+                    <div className="input-field col s2">
+                      <a
+                        href="##"
+                        className="btn waves-effect waves-light col s12 red darken-4"
+                        onClick={this.postMessageHandler}
+                      >Post</a>
+                    </div>
                   </div>
-                  <div className="col s2">
-                    <p>
-                      <input
-                        name="group1"
-                        type="radio"
-                        id="test1"
-                        value="Normal"
-                        onClick={this.getMsgStatus}
-                      />
-                      <label htmlFor="test1">Normal</label>
-                    </p>
-                    <p>
-                      <input
-                        name="group1"
-                        type="radio"
-                        id="test2"
-                        value="Urgent"
-                        onClick={this.getMsgStatus}
-                      />
-                      <label htmlFor="test2">Urgent</label>
-                    </p>
-                    <p>
-                      <input
-                        name="group1"
-                        type="radio"
-                        id="test3"
-                        value="Critical"
-                        onClick={this.getMsgStatus}
-                      />
-                      <label htmlFor="test3">Critical</label>
-                    </p>
-                  </div>
-                  <div className="input-field col s2">
-                    <a
-                      href="##"
-                      className="btn waves-effect waves-light col s12 red darken-4"
-                      onClick={this.postMessageHandler}
-                    >Post</a>
-                  </div>
-                </div>
-              </form>
+                </form>
+              </div>
             </div>
           </div>
         </div>
@@ -280,7 +315,8 @@ const mapStateToProps = (state) => {
   return {
     groupMessages: state.messages,
     member: state.member,
-    archiveMessage: state.archiveMessage
+    archiveMessage: state.archiveMessage,
+    readMessages: state.readMessages
   };
 };
 
@@ -290,7 +326,8 @@ const matchDispatchToProps = (dispatch) => {
     sendMailForNotification: UserActions.sendMailForNotification,
     sendSmsForNotification: UserActions.sendSmsForNotification,
     postGroupMessage: MessageActions.postGroupMessage,
-    archiveReadMessages: MessageActions.archiveReadMessages }, dispatch);
+    archiveReadMessages: MessageActions.archiveReadMessages,
+    getReadMessageUsers: UserActions.getReadMessageUsers }, dispatch);
 };
 
 export default connect(mapStateToProps, matchDispatchToProps)(MessageBoard);

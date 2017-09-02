@@ -14,5 +14,6 @@ export default combineReducers({
   userFromGoogle: UserReducers.registerUserFromGoogle,
   notificationMail: UserReducers.sendMailForNotification,
   notificationSms: UserReducers.sendSmsForNotification,
-  archiveMessages: MessageReducers.archiveMessageReducer
+  archiveMessages: MessageReducers.archiveMessageReducer,
+  readMessages: UserReducers.readMessages
 });

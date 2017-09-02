@@ -150,6 +150,21 @@ export default class User {
   }
 
   /**
+ * @description: retrieves all users
+
+ * @param {Function} done callback function
+ * @return {Object} retrievedData
+ */
+  static getTotalUsers(done) {
+    Users.findAll({
+    }).then((data) => {
+      done(data);
+    }).catch((err) => {
+      done({ err });
+    });
+  }
+
+  /**
  * @description: retrieves usernames of all members with userIDs
  * @param {Number} userIDs id's of the users
  * @param {Function} done callback function

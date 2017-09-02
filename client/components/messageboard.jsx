@@ -122,6 +122,17 @@ class MessageBoard extends Component {
             });
           } else {
             const postedMessage = this.props.groupMessages.messages[this.props.groupMessages.messages.length - 1];
+            if (postedMessage.priority === 'Normal') {
+              const recepients = this.props.member.members.filter((member) => {
+                return (member.username !== JSON.parse(localStorage.user).user);
+              });
+              console.log(recepients)
+              console.log('emi recepients hhhhhhhhh')
+              if (recepients.length > 0) {
+                this.props.saveInAppNotification(recepients,
+                  this.props.params.groupName, postedMessage.message, postedMessage.postedby);
+              }
+            }
             if (postedMessage.priority !== 'Normal') {
               this.sendMailNotification(this.props.member.members, decodeURI(msg));
             }
@@ -316,7 +327,8 @@ const mapStateToProps = (state) => {
     groupMessages: state.messages,
     member: state.member,
     archiveMessage: state.archiveMessage,
-    readMessages: state.readMessages
+    readMessages: state.readMessages,
+    appNotification: state.appNotification
   };
 };
 
@@ -327,7 +339,8 @@ const matchDispatchToProps = (dispatch) => {
     sendSmsForNotification: UserActions.sendSmsForNotification,
     postGroupMessage: MessageActions.postGroupMessage,
     archiveReadMessages: MessageActions.archiveReadMessages,
-    getReadMessageUsers: UserActions.getReadMessageUsers }, dispatch);
+    getReadMessageUsers: UserActions.getReadMessageUsers,
+    saveInAppNotification: UserActions.saveInAppNotification }, dispatch);
 };
 
 export default connect(mapStateToProps, matchDispatchToProps)(MessageBoard);

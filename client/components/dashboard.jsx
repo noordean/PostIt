@@ -5,6 +5,7 @@ import { Link } from 'react-router';
 import PropTypes from 'prop-types';
 
 import GroupActions from '../actions/group';
+import UserActions from '../actions/user';
 import Home from './home.jsx';
 import Paginate from './paginate.jsx';
 
@@ -50,6 +51,7 @@ class Dashboard extends Component {
           });
         }
       });
+    this.getNotificationHandler();
   }
 
   /**
@@ -64,6 +66,24 @@ class Dashboard extends Component {
         responseMsg: nextProps.group.responseMsg
       });
     }
+  }
+
+  /**
+  * description: controls displays in app notifications
+  * @return {void} void
+  */
+  getNotificationHandler() {
+    this.props.getNotifications(JSON.parse(localStorage.user).id).then(() => {
+      if (this.props.appNotification.notification.length > 0) {
+        const notifications = this.props.appNotification.notification.map((notes) => {
+          return `You have a new message in ${notes.groupName}, from ${notes.postedby}`;
+        });
+        this.props.deleteNotification(JSON.parse(localStorage.user).id);
+        return Materialize.toast(
+          notifications.join('<br>'), 10000,
+          'red darken-4 white-text rounded');
+      }
+    });
   }
 
   /**
@@ -133,13 +153,16 @@ Dashboard.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    group: state.group
+    group: state.group,
+    appNotification: state.appNotification
   };
 };
 
 const matchDispatchToProps = (dispatch) => {
   return bindActionCreators({
-    getGroups: GroupActions.getGroups
+    getGroups: GroupActions.getGroups,
+    getNotifications: UserActions.getNotifications,
+    deleteNotification: UserActions.deleteNotification
   }, dispatch);
 };
 

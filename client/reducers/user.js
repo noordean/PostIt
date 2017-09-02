@@ -224,4 +224,32 @@ export default class UserReducers {
         return state;
     }
   }
+
+  /**
+  * Reducer for saving app notification
+  *
+  * @static
+  * @param {Object} state The initial state
+  * @param {Object} action The dispatched action
+  * @returns {Object} current state
+  * @memberof UserReducers
+  */
+  static appNotification(state = { notification: [], loading: false, error: false, responseMsg: '' }, action) {
+    switch (action.type) {
+      case 'SAVE_NOTIFICATION_SUCCESSFUL':
+      case 'SAVE_NOTIFICATION_UNSUCCESSFUL':
+        return { ...state, users: action.payload };
+      case 'GET_NOTIFICATION_SUCCESSFUL':
+        return { ...state, notification: action.payload };
+      case 'DELETE_NOTIFICATION_SUCCESSFUL':
+        return { ...state, responseMsg: action.payload };
+      case 'SAVE_NOTIFICATION_REJECTED':
+      case 'GET_NOTIFICATION_REJECTED':
+      case 'DELETE_NOTIFICATION_UNSUCCESSFUL':
+      case 'DELETE_NOTIFICATION_REJECTED':
+        return { ...state, error: true };
+      default:
+        return state;
+    }
+  }
 }

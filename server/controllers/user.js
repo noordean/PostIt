@@ -3,10 +3,12 @@ import bcrypt from 'bcryptjs';
 import nodemailer from 'nodemailer';
 import jwt from 'jsonwebtoken';
 import Jusibe from 'node-jusibe';
+
 import user from '../services/user';
 import group from '../services/group';
 import groupUser from '../services/groupuser';
 import authenticate from '../helpers/authenticate';
+import notificationService from '../services/notification';
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -257,6 +259,52 @@ export default class User {
         res.status(200).json({ message: 'SMS sent!' });
       }
     }
+  }
+
+  /**
+ * @description: send sms to users through api/v1/user/notification
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * @return {Object} response
+ */
+  static saveNotification(req, res) {
+    const [userId, groupName, message, postedby] = [req.body.userId,
+      req.body.groupName, req.body.message, req.body.postedby];
+    if (Array.isArray(userId)) {
+      userId.forEach((membersId) => {
+        notificationService.save(membersId.id, groupName, message, postedby, () => {
+          res.status(201).json({ message: 'notification saved' });
+        });
+      });
+    } else {
+      res.status(400).json({ message: 'You need to supply an array for userId' });
+    }
+  }
+
+  /**
+ * @description: send sms to users through api/v1/user/:userId/notification
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * @return {Object} response
+ */
+  static getNotifications(req, res) {
+    const userId = req.params.userId;
+    notificationService.getNotification(userId, (notification) => {
+      res.status(200).json({ notifications: notification });
+    });
+  }
+
+  /**
+ * @description: send sms to users through api/v1/user/:userId/notification
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * @return {Object} response
+ */
+  static deleteNotification(req, res) {
+    const userId = req.params.userId;
+    notificationService.deleteNotification(userId, () => {
+      res.status(200).json({ message: 'Deleted successfully' });
+    });
   }
 }
 

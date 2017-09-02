@@ -291,5 +291,86 @@ export default class UserActions {
         });
     };
   }
+
+  /**
+  * Request to the API to send mail for notification
+  *
+  * @static
+  * @param {integer} userId id of the user that owns the notification
+  * @param {String} groupName name of the group  
+  * @param {String} message message posted
+  * @param {String} postedby the poster    
+  * @returns {string} dispatched object
+  * @memberof UserActions
+  */
+  static saveInAppNotification(userId, groupName, message, postedby) {
+    return (dispatch) => {
+      return axios.post('/api/v1/user/notification', {
+        userId,
+        groupName,
+        message,
+        postedby
+      })
+        .then((response) => {
+          dispatch({ type: 'SAVE_NOTIFICATION_SUCCESSFUL', payload: response.data.message });
+        })
+        .catch((err) => {
+          if (err.response.status === 500 || err.response.status === 400
+          || err.response.status === 404) {
+            dispatch({ type: 'SAVE_NOTIFICATION_UNSUCCESSFUL', payload: err.response.data.message });
+          } else {
+            dispatch({ type: 'SAVE_NOTIFICATION_REJECTED' });
+          }
+        });
+    };
+  }
+
+  /**
+  * Request to the API to get messages of a group
+  *
+  * @static
+  * @param {Integer} userId The id of the user to get notification for
+  * @returns {Object} dispatch object
+  * @memberof MessageActions
+  */
+  static getNotifications(userId) {
+    return (dispatch) => {
+      return axios.get(`/api/v1/user/${userId}/notification`)
+        .then((response) => {
+          dispatch({ type: 'GET_NOTIFICATION_SUCCESSFUL', payload: response.data.notifications });
+        })
+        .catch((err) => {
+          if (err.response.data.message) {
+            dispatch({ type: 'GET_NOTIFICATION_UNSUCCESSFUL' });
+          } else {
+            dispatch({ type: 'GET_NOTIFICATION_REJECTED' });
+          }
+        });
+    };
+  }
+
+  /**
+  * Request to the API to get messages of a group
+  *
+  * @static
+  * @param {Integer} userId The id of the user to delete notification
+  * @returns {Object} dispatch object
+  * @memberof MessageActions
+  */
+  static deleteNotification(userId) {
+    return (dispatch) => {
+      return axios.delete(`/api/v1/user/${userId}/notification`)
+        .then((response) => {
+          dispatch({ type: 'DELETE_NOTIFICATION_SUCCESSFUL', payload: response.data.message });
+        })
+        .catch((err) => {
+          if (err.response.data.message) {
+            dispatch({ type: 'DELETE_NOTIFICATION_UNSUCCESSFUL' });
+          } else {
+            dispatch({ type: 'DELETE_NOTIFICATION_REJECTED' });
+          }
+        });
+    };
+  }
 }
 

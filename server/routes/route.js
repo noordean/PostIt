@@ -26,7 +26,9 @@ router.delete('/api/v1/message/:messageID', authenticate.verifyToken, validate.c
 router.post('/api/v1/group/:groupId/message/archive', message.archiveReadMessage);
 router.get('/api/v1/group/:groupId/message/archive', message.getArchivedMessages);
 router.get('/api/v1/message/:messageId/user', message.getReadMessageUser);
-
+router.post('/api/v1/user/notification', user.saveNotification);
+router.get('/api/v1/user/:userId/notification', user.getNotifications);
+router.delete('/api/v1/user/:userId/notification', user.deleteNotification);
 // router.get('*', (req, res) => {
 //   res.send('Page Not Found');
 // });

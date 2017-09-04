@@ -26,6 +26,7 @@ export default class ReadMessages {
     }).then((result) => {
       done(result);
     }).catch((err) => {
+     console.log(err);
       done({ err });
     });
   }
@@ -47,6 +48,7 @@ export default class ReadMessages {
     }).then((result) => {
       done(result);
     }).catch((err) => {
+
       done({ err });
     });
   }

@@ -3,12 +3,13 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
+import Home from '../components/home.jsx';
 import MessageActions from '../actions/message';
 
 /**
   * @class ArchiveMessage
   */
-class ArchiveMessage extends Component {
+export class ArchiveMessage extends Component {
 /**
   * @constructor
   * @param {object} props

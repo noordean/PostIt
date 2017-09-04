@@ -202,5 +202,17 @@ describe('PostIt Endpoints', () => {
           done();
         });
     });
+    it('should respond with success message if correct detail is supplied', (done) => {
+      chai.request(app)
+        .get('/api/v1/user/2/groups?limit=6&offset=0')
+        .set('token', sentToken)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.a('object');
+          res.body.should.have.property('groups');
+          res.body.groups.rows[0].id.should.be.eql(1);
+          done();
+        });
+    });
   });
 });

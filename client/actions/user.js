@@ -1,5 +1,6 @@
 import axios from 'axios';
 import authorization from '../utils/authorization';
+import * as actionTypes from './actionTypes';
 /**
  * @class UserActions
  */
@@ -17,7 +18,7 @@ export default class UserActions {
   */
   static registerUser(username, email, password, phoneNumber) {
     return (dispatch) => {
-      dispatch({ type: 'REGISTRATION_BEGINS' });
+      dispatch({ type: actionTypes.REGISTRATION_BEGIN });
       return axios.post('/api/v1/user/signup', {
         username,
         email,
@@ -25,13 +26,14 @@ export default class UserActions {
         phoneNumber
       })
         .then((response) => {
-          dispatch({ type: 'REGISTRATION_SUCCESSFUL', payload: response.data });
+          dispatch({ type: actionTypes.REGISTRATION_SUCCESSFUL, payload: response.data });
         })
         .catch((err) => {
-          if (err.response.data.message) {
-            dispatch({ type: 'REGISTRATION_UNSUCCESSFUL', payload: err.response.data });
+          if (err.response.status === 400
+            || err.response.status === 404 || err.response.status === 409) {
+            dispatch({ type: actionTypes.REGISTRATION_UNSUCCESSFUL, payload: err.response.data });
           } else {
-            dispatch({ type: 'REGISTRATION_REJECTED' });
+            dispatch({ type: actionTypes.REGISTRATION_REJECTED });
           }
         });
     };
@@ -109,7 +111,7 @@ export default class UserActions {
         dispatch({ type: 'MEMBERS_ADDED', payload: response.data.message });
       })
       .catch((err) => {
-        if (err.response.data.message) {
+        if (err.response.status === 400 || err.response.status === 409) {
           dispatch({ type: 'ADD_MEMBERS_FAILED', payload: err.response.data.message });
         } else {
           dispatch({ type: 'ADD_MEMBERS_REJECTED' });
@@ -137,7 +139,7 @@ export default class UserActions {
           dispatch({ type: 'RESET_PASSWORD_SUCCESSFUL', payload: response.data.message });
         })
         .catch((err) => {
-          if (err.response.status === 500 || err.response.status === 400
+          if (err.response.status === 400
           || err.response.status === 404) {
             dispatch({ type: 'RESET_PASSWORD_UNSUCCESSFUL', payload: err.response.data.message });
           } else {
@@ -227,7 +229,7 @@ export default class UserActions {
           dispatch({ type: 'SEND_EMAIL_NOTIFICATION_SUCCESSFUL', payload: response.data.message });
         })
         .catch((err) => {
-          if (err.response.status === 500 || err.response.status === 400
+          if (err.response.status === 400
           || err.response.status === 404) {
             dispatch({ type: 'SEND_EMAIL_NOTIFICATION_UNSUCCESSFUL', payload: err.response.data.message });
           } else {
@@ -267,7 +269,7 @@ export default class UserActions {
   }
 
   /**
-  * Request to the API to get messages of a group
+  * Request to the API to get users that have read a message
   *
   * @static
   * @param {Integer} messageId The id of the message to get readers for
@@ -283,7 +285,7 @@ export default class UserActions {
           dispatch({ type: 'GET_READ_USERS_SUCCESSFUL', payload: response.data.users });
         })
         .catch((err) => {
-          if (err.response.data.message) {
+          if (err.response.status === 400 || err.response.status === 409) {
             dispatch({ type: 'GET_READ_USERS_UNSUCCESSFUL' });
           } else {
             dispatch({ type: 'GET_READ_USERS_REJECTED' });

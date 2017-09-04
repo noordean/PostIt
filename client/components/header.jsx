@@ -10,7 +10,7 @@ import GroupActions from '../actions/group';
 /**
   * @class GuestHeader
   */
-class Header extends Component {
+export class Header extends Component {
 /**
   * @constructor
   * @param {object} props

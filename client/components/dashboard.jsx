@@ -12,7 +12,7 @@ import Paginate from './paginate.jsx';
 /**
   * @class Dashboard
   */
-class Dashboard extends Component {
+export class Dashboard extends Component {
 /**
   * @constructor
   * @param {object} props

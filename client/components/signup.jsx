@@ -9,7 +9,7 @@ import UsersActions from '../actions/user';
 /**
   * @class SignUp
   */
-class SignUp extends Component {
+export class SignUp extends Component {
 /**
   * @constructor
   * @param {object} props

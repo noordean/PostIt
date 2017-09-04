@@ -10,7 +10,7 @@ import UsersActions from '../actions/user';
   * Description: component that get rendered through the link posted to user's email 
   * @class ConfirmResetPassword
   */
-class ConfirmResetPassword extends Component {
+export class ConfirmResetPassword extends Component {
 /**
   * @constructor
   * @param {object} props
@@ -67,6 +67,10 @@ class ConfirmResetPassword extends Component {
     );
   }
 }
+
+ConfirmResetPassword.propTypes = {
+
+};
 
 const mapStateToProps = (state) => {
   return {

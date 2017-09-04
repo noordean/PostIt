@@ -81,11 +81,8 @@ export default class MessageActions {
       })
         .then((response) => {
           dispatch({ type: 'ARCHIVE_MESSAGES_SUCCESSFUL', message: response.data.message });
-          console.log(response.data)
-          console.log('messsage go hereee');
         })
         .catch((err) => {
-          console.log('errorrrr heree')
           if (err.response.data.message) {
             dispatch({ type: 'ARCHIVE_MESSAGES_UNSUCCESSFUL', message: err.response.data.message });
           } else {

@@ -9,7 +9,7 @@ import UserActions from '../actions/user';
 /**
   * @class GuestHeader
   */
-class GuestHeader extends Component {
+export class GuestHeader extends Component {
 /**
   * @constructor
   * @param {object} props

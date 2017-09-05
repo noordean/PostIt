@@ -131,7 +131,7 @@ export default class UserActions {
   static sendPasswordResetMail(recepient, password) {
     return (dispatch) => {
       dispatch({ type: 'RESET_PASSWORD_BEGINS' });
-      return axios.post('/api/v1/user/email', {
+      return axios.post('/api/v1/user/reset-password', {
         recepient,
         password
       })
@@ -219,7 +219,7 @@ export default class UserActions {
   static sendMailForNotification(recepients, group, message, poster) {
     return (dispatch) => {
       dispatch({ type: 'SEND_EMAIL_NOTIFICATION_BEGINS' });
-      return axios.post('/api/v1/users/email', {
+      return axios.post('/api/v1/user/email', {
         recepients,
         group,
         message,
@@ -251,7 +251,7 @@ export default class UserActions {
   static sendSmsForNotification(members) {
     return (dispatch) => {
       dispatch({ type: 'SEND_SMS_NOTIFICATION_BEGINS' });
-      return axios.post('/api/v1/users/sms', {
+      return axios.post('/api/v1/user/sms', {
         members
       })
         .then((response) => {

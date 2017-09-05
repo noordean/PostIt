@@ -1,4 +1,5 @@
 import chai from 'chai';
+
 import message from '../../services/message';
 
 const should = chai.should();
@@ -7,6 +8,8 @@ describe('<Unit Test>', () => {
     describe('Method postMessage', () => {
       it('should be able to save message', (done) => {
         message.postMessage(3, 'mrNoName', 'new msg', 'Critical', (msg) => {
+          console.log(msg);
+          console.log('check here');
           msg.should.be.a('object');
           msg.dataValues.postedby.should.eql('mrNoName');
           msg.dataValues.message.should.eql('new msg');

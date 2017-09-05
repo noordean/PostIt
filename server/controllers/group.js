@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 
 import group from '../services/group';
-import groupUser from '../services/groupuser';
+import groupUser from '../services/groupUser';
 import user from '../services/user';
 import readMessageService from '../services/ReadMessage';
 
@@ -16,8 +16,10 @@ const JWT_SECRET = process.env.JWT_SECRET;
 export default class Group {
   /**
  * @description: creates a group through route POST: api/group
+ * 
  * @param {Object} req requset object
  * @param {Object} res response object
+ * 
  * @return {Object} response containing the created group
  */
   static createGroup(req, res) {
@@ -43,8 +45,10 @@ export default class Group {
 
   /**
  * @description: add a user to group through route POST: api/group/:groupID/user
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
+ * 
  * @return {Object} response containing the added user
  */
   static addUserToGroup(req, res) {
@@ -75,15 +79,17 @@ export default class Group {
 
   /**
  * @description: retrieves messages from a group through route GET: api/group/:groupID/messages
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
+ * 
  * @return {Object} response containing the retrieved messages
  */
   static getGroupMessages(req, res) {
     const groupID = req.params.groupID;
     group.getGroupById(groupID, (groups) => {
       if (groups.length === 0) {
-        res.status(404).json({ message: 'Invalid group id' });
+        res.status(404).json({ message: 'Group does not exist' });
       } else {
         group.getGroupMessages(groupID, (groupMessages) => {
           if (req.query.userId !== undefined) {
@@ -110,15 +116,17 @@ export default class Group {
 
   /**
  * @description: deletes a group through route DELETE: api/group/:groupID
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
+ * 
  * @return {Object} response containing the number of deleted groups
  */
   static deleteGroup(req, res) {
     const groupID = req.params.groupID;
     group.getGroupById(groupID, (groups) => {
       if (groups.length === 0) {
-        res.status(404).json({ message: 'Invalid group id' });
+        res.status(404).json({ message: 'Group does not exist' });
       } else {
         group.deleteGroup(groupID, () => {
           res.status(200).json({ message: 'Group deleted' });
@@ -129,8 +137,10 @@ export default class Group {
 
   /**
  * @description: retieves all groups a user belongs to through route GET: api/user/:userID/groups
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
+ * 
  * @return {Object} response containing user groups
  */
   static getUserGroups(req, res) {

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="3"
+            failures="1"
+            tests="8">
+
+  <testsuite name="user"
+    errors="3" failures="1" hostname="" id="" package="user" skipped="7"
+    tests="8" time="10.35" timestamp="Mon, 04 Sep 2017 21:30:10 GMT">
+  
+    <testcase name="Create document without credentials" classname="user" time="10.35" assertions="2">
+
+      <failure message="Timed out while waiting for element &lt;.toast&gt; to be present for 5000 milliseconds.">    at Object.Create document without credentials (/Users/andeladeveloper/Desktop/PostIt/client/tests/e2e/user.js:20:8)
+    at _combinedTickCallback (internal/process/next_tick.js:73:7)</failure>
+
+    
+    </testcase>
+  
+
+  
+    <system-err>
+      ERROR: Unable to locate element: &quot;input[name=firstName]&quot; using: css selector
+    at Object.Create document without credentials (/Users/andeladeveloper/Desktop/PostIt/client/tests/e2e/user.js:14:8)
+    at Module.call (/usr/local/lib/node_modules/nightwatch/lib/runner/module.js:62:34)
+    at /usr/local/lib/node_modules/nightwatch/lib/runner/testcase.js:70:29
+    at _fulfilled (/usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:834:54)
+    at self.promiseDispatch.done (/usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:863:30)
+    at Promise.promise.promiseDispatch (/usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:796:13)
+    at /usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:556:49
+    at runSingle (/usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:137:13)
+    at flush (/usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:125:13)
+    at _combinedTickCallback (internal/process/next_tick.js:73:7)
+ERROR: Unable to locate element: &quot;input[name=lastName]&quot; using: css selector
+    at Object.Create document without credentials (/Users/andeladeveloper/Desktop/PostIt/client/tests/e2e/user.js:15:8)
+    at Module.call (/usr/local/lib/node_modules/nightwatch/lib/runner/module.js:62:34)
+    at /usr/local/lib/node_modules/nightwatch/lib/runner/testcase.js:70:29
+    at _fulfilled (/usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:834:54)
+    at self.promiseDispatch.done (/usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:863:30)
+    at Promise.promise.promiseDispatch (/usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:796:13)
+    at /usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:556:49
+    at runSingle (/usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:137:13)
+    at flush (/usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:125:13)
+    at _combinedTickCallback (internal/process/next_tick.js:73:7)
+ERROR: Unable to locate element: &quot;.button-design&quot; using: css selector
+    at Object.Create document without credentials (/Users/andeladeveloper/Desktop/PostIt/client/tests/e2e/user.js:19:8)
+    at Module.call (/usr/local/lib/node_modules/nightwatch/lib/runner/module.js:62:34)
+    at /usr/local/lib/node_modules/nightwatch/lib/runner/testcase.js:70:29
+    at _fulfilled (/usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:834:54)
+    at self.promiseDispatch.done (/usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:863:30)
+    at Promise.promise.promiseDispatch (/usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:796:13)
+    at /usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:556:49
+    at runSingle (/usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:137:13)
+    at flush (/usr/local/lib/node_modules/nightwatch/node_modules/q/q.js:125:13)
+    at _combinedTickCallback (internal/process/next_tick.js:73:7)
+    </system-err>
+  
+
+  
+    
+    <testcase
+      name="User should be able to view personal and all documents" classname="user">
+      <skipped />
+    </testcase>
+    
+    <testcase
+      name="User should be able to create document successfully" classname="user">
+      <skipped />
+    </testcase>
+    
+    <testcase
+      name="User should not be able to create document if title exists" classname="user">
+      <skipped />
+    </testcase>
+    
+    <testcase
+      name="User should search documents" classname="user">
+      <skipped />
+    </testcase>
+    
+    <testcase
+      name="User should view document" classname="user">
+      <skipped />
+    </testcase>
+    
+    <testcase
+      name="User should not be able to update document with existing title" classname="user">
+      <skipped />
+    </testcase>
+    
+    <testcase
+      name="User delete document" classname="user">
+      <skipped />
+    </testcase>
+    
+  
+  </testsuite>
+</testsuites>

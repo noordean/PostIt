@@ -1,4 +1,5 @@
 import chai from 'chai';
+
 import user from '../../services/user';
 
 const should = chai.should();

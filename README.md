@@ -59,7 +59,7 @@ The API contains different endpoints with their respective payloads as stated be
 | /api/v1/group/:groupID/user     | It allows users to add another user to a created group of id groupID | userId                | POST            |
 | /api/v1/group/:groupID/message  | It posts message to group with id groupID                              | message and priority     | POST            |
 | /api/v1/group/:groupID/messages | It get all messages from group with id groupID                          | No payload               | GET             |
-| /api/v1/user/email            | It sends mail to users for password reset                      | email and password               | POST            |
+| /api/v1/user/reset-password            | It sends mail to users for password reset                      | email and password               | POST            |
 | /api/v1/users             | It gets all users                      | No payload               | GET            |
 | /api/v1/group/:groupID             | It deletes a group of id groupID                      | No payload               | DELETE            |
 | /api/v1/message/:messageID             | It deletes a message of id messageID                      | No payload               | DELETE            |

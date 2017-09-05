@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import webpack from 'webpack';
 import webpackMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
-import router from './routes/route';
+
 import webpackConfig from '../webpack.config';
 
 dotenv.config();
@@ -29,7 +29,7 @@ app.listen(process.env.PORT || 3333, () => {
   console.log('app running...');
 });
 
-app.use('/', router);
+require('./routes')(app);
 
 app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/src/index.html'));

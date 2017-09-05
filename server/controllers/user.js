@@ -4,24 +4,27 @@ import nodemailer from 'nodemailer';
 import jwt from 'jsonwebtoken';
 import Jusibe from 'node-jusibe';
 
-import user from '../services/user';
-import group from '../services/group';
-import groupUser from '../services/groupuser';
+import user from '../services/User';
+import group from '../services/Group';
+import groupUser from '../services/GroupUser';
 import authenticate from '../helpers/authenticate';
-import notificationService from '../services/notification';
+import notificationService from '../services/Notification';
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
 const salt = bcrypt.genSaltSync(10);
 /**
  * class User: controls all user routes
+ * 
  * @class
  */
 export default class User {
   /**
  * @description: controls a user's registration through route POST: api/v1/user/signup
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
+ * 
  * @return {Object} response containing the registered user
  */
   static signUp(req, res) {
@@ -51,8 +54,10 @@ export default class User {
 
   /**
  * @description: controls a user's login through route POST: api/user/signin
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
+ * 
  * @return {Object} response containing the logged-in user
  */
   static signIn(req, res) {
@@ -74,8 +79,10 @@ export default class User {
 
   /**
  * @description: retrieves all users through route GET: api/users
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
+ * 
  * @return {Object} response containing all users
  */
   static getAllUsers(req, res) {
@@ -91,8 +98,10 @@ export default class User {
 
   /**
  * @description: retrieves all users in a group through route GET: api/group/:groupID/user
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
+ * 
  * @return {Object} response containing all users of a group
  */
   static getGroupUsers(req, res) {
@@ -102,7 +111,7 @@ export default class User {
     } else {
       group.getGroupById(groupId, (groups) => {
         if (groups.length === 0) {
-          res.status(404).json({ message: 'Invalid group id' });
+          res.status(404).json({ message: 'Group does not exist' });
         } else {
           groupUser.getGroupUsersId(groupId, (users) => {
             if (users.length > 0) {
@@ -119,9 +128,11 @@ export default class User {
   }
 
   /**
- * @description: send mail to users through api/v1/user/email
+ * @description: send mail to users through api/v1/user/reset-password
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
+ * 
  * @return {Object} response
  */
   static sendMailForPasswordReset(req, res) {
@@ -167,8 +178,10 @@ export default class User {
 
   /**
  * @description: send mail to users through api/v1/user/email/verify
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
+ * 
  * @return {Object} response
  */
   static verifyPasswordReset(req, res) {
@@ -187,8 +200,10 @@ export default class User {
 
   /**
  * @description: registers users that logs in with google through api/v1/user/signup/google
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
+ * 
  * @return {Object} response
  */
   static registerUserFromGoogle(req, res) {
@@ -209,14 +224,21 @@ export default class User {
   }
 
   /**
- * @description: send mail to users through api/v1/users/email
+ * @description: send mail to users through api/v1/user/email
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
+ * 
  * @return {Object} response
  */
   static sendMailForNotification(req, res) {
     const [recepients, grup, message, poster] = [req.body.recepients, req.body.group,
       req.body.message, req.body.poster];
+    console.log('rec goes here')
+    console.log(recepients);
+    console.log(grup);
+    console.log(message);
+    console.log(poster);
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 465,
@@ -235,6 +257,8 @@ export default class User {
     };
     transporter.sendMail(mailOptions, (error) => {
       if (error) {
+        console.log(error);
+        console.log('CHECK HERE');
         res.status(500).json({ message: 'Sorry, mail could not be sent' });
       } else {
         res.status(200).json({ message: 'Mail notification sent' });
@@ -243,9 +267,11 @@ export default class User {
   }
 
   /**
- * @description: send sms to users through api/v1/users/sms
+ * @description: send sms to users through api/v1/user/sms
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
+ * 
  * @return {Object} response
  */
   static sendSmsForNotification(req, res) {
@@ -263,8 +289,10 @@ export default class User {
 
   /**
  * @description: send sms to users through api/v1/user/notification
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
+ * 
  * @return {Object} response
  */
   static saveNotification(req, res) {
@@ -283,8 +311,10 @@ export default class User {
 
   /**
  * @description: send sms to users through api/v1/user/:userId/notification
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
+ * 
  * @return {Object} response
  */
   static getNotifications(req, res) {
@@ -296,8 +326,10 @@ export default class User {
 
   /**
  * @description: send sms to users through api/v1/user/:userId/notification
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
+ * 
  * @return {Object} response
  */
   static deleteNotification(req, res) {

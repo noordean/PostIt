@@ -1,9 +1,10 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-import group from '../services/group';
-import message from '../services/message';
-import groupUser from '../services/groupuser';
-import userService from '../services/user';
+
+import group from '../services/Group';
+import message from '../services/Message';
+import groupUser from '../services/GroupUser';
+import userService from '../services/User';
 import readMessageService from '../services/ReadMessage';
 
 dotenv.config();
@@ -11,13 +12,16 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 /**
  * class Message: controls all message routes
+ * 
  * @class
  */
 export default class Message {
   /**
  * @description: posts a message to a group through route POST: api/group/:groupID/message
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
+ * 
  * @return {Object} response containing the posted message
  */
   static postMessageToGroup(req, res) {
@@ -25,7 +29,7 @@ export default class Message {
       req.body.priority, jwt.verify(req.headers.token || req.body.token, JWT_SECRET)];
     group.getGroupById(groupID, (groups) => {
       if (groups.length === 0) {
-        res.status(404).json({ message: 'Invalid group id' });
+        res.status(404).json({ message: 'Group does not exist' });
       } else {
         groupUser.getUser(decode.id, groupID, (member) => {
           if (member.length > 0) {
@@ -42,8 +46,10 @@ export default class Message {
 
   /**
  * @description: delete a message through route DELETE: api/message/:messageID
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
+ * 
  * @return {Object} response containing the number of deleted messages
  */
   static deleteMessage(req, res) {
@@ -61,8 +67,10 @@ export default class Message {
 
   /**
  * @description: adds a read message through api/v1/group/:groupId/message/archive
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
+ * 
  * @return {Object} response containing the number of deleted messages
  */
   static archiveReadMessage(req, res) {
@@ -82,8 +90,10 @@ export default class Message {
 
   /**
  * @description: adds a read message through route api/v1/group/:groupId/message/archive
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
+ * 
  * @return {Object} response containing the number of deleted messages
  */
   static getArchivedMessages(req, res) {
@@ -106,8 +116,10 @@ export default class Message {
   }
   /**
  * @description: adds a read message through route api/v1/message/:messageId/user
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
+ * 
  * @return {Object} response containing the number of deleted messages
  */
   static getReadMessageUser(req, res) {
@@ -121,7 +133,6 @@ export default class Message {
         const displayUser = user.filter((userData) => {
           return (readUsers.indexOf(userData.id) !== -1);
         });
-        console.log(readUsers);
         res.status(200).json({ users: displayUser });
       });
     });

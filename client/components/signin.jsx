@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
+import { Link, browserHistory } from 'react-router';
 import PropTypes from 'prop-types';
-import { browserHistory } from 'react-router';
 
 import UsersActions from '../actions/user';
 import GoogleLogin from './GoogleLogin.jsx';

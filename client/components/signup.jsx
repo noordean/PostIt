@@ -109,7 +109,7 @@ export class SignUp extends Component {
   render() {
     let errorMsg = <div>{this.state.signUpResponse}</div>;
     if (this.state.signUpResponse === 'Registration successful') {
-      errorMsg = <div>Registration successful, click <Link to="/signin">here</Link> to login</div>;
+      errorMsg = <div className="signup-link">Registration successful, click <Link to="/signin" className="signin-link">here</Link> to login</div>;
     }
     return (
       <div className="container">
@@ -118,7 +118,12 @@ export class SignUp extends Component {
             <form className="register-form" onSubmit={this.registerHandler} id="formElement">
               <div className="row">
                 <div className="input-field col s12 center">
-                  <img id="reg-img" src="client/src/public/image/regsiter.jpg" alt="register img" className="circle responsive-img valign profile-image-login" />
+                  <img
+                    id="reg-img"
+                    src="client/src/public/image/regsiter.jpg"
+                    alt="register img"
+                    className="circle responsive-img valign profile-image-login"
+                  />
                   <div id="clientError" />
                   {errorMsg}
                 </div>
@@ -126,42 +131,79 @@ export class SignUp extends Component {
               <div className="row margin">
                 <div className="input-field col s12">
                   <i className="material-icons prefix">account_circle</i>
-                  <input id="username" type="text" name="usernameInput" value={this.state.usernameInput} onChange={this.onChange} required />
+                  <input
+                    id="username"
+                    type="text"
+                    name="usernameInput"
+                    value={this.state.usernameInput}
+                    onChange={this.onChange}
+                    required
+                  />
                   <label htmlFor="username" className="center-align">Username</label>
                 </div>
               </div>
               <div className="row margin">
                 <div className="input-field col s12">
                   <i className="material-icons prefix">email</i>
-                  <input id="email" type="email" name="emailInput" value={this.state.emailInput} onChange={this.onChange} required />
+                  <input
+                    id="email"
+                    type="email"
+                    name="emailInput"
+                    value={this.state.emailInput}
+                    onChange={this.onChange}
+                    required
+                  />
                   <label htmlFor="email" className="center-align">Email</label>
                 </div>
               </div>
               <div className="row margin">
                 <div className="input-field col s12">
                   <i className="material-icons prefix">phone</i>
-                  <input id="phonenumber" type="text" name="phoneInput" value={this.state.phoneInput} onChange={this.onChange} required />
+                  <input
+                    id="phonenumber"
+                    type="text"
+                    name="phoneInput"
+                    value={this.state.phoneInput}
+                    onChange={this.onChange}
+                    required
+                  />
                   <label htmlFor="email" className="center-align">Phone Number</label>
                 </div>
               </div>
               <div className="row margin">
                 <div className="input-field col s12">
                   <i className="material-icons prefix">lock</i>
-                  <input id="password" type="password" name="passwordInput" value={this.state.passwordInput} onChange={this.onChange} required />
+                  <input
+                    id="password"
+                    type="password"
+                    name="passwordInput"
+                    value={this.state.passwordInput}
+                    onChange={this.onChange}
+                    required
+                  />
                   <label htmlFor="password">Password</label>
                 </div>
               </div>
               <div className="row margin">
                 <div className="input-field col s12">
                   <i className="material-icons prefix">lock</i>
-                  <input id="password-again" type="password" name="confirmPasswordInput" value={this.state.confirmPasswordInput} onChange={this.onChange} required />
+                  <input
+                    id="password-again"
+                    type="password"
+                    name="confirmPasswordInput"
+                    value={this.state.confirmPasswordInput}
+                    onChange={this.onChange}
+                    required
+                  />
                   <label htmlFor="password-again">Confirm Password</label>
                 </div>
               </div>
               <div className="row">
-                <input type="submit" value="Register Now" className="btn col s12 red darken-4" />
+                <input type="submit" value="Register Now" className="btn col s12 red darken-4 signup-btn" />
                 <div className="input-field col s12">
-                  <p className="margin center medium-small sign-up">Already have an account? <a href="page-login.html">Login</a></p>
+                  <p className="margin center medium-small sign-up">
+                    Already have an account?
+                    <a href="page-login.html">Login</a></p>
                 </div>
               </div>
             </form>
@@ -174,7 +216,6 @@ export class SignUp extends Component {
 
 
 SignUp.propTypes = {
-  userRegistration: PropTypes.object,
   registerUser: PropTypes.func
 };
 

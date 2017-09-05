@@ -1,9 +1,9 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 
-import group from '../services/group';
-import groupUser from '../services/groupUser';
-import user from '../services/user';
+import group from '../services/Group';
+import groupUser from '../services/GroupUser';
+import user from '../services/User';
 import readMessageService from '../services/ReadMessage';
 
 dotenv.config();

@@ -234,11 +234,6 @@ export default class User {
   static sendMailForNotification(req, res) {
     const [recepients, grup, message, poster] = [req.body.recepients, req.body.group,
       req.body.message, req.body.poster];
-    console.log('rec goes here')
-    console.log(recepients);
-    console.log(grup);
-    console.log(message);
-    console.log(poster);
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 465,

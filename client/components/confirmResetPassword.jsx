@@ -27,22 +27,18 @@ export class ConfirmResetPassword extends Component {
   * @return {void} void
   */
   componentWillMount() {
-    this.props.verifyPasswordReset(this.props.params.token)
-      .then(() => {
-        if (this.props.verifyMailUrl.responseMsg === 'Password changed successfully') {
-          this.setState({
-            responseMsg: 'success'
-          });
-        } else if (this.props.verifyMailUrl.error) {
-          this.setState({
-            responseMsg: 'failure'
-          });
-        } else {
-          this.setState({
-            responseMsg: this.props.verifyMailUrl.responseMsg
-          });
-        }
-      });
+    this.props.verifyPasswordReset(this.props.params.token);
+  }
+
+  /**
+  * description: executes when the state changes
+  * @param {object} nextProps the next state
+  * @return {void} void
+  */
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      responseMsg: nextProps.verifyMailUrl.responseMsg
+    });
   }
 
   /**

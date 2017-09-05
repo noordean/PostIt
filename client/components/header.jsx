@@ -29,15 +29,14 @@ export class Header extends Component {
   }
 
   /**
-  * description: logs a user out
-  * @param {object} event the event being executed
+  * description: controls inputs state
+  * @param {object} element the current elementv
   * @return {void} void
   */
-  logoutHandler(event) {
-    event.preventDefault();
-    localStorage.removeItem('user');
-    browserHistory.push('/');
-    window.location.reload();
+  onChange(element) {
+    this.setState({
+      [element.target.name]: element.target.value,
+    });
   }
 
   /**
@@ -74,14 +73,15 @@ export class Header extends Component {
   }
 
   /**
-  * description: controls inputs state
-  * @param {object} element the current elementv
+  * description: logs a user out
+  * @param {object} event the event being executed
   * @return {void} void
   */
-  onChange(element) {
-    this.setState({
-      [element.target.name]: element.target.value,
-    });
+  logoutHandler(event) {
+    event.preventDefault();
+    localStorage.removeItem('user');
+    browserHistory.push('/');
+    window.location.reload();
   }
 
   /**

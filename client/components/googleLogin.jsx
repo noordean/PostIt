@@ -43,9 +43,9 @@ class LoginWithGoogle extends Component {
   render() {
     return (
       <GoogleLogin
-        className='google-login'
-        clientId='865334857353-2cgfcv29lanb6k7rsdo4qubn6fp1dvm6.apps.googleusercontent.com'
-        buttonText='Login with Google'
+        className="google-login"
+        clientId="865334857353-2cgfcv29lanb6k7rsdo4qubn6fp1dvm6.apps.googleusercontent.com"
+        buttonText="Login with Google"
         onSuccess={this.responseGoogle}
         onFailure={this.responseGoogle}
       />

@@ -143,7 +143,7 @@ class SignIn extends Component {
               </div>
               <div className="row">
                 <div className="input-field col s6">
-                  <input type="submit" value="Login" className="btn col s12 red darken-4" />
+                  <input type="submit" value="Login" className="btn col s12 red darken-4 login-btn" />
                 </div>
                 <div className="input-field col s6">
                   <GoogleLogin />
@@ -171,8 +171,7 @@ class SignIn extends Component {
 
 
 SignIn.propTypes = {
-  userLogin: PropTypes.object,
-	loginUser: PropTypes.func
+
 }
 
 const mapStateToProps = (state) => {

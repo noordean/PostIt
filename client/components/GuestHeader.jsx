@@ -28,6 +28,19 @@ export class GuestHeader extends Component {
   }
 
   /**
+  * description: controls what happens when state is about to change
+  * @param {object} nextProps The next state
+  * @return {void} void
+  */
+  componentWillReceiveProps(nextProps) {
+    if (this.props !== nextProps) {
+      this.setState({
+        responseMsg: nextProps.sentMail.responseMsg
+      });
+    }
+  }
+
+  /**
   * description: controls inputs state
   * @param {object} element the current elementv
   * @return {void} void
@@ -51,25 +64,9 @@ export class GuestHeader extends Component {
         responseMsg: 'The two passwords did not match'
       });
     } else {
-      this.props.sendPasswordResetMail(this.state.email, this.state.password)
-        .then(() => {
-          if (this.props.sentMail.responseMsg !== '') {
-            this.setState({
-              responseMsg: this.props.sentMail.responseMsg
-            });
-          } else if (this.props.sentMail.error) {
-            this.setState({
-              responseMsg: 'Sorry, your request could not be sent'
-            });
-          } else if (this.props.sentMail.loading) {
-            this.setState({
-              responseMsg: 'Loading...'
-            });
-          }
-        });
+      this.props.sendPasswordResetMail(this.state.email, this.state.password);
     }
   }
-
 
   /**
   * description: It opens the resetPassword modal dynamically

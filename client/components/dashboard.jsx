@@ -35,21 +35,10 @@ export class Dashboard extends Component {
   componentDidMount() {
     this.props.getGroups(JSON.parse(localStorage.user).id, this.state.groupLimit, 0)
       .then(() => {
-        if (this.props.group.groups.length > 0) {
-          this.setState({
-            groups: this.props.group.groups,
-            responseMsg: '',
-            groupCount: this.props.group.pageCount
-          });
-        } else if (this.props.group.responseMsg !== '') {
-          this.setState({
-            responseMsg: this.props.group.responseMsg
-          });
-        } else if (this.props.group.error) {
-          this.setState({
-            responseMsg: 'Sorry, groups could not be fetched'
-          });
-        }
+        this.setState({
+          groups: this.props.group.groups,
+          groupCount: this.props.group.pageCount
+        });
       });
     this.getNotificationHandler();
   }

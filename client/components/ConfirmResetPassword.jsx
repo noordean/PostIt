@@ -7,7 +7,8 @@ import PropTypes from 'prop-types';
 import UsersActions from '../actions/user';
 
 /**
-  * Description: component that get rendered through the link posted to user's email 
+  * Description: component that get rendered through the link posted to user's email
+  *
   * @class ConfirmResetPassword
   */
 export class ConfirmResetPassword extends Component {
@@ -24,29 +25,29 @@ export class ConfirmResetPassword extends Component {
 
   /**
   * description: controls what happens before component get rendered
+  *
   * @return {void} void
   */
   componentWillMount() {
-    this.props.verifyPasswordReset(this.props.params.token)
-      .then(() => {
-        if (this.props.verifyMailUrl.responseMsg === 'Password changed successfully') {
-          this.setState({
-            responseMsg: 'success'
-          });
-        } else if (this.props.verifyMailUrl.error) {
-          this.setState({
-            responseMsg: 'failure'
-          });
-        } else {
-          this.setState({
-            responseMsg: this.props.verifyMailUrl.responseMsg
-          });
-        }
-      });
+    this.props.verifyPasswordReset(this.props.params.token);
+  }
+
+  /**
+  * description: executes when the state changes
+  *
+  * @param {object} nextProps the next state
+  *
+  * @return {void} void
+  */
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      responseMsg: nextProps.verifyMailUrl.responseMsg
+    });
   }
 
   /**
   * description: determines what get rendered
+  *
   * @return {void} void
   */
   render() {
@@ -55,7 +56,7 @@ export class ConfirmResetPassword extends Component {
       status =
       (<p className="text center">
         Password successfully changed. You can now click
-        <Link to='/signin'>here</Link> to login
+        <Link to="/signin">here</Link> to login
       </p>);
     } else {
       status = <p className="text center">{this.state.responseMsg}</p>;
@@ -69,19 +70,21 @@ export class ConfirmResetPassword extends Component {
 }
 
 ConfirmResetPassword.propTypes = {
-
+  params: PropTypes.shape({ token: PropTypes.string.isRequired }).isRequired,
+  verifyPasswordReset: PropTypes.func.isRequired,
+  verifyMailUrl: PropTypes.shape({
+    error: PropTypes.bool,
+    responseMsg: PropTypes.string,
+    loading: PropTypes.bool
+  }).isRequired
 };
 
-const mapStateToProps = (state) => {
-  return {
-    verifyMailUrl: state.verifyMailUrl
-  };
-};
+const mapStateToProps = state => ({
+  verifyMailUrl: state.verifyMailUrl
+});
 
-const matchDispatchToProps = (dispatch) => {
-  return bindActionCreators({
-    verifyPasswordReset: UsersActions.verifyPasswordReset
-  }, dispatch);
-};
+const matchDispatchToProps = dispatch => bindActionCreators({
+  verifyPasswordReset: UsersActions.verifyPasswordReset
+}, dispatch);
 
 export default connect(mapStateToProps, matchDispatchToProps)(ConfirmResetPassword);

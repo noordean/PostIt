@@ -12,9 +12,11 @@ export default class UserReducers {
   * Reducer for registering users
   *
   * @static
+  *
   * @param {Object} state The initial state
   * @param {Object} action The dispatched action
   * @returns {Object} current state
+  *
   * @memberof UserReducers
   */
   static register(state = initialState, action) {
@@ -35,9 +37,12 @@ export default class UserReducers {
   * Reducer for login users
   *
   * @static
+  *
   * @param {Object} state The initial state
   * @param {Object} action The dispatched action
+  *
   * @returns {Object} current state
+  *
   * @memberof UserReducers
   */
   static login(state = initialState, action) {
@@ -57,9 +62,12 @@ export default class UserReducers {
   * Reducer for adding members to a group
   *
   * @static
+  *
   * @param {Object} state The initial state
   * @param {Object} action The dispatched action
+  *
   * @returns {Object} current state
+  *
   * @memberof UserReducers
   */
   static groupMembers(state = { members: [], responseMsg: '', reqError: false }, action) {

@@ -10,7 +10,10 @@
     "window": true,
     "document": true,
     "this": true,
-    "$": true
+    "$": true,
+    "localStorage": true,
+    "Materialize": true,
+    "should": true
     },
   "rules": {
     "one-var": 0,

@@ -1,5 +1,6 @@
 import chaiHttp from 'chai-http';
 import chai from 'chai';
+
 import app from '../../server';
 
 chai.use(chaiHttp);
@@ -434,7 +435,7 @@ describe('PostIt Endpoints', () => {
           done();
         });
     });
-    it('should respond with error message if invalid group id is supplied', (done) => {
+    it('should respond with error message if incorrect groupId is supplied', (done) => {
       chai.request(app)
         .get('/api/v1/group/1537625/users')
         .set('token', sentToken)
@@ -442,7 +443,7 @@ describe('PostIt Endpoints', () => {
           res.should.have.status(404);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
-          res.body.message.should.be.eql('Invalid group id');
+          res.body.message.should.be.eql('Group does not exist');
           done();
         });
     });
@@ -513,24 +514,24 @@ describe('PostIt Endpoints', () => {
     });
   });
 
-  describe('POST api/v1/user/email', () => {
+  describe('POST api/v1/user/reset-password', () => {
     it('should respond with error message if recepient is not supplied', (done) => {
       chai.request(app)
-        .post('/api/v1/user/email')
+        .post('/api/v1/user/reset-password')
         .send({
-          password: 'newPassword'
+          newPassword: 'newPassword'
         })
         .end((err, res) => {
           res.should.have.status(400);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
-          res.body.message.should.be.eql('Both email and password must be supplied');
+          res.body.message.should.be.eql('Both recepient(email) and newPassword must be supplied');
           done();
         });
     });
     it('should respond with error message if new password is not supplied', (done) => {
       chai.request(app)
-        .post('/api/v1/user/email')
+        .post('/api/v1/user/reset-password')
         .send({
           recepient: 'existing@gmail.com'
         })
@@ -538,46 +539,46 @@ describe('PostIt Endpoints', () => {
           res.should.have.status(400);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
-          res.body.message.should.be.eql('Both email and password must be supplied');
+          res.body.message.should.be.eql('Both recepient(email) and newPassword must be supplied');
           done();
         });
     });
     it('should respond with error message if recepient is empty', (done) => {
       chai.request(app)
-        .post('/api/v1/user/email')
+        .post('/api/v1/user/reset-password')
         .send({
           recepient: '',
-          password: 'newPass123'
+          newPassword: 'newPass123'
         })
         .end((err, res) => {
           res.should.have.status(400);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
-          res.body.message.should.be.eql('Both email and password are required');
+          res.body.message.should.be.eql('Both recepient(email) and newPassword are required');
           done();
         });
     });
     it('should respond with error message if password is empty', (done) => {
       chai.request(app)
-        .post('/api/v1/user/email')
+        .post('/api/v1/user/reset-password')
         .send({
           recepient: 'existing@gmail.com',
-          password: ''
+          newPassword: ''
         })
         .end((err, res) => {
           res.should.have.status(400);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
-          res.body.message.should.be.eql('Both email and password are required');
+          res.body.message.should.be.eql('Both recepient(email) and newPassword are required');
           done();
         });
     });
     it('should respond with error message if recepient is not found', (done) => {
       chai.request(app)
-        .post('/api/v1/user/email')
+        .post('/api/v1/user/reset-password')
         .send({
           recepient: 'notFound@gmail.com',
-          password: 'newPass123'
+          newPassword: 'newPass123'
         })
         .end((err, res) => {
           res.should.have.status(404);

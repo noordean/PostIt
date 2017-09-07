@@ -9,7 +9,7 @@ import UserActions from '../actions/user';
 /**
   * @class SideNav
   */
-class SideNav extends Component {
+export class SideNav extends Component {
 /**
   * @constructor
   * @param {object} props
@@ -25,6 +25,7 @@ class SideNav extends Component {
 
   /**
   * description: executes immediately the component get mounted
+  *
   * @return {void} void
   */
   componentDidMount() {
@@ -33,14 +34,14 @@ class SideNav extends Component {
 
   /**
   * description: executes when state is about to change
+  *
   * @param {object} nextProps
+  *
   * @return {void} void
   */
   componentWillReceiveProps(nextProps) {
     if (this.props !== nextProps) {
-      const newMembers = nextProps.member.members.map((user) => {
-        return user.username;
-      });
+      const newMembers = nextProps.member.members.map(user => user.username);
       this.setState({
         groupMembers: newMembers,
         responseMsg: nextProps.member.responseMsg
@@ -50,15 +51,14 @@ class SideNav extends Component {
 
   /**
   * description: get members of the current group
+  *
   * @return {void} void
   */
   getMembersHandler() {
     this.props.getGroupMembers(this.props.groupID)
       .then(() => {
         if (this.props.member.members.length > 0) {
-          const newMembers = this.props.member.members.map((user) => {
-            return user.username;
-          });
+          const newMembers = this.props.member.members.map(user => user.username);
           this.setState({
             groupMembers: newMembers
           });
@@ -68,14 +68,16 @@ class SideNav extends Component {
 
   /**
   * description: adds members to group
+  *
   * @param {object} event object
+  *
   * @return {void} void
   */
   addMembersHandler(event) {
     event.preventDefault();
-    const selectedMembers = this.refs.usersSelectedInput.value.split(' ');
-    if (selectedMembers.length === 0) {
-      this.refs.errMsg.innerHTML = 'Kindly select members to add'
+    const selectedMembers = $('#getChips').val().split(' ');
+    if (selectedMembers[0] === '') {
+      $('#errMsg').text('Kindly select members to add');
     } else {
       this.setState({
         responseMsg: 'Processing...'
@@ -95,16 +97,18 @@ class SideNav extends Component {
             this.setState({
               responseMsg: 'Members added successfully'
             });
+            $('#getChips').val('');
             this.getMembersHandler();
             $('#modal2').modal('close');
           }
         });
-      this.refs.errMsg.innerHTML = '';
+      $('#errMsg').text('');
     }
   }
 
   /**
   * description: renders the component
+  *
   * @return {void} void
   */
   render() {
@@ -118,16 +122,15 @@ class SideNav extends Component {
 
     let members;
     if (this.state.groupMembers.length > 0) {
-      members = this.state.groupMembers.map((member, index) => {
-        return <li key={index}><a href="##">{member}</a></li>;
-      });
+      members = this.state.groupMembers.map(
+        (member, index) => <li key={index}><a href="##">{member}</a></li>);
     }
     return (
       <div>
         <div id="modal2" className="modal">
           <div className="modal-content">
             <form className="group-form">
-              <div className="center" ref="errMsg" />
+              <div className="center" id="errMsg" />
               <div className="center">{this.state.responseMsg}</div>
               <div className="input-field row">
                 <div id="chips" className="chips chips-autocomplete" />
@@ -139,7 +142,7 @@ class SideNav extends Component {
                   onClick={this.addMembersHandler}
                 >Add</a>
               </div>
-              <input type='hidden' ref="autoInpt" id="getMemberChips"/>
+              <input type="hidden" id="getMemberChips" />
             </form>
           </div>
         </div>
@@ -147,18 +150,28 @@ class SideNav extends Component {
         <ul id="slide-out" className="side-nav fixed red darken-4 white-text">
           <li><h5 className="user-view">{this.props.groupName}</h5></li>
           <li>
-            <Link className="waves-effect waves-light btn modal-trigger red darken-4" to="/dashboard">
+            <Link
+              className="waves-effect waves-light btn modal-trigger red darken-4"
+              to="/dashboard"
+            >
               Dashboard
             </Link>
           </li>
           <li>
-            <a className="waves-effect waves-light btn modal-trigger red darken-4" href="#modal2" id="addMembers">
+            <a
+              className="waves-effect waves-light btn modal-trigger red darken-4"
+              href="#modal2"
+              id="addMembers"
+            >
               Add members
             </a>
           </li>
           <li>
             <div>
-              <Link className="waves-effect waves-light btn archive red darken-4" to={`/archive-board/${this.props.groupID}`}>
+              <Link
+                className="waves-effect waves-light btn archive red darken-4"
+                to={`/archive-board/${this.props.groupID}`}
+              >
                 View Archived Messages
               </Link>
             </div>
@@ -166,21 +179,27 @@ class SideNav extends Component {
           <li>
             <i className="material-icons prefix">account_circle</i>
             <a
-              className='dropdown-button'
+              className="dropdown-button"
               href="##"
-              data-activates='dropdown3'
+              data-activates="dropdown3"
             >
               Members
               <i className="material-icons right">arrow_drop_down</i>
             </a>
           </li>
-          <li><input type="hidden" ref="getMembersInput" id="getMembers" value={this.state.groupMembers.join('-')} /></li>
-          <li><input type="hidden" ref="usersSelectedInput" id="getChips" /></li>
+          <li><input type="hidden" id="getMembers" value={this.state.groupMembers.join('-')} /></li>
+          <li><input type="hidden" id="getChips" /></li>
         </ul>
-        <ul id='dropdown3' className='dropdown-content'>
+        <ul id="dropdown3" className="dropdown-content">
           {members}
         </ul>
-        <a id="slideOut" href="" data-activates="slide-out" className="button-collapse"><i className="material-icons red-text">menu</i></a>
+        <a
+          id="slideOut"
+          href=""
+          data-activates="slide-out"
+          className="button-collapse"
+        >
+          <i className="material-icons red-text">menu</i></a>
       </div>
     );
   }
@@ -188,21 +207,23 @@ class SideNav extends Component {
 
 
 SideNav.propTypes = {
-  member: PropTypes.object,
-	addGroupMembers: PropTypes.func,
-	getGroupMembers: PropTypes.func
-}
-
-const mapStateToProps = (state) => {
-  return {
-    member: state.member
-  };
-}
-
-const matchDispatchToProps = (dispatch) => {
-  return bindActionCreators({
-    addGroupMembers: UserActions.addGroupMembers,
-    getGroupMembers: UserActions.getGroupMembers }, dispatch);
+  groupID: PropTypes.string.isRequired,
+  groupName: PropTypes.string.isRequired,
+  addGroupMembers: PropTypes.func.isRequired,
+  getGroupMembers: PropTypes.func.isRequired,
+  member: PropTypes.shape({
+    reqError: PropTypes.bool,
+    responseMsg: PropTypes.string,
+    members: PropTypes.arrayOf(PropTypes.object.isRequired)
+  }).isRequired
 };
+
+const mapStateToProps = state => ({
+  member: state.member
+});
+
+const matchDispatchToProps = dispatch => bindActionCreators({
+  addGroupMembers: UserActions.addGroupMembers,
+  getGroupMembers: UserActions.getGroupMembers }, dispatch);
 
 export default connect(mapStateToProps, matchDispatchToProps)(SideNav);

@@ -1,6 +1,6 @@
-import db from '../models';
+import database from '../models';
 
-const GroupUser = db.GroupUser;
+const GroupUser = database.GroupUser;
 /**
  * class UserGroup: interract with the GroupUser table
  * @class
@@ -8,9 +8,11 @@ const GroupUser = db.GroupUser;
 export default class UserGroup {
   /**
  * @description: add user to group
+ * 
  * @param {Integer} groupId the id of group to add to
  * @param {Integer} userId the id of user to add
  * @param {Function} done callback
+ * 
  * @return {Object} insertedData
  */
   static addUser(groupId, userId, done) {
@@ -28,8 +30,10 @@ export default class UserGroup {
 
   /**
  * @description: add user to group
+ * 
  * @param {Integer} groupId the id of group to get users from
  * @param {Function} done callback
+ * 
  * @return {Object} retrievedData
  */
   static getGroupUsersId(groupId, done) {
@@ -46,8 +50,10 @@ export default class UserGroup {
 
   /**
  * @description: add user to group
+ * 
  * @param {Integer} userId id of the user to get 
  * @param {Function} done callback
+ * 
  * @return {Object} retrievedData
  */
   static getUserGroupsId(userId, done) {
@@ -64,9 +70,11 @@ export default class UserGroup {
 
   /**
  * @description: add user to group
+ * 
  * @param {Integer} userId id of the user to get
  * @param {Integer} groupId the id of group to get user from
  * @param {Function} done callback
+ * 
  * @return {Object} retrievedData
  */
   static getUser(userId, groupId, done) {

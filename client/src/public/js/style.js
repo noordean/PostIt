@@ -11,8 +11,6 @@ $(document).ready(() => {
       }
     })
       .then((response) => {
-        console.log(response.data);
-        console.log('users jquery hereeeeee');
         const autoCompleteValues = {};
         response.data.users.forEach((user) => {
           autoCompleteValues[user.username] = null;

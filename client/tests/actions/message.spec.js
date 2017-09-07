@@ -26,9 +26,9 @@ describe('Message Actions', () => {
         },
         {
           type: 'POST_MESSAGE_SUCCESSFUL',
-          payload: { id: 1, groupId: 5, message: 'writing tests' }
+          payload: { id: 12, groupId: 8, postedby: 'ibrahim nurudeen', message: 'hi people', priority: 'Normal' }
         }];
-      store.dispatch(MessageActions.postGroupMessage(5, 'prioriy', 'Normal')).then(() => {
+      store.dispatch(MessageActions.postGroupMessage(8, 'hi people', 'Normal')).then(() => {
         expect(store.getActions()).toEqual(expectedAction);
       });
       done();

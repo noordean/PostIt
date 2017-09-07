@@ -1,6 +1,7 @@
 
 import chai from 'chai';
-import group from '../../services/group';
+
+import group from '../../services/Group';
 
 const should = chai.should();
 describe('<Unit Test>', () => {

@@ -17,21 +17,51 @@ export class SignUp extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      signUpResponse: ''
+      signUpResponse: '',
+      usernameInput: '',
+      emailInput: '',
+      phoneInput: '',
+      passwordInput: '',
+      confirmPasswordInput: ''
     };
     this.registerHandler = this.registerHandler.bind(this);
+    this.onChange = this.onChange.bind(this);
+  }
+
+  /**
+  * description: returns the userRegistration to initial state
+  * @return {void} void
+  */
+  componentWillUnmount() {
+    this.props.userRegistration.reqStatus = {};
+    this.props.userRegistration.reqError = null;
+    this.props.userRegistration.reqProcessed = false;
+    this.props.userRegistration.reqProcessing = false;
+  }
+
+  /**
+  * description: controls inputs state
+  * @param {object} element the current elementv
+  * @return {void} void
+  */
+  onChange(element) {
+    this.setState({
+      [element.target.name]: element.target.value,
+    });
   }
 
   /**
   * description: executes when component is just about to get rendered
   * @return {void} void
   */
-  componentWillUnmount() {
-    // return state to its initial value
-    this.props.userRegistration.reqStatus = {};
-    this.props.userRegistration.reqError = null;
-    this.props.userRegistration.reqProcessed = false;
-    this.props.userRegistration.reqProcessing = false;
+  changeStateToInitial() {
+    this.setState({
+      usernameInput: '',
+      emailInput: '',
+      passwordInput: '',
+      phoneInput: '',
+      confirmPasswordInput: ''
+    });
   }
 
   /**
@@ -41,22 +71,22 @@ export class SignUp extends Component {
   */
   registerHandler(event) {
     event.preventDefault();
-    const username = this.refs.usernameInput.value;
-    const email = this.refs.emailInput.value;
-    const phone = this.refs.phoneInput.value;
-    const password = this.refs.passwordInput.value;
-    const confirmPassword = this.refs.confirmPasswordInput.value;
+    const username = this.state.usernameInput;
+    const email = this.state.emailInput;
+    const phone = this.state.phoneInput;
+    const password = this.state.passwordInput;
+    const confirmPassword = this.state.confirmPasswordInput;
     if (password !== confirmPassword) {
-      this.refs.clientError.innerHTML = 'The two passwords did not match';
+      $('#clientError').text('The two passwords did not match');
     } else {
-      this.refs.clientError.innerHTML = '';
+      $('#clientError').text('');
       this.props.registerUser(username, email, password, phone)
         .then(() => {
           if (this.props.userRegistration.reqStatus.message === 'Registration successful') {
-            this.refs.formElement.reset();
             this.setState({
               signUpResponse: this.props.userRegistration.reqStatus.message
             });
+            this.changeStateToInitial();
           } else {
             this.setState({
               signUpResponse: this.props.userRegistration.reqStatus.message
@@ -78,59 +108,107 @@ export class SignUp extends Component {
   render() {
     let errorMsg = <div>{this.state.signUpResponse}</div>;
     if (this.state.signUpResponse === 'Registration successful') {
-      errorMsg = <div>Registration successful, click <Link to="/signin">here</Link> to login</div>;
+      errorMsg = (<div
+        className="signup-link"
+      >
+      Registration successful, click
+        <Link
+          to="/signin"
+          className="signin-link"
+        >here
+        </Link>to login</div>);
     }
     return (
       <div className="container">
         <div id="register-page" className="row">
           <div className="col s12 z-depth-4 card-panel">
-            <form className="register-form" onSubmit={this.registerHandler} ref="formElement">
+            <form className="register-form" onSubmit={this.registerHandler} id="formElement">
               <div className="row">
                 <div className="input-field col s12 center">
-                  <img id="reg-img" src="client/src/public/image/regsiter.jpg" alt="register img" className="circle responsive-img valign profile-image-login" />
-                  <div ref="clientError" />
+                  <div id="clientError" />
                   {errorMsg}
                 </div>
               </div>
               <div className="row margin">
                 <div className="input-field col s12">
                   <i className="material-icons prefix">account_circle</i>
-                  <input id="username" type="text" ref="usernameInput" required />
+                  <input
+                    id="username"
+                    type="text"
+                    name="usernameInput"
+                    value={this.state.usernameInput}
+                    onChange={this.onChange}
+                    required
+                  />
                   <label htmlFor="username" className="center-align">Username</label>
                 </div>
               </div>
               <div className="row margin">
                 <div className="input-field col s12">
                   <i className="material-icons prefix">email</i>
-                  <input id="email" type="email" ref="emailInput" required />
+                  <input
+                    id="email"
+                    type="email"
+                    name="emailInput"
+                    value={this.state.emailInput}
+                    onChange={this.onChange}
+                    required
+                  />
                   <label htmlFor="email" className="center-align">Email</label>
                 </div>
               </div>
               <div className="row margin">
                 <div className="input-field col s12">
                   <i className="material-icons prefix">phone</i>
-                  <input id="phonenumber" type="text" ref="phoneInput" required />
+                  <input
+                    id="phonenumber"
+                    type="text"
+                    name="phoneInput"
+                    value={this.state.phoneInput}
+                    onChange={this.onChange}
+                    required
+                  />
                   <label htmlFor="email" className="center-align">Phone Number</label>
                 </div>
               </div>
               <div className="row margin">
                 <div className="input-field col s12">
                   <i className="material-icons prefix">lock</i>
-                  <input id="password" type="password" ref="passwordInput" required />
+                  <input
+                    id="password"
+                    type="password"
+                    name="passwordInput"
+                    value={this.state.passwordInput}
+                    onChange={this.onChange}
+                    required
+                  />
                   <label htmlFor="password">Password</label>
                 </div>
               </div>
               <div className="row margin">
                 <div className="input-field col s12">
                   <i className="material-icons prefix">lock</i>
-                  <input id="password-again" type="password" ref="confirmPasswordInput" required />
+                  <input
+                    id="password-again"
+                    type="password"
+                    name="confirmPasswordInput"
+                    value={this.state.confirmPasswordInput}
+                    onChange={this.onChange}
+                    required
+                  />
                   <label htmlFor="password-again">Confirm Password</label>
                 </div>
               </div>
               <div className="row">
-                <input type="submit" value="Register Now" className="btn col s12 red darken-4" />
+                <input
+                  type="submit"
+                  value="Register Now"
+                  className="btn col s12 red darken-4 signup-btn"
+                />
                 <div className="input-field col s12">
-                  <p className="margin center medium-small sign-up">Already have an account? <a href="page-login.html">Login</a></p>
+                  <p className="margin center medium-small sign-up">
+                    Already have an account?
+                    <a href="page-login.html">Login</a></p>
                 </div>
               </div>
             </form>
@@ -141,9 +219,15 @@ export class SignUp extends Component {
   }
 }
 
+
 SignUp.propTypes = {
-  userRegistration: PropTypes.object,
-  registerUser: PropTypes.func
+  registerUser: PropTypes.func.isRequired,
+  userRegistration: PropTypes.shape({
+    reqError: PropTypes.bool,
+    reqProcessing: PropTypes.bool,
+    reqProcessed: PropTypes.bool,
+    reqStatus: PropTypes.object
+  }).isRequired
 };
 
 const mapStateToProps = state => ({

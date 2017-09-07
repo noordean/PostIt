@@ -2,7 +2,8 @@ const initialState = {
   groups: [],
   responseMsg: '',
   loading: false,
-  error: false
+  error: false,
+  pageCount: 0,
 };
 
 /**
@@ -27,14 +28,14 @@ export default class GroupReducers {
         return { ...state, groups: action.groups, pageCount: action.pageCount, responseMsg: '', loading: false };
       case 'CREATE_GROUP_SUCCESSFUL':
         const newState = { ...state, responseMsg: '', loading: false };
-        newState.groups = [...newState.groups, action.groups]
+        newState.groups = [...newState.groups, action.groups];
         return newState;
       case 'CREATE_GROUP_UNSUCCESSFUL':
       case 'GET_GROUPS_UNSUCCESSFUL':
-        return { ...state, responseMsg: action.errorMessage, loading: false }
+        return { ...state, responseMsg: action.errorMessage, loading: false };
       case 'CREATE_GROUP_REJECTED':
       case 'GET_GROUPS_REJECTED':
-        return { ...state, error: true, responseMsg: '', loading: false }
+        return { ...state, error: true, responseMsg: '', loading: false };
       default:
         return state;
     }

@@ -1,26 +1,24 @@
 import chaiHttp from 'chai-http';
 import chai from 'chai';
+
 import app from '../../server';
 
 chai.use(chaiHttp);
 const should = chai.should();
 let sentToken = '';
 describe('PostIt Endpoints', () => {
-  describe('POST api/v1/user/signin', () => {
-    it('should log a user in, to get login token', (done) => {
-      chai.request(app)
-        .post('/api/v1/user/signin')
-        .send({
-          username: 'existing',
-          password: 'exist123'
-        })
-        .end((err, res) => {
-          sentToken = res.body.user.token;
-          done();
-        });
-    });
+  before((done) => {
+    chai.request(app)
+      .post('/api/v1/user/signin')
+      .send({
+        username: 'existing',
+        password: 'exist123'
+      })
+      .end((err, res) => {
+        sentToken = res.body.user.token;
+        done();
+      });
   });
-
   describe('POST api/v1/group', () => {
     it('should respond with error message if empty groupname is supplied', (done) => {
       chai.request(app)
@@ -113,6 +111,7 @@ describe('PostIt Endpoints', () => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.group.name.should.be.eql('Correct Group');
+          res.body.group.description.should.be.eql('for testing...');
           res.body.message.should.be.eql('Group successfully created');
           done();
         });
@@ -145,7 +144,7 @@ describe('PostIt Endpoints', () => {
           done();
         });
     });
-    it('should respond with error message if the supplied groupID is not valid', (done) => {
+    it('should respond with error message if the supplied groupID does not exist', (done) => {
       chai.request(app)
         .delete('/api/v1/group/12776283')
         .send({
@@ -155,7 +154,7 @@ describe('PostIt Endpoints', () => {
           res.should.have.status(404);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
-          res.body.message.should.be.eql('Invalid group id');
+          res.body.message.should.be.eql('Group does not exist');
           done();
         });
     });
@@ -173,32 +172,29 @@ describe('PostIt Endpoints', () => {
           done();
         });
     });
-    it('should respond with success message if correct details are supplied', (done) => {
+  });
+
+  describe('GET api/user/groups', () => {
+    it('should respond with error message if invalid token is supplied', (done) => {
       chai.request(app)
-        .delete('/api/v1/group/3')
-        .send({
-          token: sentToken
-        })
+        .get('/api/v1/user/groups?limit=6&offset=0')
+        .set('token', 'invalidToken')
         .end((err, res) => {
-          res.should.have.status(200);
+          res.should.have.status(401);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
-          res.body.message.should.be.eql('Group deleted');
+          res.body.message.should.be.eql('Access denied!. Kindly login');
           done();
         });
     });
-  });
-
-  describe('GET api/user/:userID/groups', () => {
-    it('should respond with error message if invalid id is defined', (done) => {
+    it('should respond with success message if correct detail is supplied', (done) => {
       chai.request(app)
-        .get('/api/v1/user/14575893/groups?limit=6&offset=0')
+        .get('/api/v1/user/groups?limit=6&offset=0')
         .set('token', sentToken)
         .end((err, res) => {
-          res.should.have.status(404);
+          res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.message.should.be.eql('Invalid user id');
+          res.body.should.have.property('groups');
           done();
         });
     });

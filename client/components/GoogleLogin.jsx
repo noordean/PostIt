@@ -3,6 +3,7 @@ import { browserHistory } from 'react-router';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import GoogleLogin from 'react-google-login';
+import PropTypes from 'prop-types';
 
 import UserActions from '../actions/user';
 import authorization from '../utils/authorization';
@@ -10,7 +11,7 @@ import authorization from '../utils/authorization';
 /**
   * @class LoginWithGoogle
   */
-class LoginWithGoogle extends Component {
+export class LoginWithGoogle extends Component {
 /**
   * @constructor
   * @param {object} props
@@ -22,7 +23,9 @@ class LoginWithGoogle extends Component {
 
   /**
   * description: redirects after google signup is successful
+  *
   * @param {object} response google object information
+  *
   * @return {void} void
   */
   responseGoogle(response) {
@@ -37,15 +40,16 @@ class LoginWithGoogle extends Component {
   }
 
   /**
-  * description: render the google button
+  * description: renders the google button
+  *
   * @return {void} void
   */
   render() {
     return (
       <GoogleLogin
-        className='google-login'
-        clientId='865334857353-2cgfcv29lanb6k7rsdo4qubn6fp1dvm6.apps.googleusercontent.com'
-        buttonText='Login with Google'
+        className="google-login"
+        clientId="865334857353-2cgfcv29lanb6k7rsdo4qubn6fp1dvm6.apps.googleusercontent.com"
+        buttonText="Login with Google"
         onSuccess={this.responseGoogle}
         onFailure={this.responseGoogle}
       />
@@ -53,17 +57,21 @@ class LoginWithGoogle extends Component {
   }
 }
 
-
-const mapStateToProps = (state) => {
-  return {
-    userFromGoogle: state.userFromGoogle
-  };
+LoginWithGoogle.propTypes = {
+  registerUserFromGoogle: PropTypes.func.isRequired,
+  userFromGoogle: PropTypes.shape({
+    response: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+    error: PropTypes.bool,
+    loading: PropTypes.bool
+  }).isRequired
 };
 
-const matchDispatchToProps = (dispatch) => {
-  return bindActionCreators({
-    registerUserFromGoogle: UserActions.registerUserFromGoogle
-  }, dispatch);
-};
+const mapStateToProps = state => ({
+  userFromGoogle: state.userFromGoogle
+});
+
+const matchDispatchToProps = dispatch => bindActionCreators({
+  registerUserFromGoogle: UserActions.registerUserFromGoogle
+}, dispatch);
 
 export default connect(mapStateToProps, matchDispatchToProps)(LoginWithGoogle);

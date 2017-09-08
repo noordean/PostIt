@@ -1,26 +1,24 @@
 import chaiHttp from 'chai-http';
 import chai from 'chai';
+
 import app from '../../server';
 
 chai.use(chaiHttp);
 const should = chai.should();
 let sentToken = '';
 describe('PostIt Endpoints', () => {
-  describe('POST api/v1/user/signin', () => {
-    it('should log a user in, to get login token', (done) => {
-      chai.request(app)
-        .post('/api/v1/user/signin')
-        .send({
-          username: 'existing',
-          password: 'exist123'
-        })
-        .end((err, res) => {
-          sentToken = res.body.user.token;
-          done();
-        });
-    });
+  before((done) => {
+    chai.request(app)
+      .post('/api/v1/user/signin')
+      .send({
+        username: 'existing',
+        password: 'exist123'
+      })
+      .end((err, res) => {
+        sentToken = res.body.user.token;
+        done();
+      });
   });
-
   describe('POST api/v1/group/:groupID/message', () => {
     it('should respond with error message if token is not defined', (done) => {
       chai.request(app)
@@ -96,7 +94,7 @@ describe('PostIt Endpoints', () => {
           res.should.have.status(404);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
-          res.body.message.should.be.eql('Invalid group id');
+          res.body.message.should.be.eql('Group does not exist');
           done();
         });
     });
@@ -162,6 +160,7 @@ describe('PostIt Endpoints', () => {
           res.body.should.have.property('message');
           res.body.message.should.be.eql('Message posted successfully');
           res.body.Message.message.should.be.eql('Hello guyz');
+          res.body.Message.priority.should.be.eql('Critical');
           done();
         });
     });
@@ -236,7 +235,7 @@ describe('PostIt Endpoints', () => {
   });
 
   describe('DELETE api/message/:messageID', () => {
-    it('should not have access to delete messagee if token is not supplied', (done) => {
+    it('should not have access to delete message if token is not supplied', (done) => {
       chai.request(app)
         .delete('/api/v1/message/54678')
         .send({

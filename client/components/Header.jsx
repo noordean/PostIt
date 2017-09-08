@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import GuestHeader from './guestHeader.jsx'
+import GuestHeader from './GuestHeader.jsx';
 import GroupActions from '../actions/group';
 
 /**
@@ -18,18 +18,72 @@ export class Header extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      groupName: '',
+      groupDescription: '',
       responseMsg: '',
       groupLimit: 6
     };
     this.createGroup = this.createGroup.bind(this);
     this.logoutHandler = this.logoutHandler.bind(this);
+    this.onChange = this.onChange.bind(this);
+  }
+
+  /**
+  * description: controls inputs state
+  *
+  * @param {object} element the current element
+  *
+  * @return {void} void
+  */
+  onChange(element) {
+    this.setState({
+      [element.target.name]: element.target.value,
+    });
+  }
+
+  /**
+  * description: creates new group
+  *
+  * @param {object} event the event being executed
+  *
+  * @return {void} void
+  */
+  createGroup(event) {
+    event.preventDefault();
+    this.props.createGroup(this.state.groupName, this.state.groupDescription)
+      .then(() => {
+        if (this.props.group.error) {
+          this.setState({
+            responseMsg: 'Sorry, group could not be created'
+          });
+        } else if (this.props.group.responseMsg !== '') {
+          this.setState({
+            responseMsg: this.props.group.responseMsg
+          });
+        } else if (this.props.group.loading) {
+          this.setState({
+            responseMsg: 'Creating group...'
+          });
+        } else {
+          this.setState({
+            responseMsg: 'Group created successfully',
+            groupName: '',
+            groupDescription: ''
+          });
+          this.props.getGroups(this.state.groupLimit, 0);
+          $('#modal1').modal('close');
+        }
+      });
   }
 
   /**
   * description: logs a user out
+  *
   * @param {object} event the event being executed
+  *
   * @return {void} void
   */
+  //eslint-disable-next-line
   logoutHandler(event) {
     event.preventDefault();
     localStorage.removeItem('user');
@@ -38,39 +92,8 @@ export class Header extends Component {
   }
 
   /**
-  * description: creates new group
-  * @param {object} event the event being executed
-  * @return {void} void
-  */
-  createGroup(event) {
-    event.preventDefault();
-    const groupName = this.refs.groupNameInput.value;
-    const description = this.refs.descriptionInput.value;
-    this.props.createGroup(groupName, description)
-      .then(() => {
-        if (this.props.group.reqError) {
-          this.setState({
-            responseMsg: 'Sorry, group could not be created'
-          })
-        } else if (this.props.group.responseMsg !== '') {
-          this.setState({
-            responseMsg: this.props.group.responseMsg
-          })
-        } else if (this.props.group.loading) {
-          this.setState({
-            responseMsg: 'Creating group...'
-          })
-        } else {
-          responseMsg: 'Group created successfully'
-          this.refs.createForm.reset();
-          this.props.getGroups(JSON.parse(localStorage.user).id, this.state.groupLimit, 0);
-          $('#modal1').modal('close');
-        }
-      });
-  }
-
-  /**
   * description: render the google button
+  *
   * @return {void} void
   */
   render() {
@@ -81,11 +104,16 @@ export class Header extends Component {
       (<div>
         <div id="modal1" className="modal">
           <div className="modal-content">
-            <form className="group-form" ref="createForm">
+            <form className="group-form" id="createForm">
               <div className="row">
                 {errorMsg}
                 <div className="input-field col s12">
-                  <input type="text" ref="groupNameInput"/>
+                  <input
+                    type="text"
+                    name="groupName"
+                    onChange={this.onChange}
+                    value={this.state.groupName}
+                  />
                   <label htmlFor="password">Group Name</label>
                 </div>
               </div>
@@ -93,8 +121,10 @@ export class Header extends Component {
                 <div className="input-field col s12">
                   <textarea
                     id="textarea1"
+                    name="groupDescription"
                     className="materialize-textarea white"
-                    ref="descriptionInput"
+                    onChange={this.onChange}
+                    value={this.state.groupDescription}
                   />
                   <label htmlFor="password">Description</label>
                 </div>
@@ -129,7 +159,7 @@ export class Header extends Component {
                 className="waves-effect waves-light btn modal-trigger red darken-4"
                 href="#modal1"
               >Create Group</a></li>
-              <li><a className="dropdown-button" href="" data-activates="dropdown1">{localStorage.user ? JSON.parse(localStorage.user).user : ''}<i className="material-icons right">arrow_drop_down</i></a></li>
+              <li><a className="dropdown-button" href="" data-activates="dropdown1">{localStorage.user ? JSON.parse(localStorage.user).username : ''}<i className="material-icons right">arrow_drop_down</i></a></li>
             </ul>
           </div>
         </nav>
@@ -137,27 +167,29 @@ export class Header extends Component {
 
     return (
       <div>
-        {localStorage.user ? userHeader : <GuestHeader/>}
+        {localStorage.user ? userHeader : <GuestHeader />}
       </div>
     );
   }
 }
 
-
 Header.propTypes = {
-  group: PropTypes.object,
-	createGroup: PropTypes.func,
-	getGroups: PropTypes.func
-}
-const mapStateToProps = (state) => {
-  return {
-    group: state.group
-  };
+  createGroup: PropTypes.func.isRequired,
+  getGroups: PropTypes.func.isRequired,
+  group: PropTypes.shape({
+    error: PropTypes.bool,
+    responseMsg: PropTypes.string,
+    loading: PropTypes.bool,
+    groups: PropTypes.arrayOf(PropTypes.object.isRequired),
+    pageCount: PropTypes.number
+  }).isRequired,
 };
 
-const matchDispatchToProps = (dispatch) => {
-  return bindActionCreators({
-    createGroup: GroupActions.createGroup, getGroups: GroupActions.getGroups }, dispatch);
-};
+const mapStateToProps = state => ({
+  group: state.group
+});
+
+const matchDispatchToProps = dispatch => bindActionCreators({
+  createGroup: GroupActions.createGroup, getGroups: GroupActions.getGroups }, dispatch);
 
 export default connect(mapStateToProps, matchDispatchToProps)(Header);

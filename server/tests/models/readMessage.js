@@ -1,6 +1,7 @@
 
 import chai from 'chai';
-import readMessage from '../../services/readMessage';
+
+import readMessage from '../../services/ReadMessage';
 
 const should = chai.should();
 describe('<Unit Test>', () => {

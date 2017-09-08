@@ -8,11 +8,14 @@ export default class MessageActions {
   * Request to the API to post message to a group
   *
   * @static
+
   * @param {Integer} groupID The id of the group to post message to
   * @param {String} message The content of the message to be posted
   * @param {String} priority The content of the message to be posted
   * @param {String} token JWToken to access the endpoint
+  *
   * @returns {Object} dispatch object
+  *
   * @memberof MessageActions
   */
   static postGroupMessage(groupID, message, priority) {
@@ -40,10 +43,13 @@ export default class MessageActions {
   * Request to the API to get messages of a group
   *
   * @static
+  *
   * @param {Integer} groupID The id of the group to get message from
   * @param {Integer} userId The id of the user to get message for
   * @param {String} token The login token
+  *
   * @returns {Object} dispatch object
+  *
   * @memberof MessageActions
   */
   static getMessages(groupID, userId) {
@@ -67,10 +73,13 @@ export default class MessageActions {
   * Request to the API to archive read messages
   *
   * @static
+  *
   * @param {Integer}  groupId id of the group to get message from
   * @param {Integer}  userId id of the user that read the messages
   * @param {String} messageIds An array of messages read
+  *
   * @returns {Object} dispatch object
+  *
   * @memberof MessageActions
   */
   static archiveReadMessages(groupId, userId, messageIds) {
@@ -96,10 +105,13 @@ export default class MessageActions {
   * Request to the API to get messages of a group
   *
   * @static
+  *
   * @param {Integer} groupID The id of the group to get message from
   * @param {Integer} userId The id of the user to get message for
   * @param {String} token The login token
+  *
   * @returns {Object} dispatch object
+  *
   * @memberof MessageActions
   */
   static getArchivedMessages(groupID, userId) {

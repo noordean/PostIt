@@ -35,7 +35,7 @@ describe('User Actions', () => {
       });
       done();
     });
-    it("Should dispatch appropraite action type if invalid username is supplied",
+    it('Should dispatch appropraite action type if invalid username is supplied',
       (done) => {
         moxios.stubRequest('/api/v1/user/signup', {
           status: 400,
@@ -59,7 +59,7 @@ describe('User Actions', () => {
         });
         done();
       });
-    it("Should dispatch appropraite action type if an unexpected error occured",
+    it('Should dispatch appropraite action type if an unexpected error occured',
       (done) => {
         moxios.stubRequest('/api/v1/user/signup', {
           status: 500
@@ -222,7 +222,7 @@ describe('User Actions', () => {
   describe('sendResetPasswordMail Action', () => {
     it('Should make a request to reset password for a user',
       (done) => {
-        moxios.stubRequest('/api/v1/user/email', {
+        moxios.stubRequest('/api/v1/user/reset-password', {
           status: 200,
           response: {
             message: 'A message has been sent to your mail'
@@ -244,7 +244,7 @@ describe('User Actions', () => {
       });
     it('Should dispatch appropraite action type if there\'s an error',
       (done) => {
-        moxios.stubRequest('/api/v1/user/email', {
+        moxios.stubRequest('/api/v1/user/reset-password', {
           status: 400,
           response: {
             message: 'Could not send mail'
@@ -266,7 +266,7 @@ describe('User Actions', () => {
       });
     it('Should dispatch appropraite action type if there\'s an error',
       (done) => {
-        moxios.stubRequest('/api/v1/user/email', {
+        moxios.stubRequest('/api/v1/user/reset-password', {
           status: 500
         });
         const store = mockStore({});
@@ -556,7 +556,7 @@ describe('User Actions', () => {
         moxios.stubRequest('/api/v1/message/2/user?groupId=12', {
           status: 200,
           response: {
-            users: [{id: 1, username: 'noordean'}]
+            users: [{ id: 1, username: 'noordean' }]
           }
         });
         const store = mockStore({});

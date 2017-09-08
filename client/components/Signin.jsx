@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
-import GoogleLogin from './googleLogin.jsx';
+import { Link, browserHistory } from 'react-router';
 import PropTypes from 'prop-types';
 
 import UsersActions from '../actions/user';
-import { browserHistory } from 'react-router';
+import GoogleLogin from './GoogleLogin.jsx';
 
 /**
   * @class Dashboard
@@ -19,10 +18,13 @@ class SignIn extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loginResponse: ''
+      loginResponse: '',
+      usernameInput: '',
+      passwordInput: ''
     };
     this.loginHandler = this.loginHandler.bind(this);
     this.openResetPassword = this.openResetPassword.bind(this);
+    this.onChange = this.onChange.bind(this);
   }
 
   /**
@@ -36,14 +38,25 @@ class SignIn extends Component {
   }
 
   /**
+  * description: controls inputs state
+  * @param {object} element the current elementv
+  * @return {void} void
+  */
+  onChange(element) {
+    this.setState({
+      [element.target.name]: element.target.value,
+    });
+  }
+
+  /**
   * description: controls user login
   * @param {object} event event object
   * @return {void} void
   */
   loginHandler(event) {
     event.preventDefault();
-    const username = this.refs.usernameInput.value;
-    const password = this.refs.passwordInput.value;
+    const username = this.state.usernameInput;
+    const password = this.state.passwordInput;
     this.props.loginUser(username, password)
       .then(() => {
         if (this.props.userLogin.reqStatus.message === 'You are now logged in') {
@@ -67,10 +80,12 @@ class SignIn extends Component {
   * @param {object} event event object
   * @return {void} void
   */
+  //eslint-disable-next-line
   openResetPassword(event) {
     event.preventDefault();
-    $('#modal3').modal('open');
+    $('#resetPassword').modal('open');
   }
+
 
   /**
   * description: renders the component
@@ -84,25 +99,38 @@ class SignIn extends Component {
             <form className="login-form" onSubmit={this.loginHandler}>
               <div className="row">
                 <div className="input-field col s12 center">
-                  <img id="login-img" src="/public/image/login.jpg" alt="" className="circle responsive-img valign profile-image-login"/>
                   <div>{this.state.loginResponse}</div>
                 </div>
               </div>
               <div className="row margin">
                 <div className="input-field col s12">
                   <i className="material-icons prefix">account_circle</i>
-                  <input id="username" type="text" ref="usernameInput" required/>
+                  <input
+                    id="username"
+                    type="text"
+                    name="usernameInput"
+                    value={this.state.usernameInput}
+                    onChange={this.onChange}
+                    required
+                  />
                   <label htmlFor="username" className="center-align">Username</label>
                 </div>
               </div>
               <div className="row margin">
                 <div className="input-field col s12">
                   <i className="material-icons prefix">lock</i>
-                  <input id="password" type="password" ref="passwordInput" required/>
+                  <input
+                    id="password"
+                    type="password"
+                    name="passwordInput"
+                    value={this.state.passwordInput}
+                    onChange={this.onChange}
+                    required
+                  />
                   <label htmlFor="password">Password</label>
                 </div>
               </div>
-              <div className="row">          
+              <div className="row">
                 <div className="input-field col s12 m12 l12  login-text">
                   <input type="checkbox" id="remember-me" />
                   <label htmlFor="remember-me">Remember me</label>
@@ -110,7 +138,11 @@ class SignIn extends Component {
               </div>
               <div className="row">
                 <div className="input-field col s6">
-                  <input type="submit" value="Login" className="btn col s12 red darken-4" />
+                  <input
+                    type="submit"
+                    value="Login"
+                    className="btn col s12 red darken-4 login-btn"
+                  />
                 </div>
                 <div className="input-field col s6">
                   <GoogleLogin />
@@ -138,18 +170,19 @@ class SignIn extends Component {
 
 
 SignIn.propTypes = {
-  userLogin: PropTypes.object,
-	loginUser: PropTypes.func
-}
-
-const mapStateToProps = (state) => {
-  return {
-    userLogin: state.userLogin
-  };
+  loginUser: PropTypes.func.isRequired,
+  userLogin: PropTypes.shape({
+    reqError: PropTypes.bool,
+    loading: PropTypes.bool,
+    reqStatus: PropTypes.object
+  }).isRequired
 };
 
-const matchDispatchToProps = (dispatch) => {
-  return bindActionCreators({ loginUser: UsersActions.loginUser }, dispatch);
-};
+const mapStateToProps = state => ({
+  userLogin: state.userLogin
+});
+
+const matchDispatchToProps = dispatch => bindActionCreators({
+  loginUser: UsersActions.loginUser }, dispatch);
 
 export default connect(mapStateToProps, matchDispatchToProps)(SignIn);

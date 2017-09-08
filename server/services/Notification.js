@@ -1,6 +1,6 @@
-import db from '../models';
+import database from '../models';
 
-const Notification = db.Notification;
+const Notification = database.Notification;
 /**
  * class UserGroup: interract with the GroupUser table
  * @class
@@ -8,11 +8,13 @@ const Notification = db.Notification;
 export default class Notify {
   /**
  * @description: saves notification to database
+ * 
  * @param {Integer} userId the id of user to add
  * @param {Integer} groupName name of the group
  * @param {string} message the posted message
  * @param {Integer} postedby the poster
  * @param {Function} done callback
+ * 
  * @return {Object} insertedData
  */
   static save(userId, groupName, message, postedby, done) {
@@ -30,8 +32,10 @@ export default class Notify {
 
   /**
  * @description: gets notification from database
+ * 
  * @param {Integer} userId the id of user to to get notification for
  * @param {Function} done callback
+ * 
  * @return {Object} retrieved Data
  */
   static getNotification(userId, done) {
@@ -48,8 +52,10 @@ export default class Notify {
 
   /**
  * @description: gets notification from database
+ * 
  * @param {Integer} userId the id of user to to get notification for
  * @param {Function} done callback
+ * 
  * @return {Object} retrieved Data
  */
   static deleteNotification(userId, done) {

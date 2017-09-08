@@ -1,17 +1,17 @@
-import React, {Component} from "react";
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
+import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import UserActions from '../actions/user';
 import MessageActions from '../actions/message';
-import SideNav from './sidenav.jsx';
-import Home from './home.jsx';
+import SideNav from './Sidenav.jsx';
+import Home from './Home.jsx';
 
 /**
   * @class MessageBoard
   */
-class MessageBoard extends Component {
+export class MessageBoard extends Component {
 /**
   * @constructor
   * @param {object} props
@@ -22,14 +22,17 @@ class MessageBoard extends Component {
       responseMsg: '',
       msgStatus: 'Normal',
       messages: [],
-      readMessageUsers: []
+      readMessageUsers: [],
+      messageInput: ''
     };
     this.getMsgStatus = this.getMsgStatus.bind(this);
     this.postMessageHandler = this.postMessageHandler.bind(this);
+    this.onChange = this.onChange.bind(this);
   }
 
   /**
   * description: executes immediately after the component mounts
+  *
   * @return {void} void
   */
   componentDidMount() {
@@ -38,7 +41,9 @@ class MessageBoard extends Component {
 
   /**
   * description: executes when the state changes
+  *
   * @param {object} nextProps the next state
+  *
   * @return {void} void
   */
   componentWillReceiveProps(nextProps) {
@@ -52,7 +57,21 @@ class MessageBoard extends Component {
   }
 
   /**
+  * description: controls inputs state
+  *
+  * @param {object} element the current element
+  *
+  * @return {void} void
+  */
+  onChange(element) {
+    this.setState({
+      [element.target.name]: element.target.value,
+    });
+  }
+
+  /**
   * description: gets all messages for a group
+  *
   * @return {void} void
   */
   getMessagesHandler() {
@@ -77,7 +96,9 @@ class MessageBoard extends Component {
 
   /**
   * description: gets the message status, either normal, urgent or critical
+  *
   * @param {event} event the event being executed
+  *
   * @return {void} void
   */
   getMsgStatus(event) {
@@ -89,29 +110,34 @@ class MessageBoard extends Component {
 
   /**
   * description: archives all read messages
+  *
   * @return {void} void
   */
   archiveMessageHandler() {
     if (this.state.messages.length > 0) {
-      const readMessageIds = this.state.messages.map((msgId) => {
-        return msgId.id;
-      });
-      this.props.archiveReadMessages(this.props.params.groupID, JSON.parse(localStorage.user).id, readMessageIds);
+      const readMessageIds = this.state.messages.map(msgId => msgId.id);
+      this.props.archiveReadMessages(this.props.params.groupID,
+        JSON.parse(localStorage.user).id, readMessageIds);
     }
   }
 
+
   /**
   * description: posts message to a group
+  *
   * @param {event} event the event being executed
+  *
   * @return {void} void
   */
   postMessageHandler(event) {
     event.preventDefault();
-    const msg = encodeURI(this.refs.msgInput.value);
-    if (this.refs.msgInput.value.trim().length !== 0) {
+    const msg = encodeURI(this.state.messageInput);
+    if (msg.length !== 0) {
       this.props.postGroupMessage(this.props.params.groupID, msg, this.state.msgStatus)
         .then(() => {
-          this.refs.msgInput.value = '';
+          this.setState({
+            messageInput: ''
+          });
           if (this.props.groupMessages.responseMsg !== '') {
             this.setState({
               responseMsg: this.props.groupMessages.responseMsg
@@ -121,13 +147,11 @@ class MessageBoard extends Component {
               responseMsg: 'Sorry, message could not be posted'
             });
           } else {
-            const postedMessage = this.props.groupMessages.messages[this.props.groupMessages.messages.length - 1];
+            const postedMessage = this.props.groupMessages.messages[
+              this.props.groupMessages.messages.length - 1];
             if (postedMessage.priority === 'Normal') {
-              const recepients = this.props.member.members.filter((member) => {
-                return (member.username !== JSON.parse(localStorage.user).user);
-              });
-              console.log(recepients)
-              console.log('emi recepients hhhhhhhhh')
+              const recepients = this.props.member.members.filter(
+                member => (member.username !== JSON.parse(localStorage.user).username));
               if (recepients.length > 0) {
                 this.props.saveInAppNotification(recepients,
                   this.props.params.groupName, postedMessage.message, postedMessage.postedby);
@@ -153,27 +177,29 @@ class MessageBoard extends Component {
 
   /**
   * description: sends email notification to group members
+  *
   * @param {array} members the current group members
   * @param {string} message the resent message posted
+  *
   * @return {void} void
   */
   sendMailNotification(members, message) {
-    const allMembers = members.map((member) => {
-      return member.email;
-    });
-    const recepients = allMembers.filter((member) => {
-      return member !== JSON.parse(localStorage.user).email;
-    });
+    const allMembers = members.map(member => member.email);
+    const recepients = allMembers.filter(member => member !== JSON.parse(localStorage.user).email);
     const recepientsInStr = recepients.join(', ');
     const groupName = this.props.params.groupName;
-    const poster = JSON.parse(localStorage.user).user;
-    this.props.sendMailForNotification(recepientsInStr, groupName, message, poster);
+    const poster = JSON.parse(localStorage.user).username;
+    if (allMembers.length > 1) {
+      this.props.sendMailForNotification(recepientsInStr, groupName, message, poster);
+    }
   }
 
   /**
   * description: posts message to a group
+  *
   * @param {integer} messageId the id of the message to get users for
   * @param {event} event the event being executed
+  *
   * @return {void} void
   */
   openSeenMsgModal(messageId, event) {
@@ -189,6 +215,7 @@ class MessageBoard extends Component {
 
   /**
   * description: renders the component
+  *
   * @return {void} void
   */
   render() {
@@ -200,49 +227,48 @@ class MessageBoard extends Component {
     if (this.state.responseMsg !== '') {
       messageBoard = <div className="center">{this.state.responseMsg}</div>;
     } else if (this.props.groupMessages.loading) {
-      messageBoard = <div className="center">Loading messages...</div>
+      messageBoard = <div className="center">Loading messages...</div>;
     } else if (this.state.messages.length > 0) {
-      messageBoard = this.state.messages.map((message) => {
-        return (
-          <div key={message.id}>
-            <div className="row">
-              <div className="col s10">
-                <h6 className="media-heading">{message.postedby}</h6>
-                <p className="col-lg-10" className="msgTxt">{decodeURI(message.message)}</p>
-              </div>
-              <div className="col s2">
+      messageBoard = this.state.messages.map(message => (
+        <div key={message.id}>
+          <div className="row">
+            <div className="col s10">
+              <h6 className="media-heading">{message.postedby}</h6>
+              <p className="col-lg-10 msgTxt">{decodeURI(message.message)}</p>
+            </div>
+            <div className="col s2">
+              <div>
                 <div>
-                  <div>
-                    <small className="pull-right time">
-                      <i className="fa fa-clock-o" />
-                      {new Date(message.createdAt).toLocaleString()}
-                    </small>
-                  </div>
-                  <div>
-                    <small className="pull-right time red-text">
-                      <i className="fa fa-clock-o" />
-                      {message.priority}
-                    </small>
-                    <small className="seen">
-                      <a href="##" onClick={this.openSeenMsgModal.bind(this, message.id)}>seen by:</a>
-                    </small>
-                  </div>
+                  <small className="pull-right time">
+                    <i className="fa fa-clock-o" />
+                    {new Date(message.createdAt).toLocaleString()}
+                  </small>
+                </div>
+                <div>
+                  <small className="pull-right time red-text">
+                    <i className="fa fa-clock-o" />
+                    {message.priority}
+                  </small>
+                  <small className="seen">
+                    <a
+                      href="##"
+                      onClick={this.openSeenMsgModal.bind(this, message.id)}
+                    >seen by:</a>
+                  </small>
                 </div>
               </div>
             </div>
-            <hr />
           </div>
-        );
-      });
+          <hr />
+        </div>
+      ));
     } else {
-      messageBoard = <div className="center">There is no recent message in this group</div>
+      messageBoard = <div className="center">There is no recent message in this group</div>;
     }
 
     let readMessageUsers = ['none'];
     if (this.state.readMessageUsers.length !== 0) {
-      readMessageUsers = this.state.readMessageUsers.map((user) => {
-        return user.username;
-      });
+      readMessageUsers = this.state.readMessageUsers.map(user => user.username);
     }
     return (
       <div>
@@ -252,7 +278,7 @@ class MessageBoard extends Component {
           </div>
         </div>
         <div>
-          <SideNav groupName={this.props.params.groupName} groupID={this.props.params.groupID}/>
+          <SideNav groupName={this.props.params.groupName} groupID={this.props.params.groupID} />
           <div className="row group-cards">
             <div className="col s3" />
             <div className="col s9">
@@ -263,7 +289,12 @@ class MessageBoard extends Component {
                 <form className="col s12" id="textareaForm">
                   <div className="row">
                     <div className="input-field col s8">
-                      <textarea id="textarea1" ref="msgInput" />
+                      <textarea
+                        id="textarea1"
+                        value={this.state.messageInput}
+                        name="messageInput"
+                        onChange={this.onChange}
+                      />
                       <label htmlFor="textarea1">Message</label>
                     </div>
                     <div className="col s2">
@@ -317,30 +348,50 @@ class MessageBoard extends Component {
 }
 
 MessageBoard.propTypes = {
-  groupMessages: PropTypes.object.isRequired,
+  params: PropTypes.shape({
+    groupID: PropTypes.string.isRequired,
+    groupName: PropTypes.string.isRequired
+  }).isRequired,
   getMessages: PropTypes.func.isRequired,
-  postGroupMessage: PropTypes.func.isRequired
+  postGroupMessage: PropTypes.func.isRequired,
+  saveInAppNotification: PropTypes.func.isRequired,
+  archiveReadMessages: PropTypes.func.isRequired,
+  sendSmsForNotification: PropTypes.func.isRequired,
+  sendMailForNotification: PropTypes.func.isRequired,
+  getReadMessageUsers: PropTypes.func.isRequired,
+  groupMessages: PropTypes.shape({
+    responseMsg: PropTypes.string,
+    error: PropTypes.bool,
+    loading: PropTypes.bool,
+    messages: PropTypes.arrayOf(PropTypes.object.isRequired),
+  }).isRequired,
+  readMessages: PropTypes.shape({
+    error: PropTypes.bool,
+    loading: PropTypes.bool,
+    users: PropTypes.arrayOf(PropTypes.object.isRequired),
+  }).isRequired,
+  member: PropTypes.shape({
+    reqError: PropTypes.bool,
+    responseMsg: PropTypes.string,
+    members: PropTypes.arrayOf(PropTypes.object.isRequired),
+  }).isRequired
 };
 
-const mapStateToProps = (state) => {
-  return {
-    groupMessages: state.messages,
-    member: state.member,
-    archiveMessage: state.archiveMessage,
-    readMessages: state.readMessages,
-    appNotification: state.appNotification
-  };
-};
+const mapStateToProps = state => ({
+  groupMessages: state.messages,
+  member: state.member,
+  archiveMessage: state.archiveMessage,
+  readMessages: state.readMessages,
+  appNotification: state.appNotification
+});
 
-const matchDispatchToProps = (dispatch) => {
-  return bindActionCreators({
-    getMessages: MessageActions.getMessages,
-    sendMailForNotification: UserActions.sendMailForNotification,
-    sendSmsForNotification: UserActions.sendSmsForNotification,
-    postGroupMessage: MessageActions.postGroupMessage,
-    archiveReadMessages: MessageActions.archiveReadMessages,
-    getReadMessageUsers: UserActions.getReadMessageUsers,
-    saveInAppNotification: UserActions.saveInAppNotification }, dispatch);
-};
+const matchDispatchToProps = dispatch => bindActionCreators({
+  getMessages: MessageActions.getMessages,
+  sendMailForNotification: UserActions.sendMailForNotification,
+  sendSmsForNotification: UserActions.sendSmsForNotification,
+  postGroupMessage: MessageActions.postGroupMessage,
+  archiveReadMessages: MessageActions.archiveReadMessages,
+  getReadMessageUsers: UserActions.getReadMessageUsers,
+  saveInAppNotification: UserActions.saveInAppNotification }, dispatch);
 
 export default connect(mapStateToProps, matchDispatchToProps)(MessageBoard);

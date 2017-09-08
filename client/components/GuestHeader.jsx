@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { Link } from 'react-router';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
-import ResetPassword from './resetPasswod.jsx';
+import ResetPassword from './ResetPasswod.jsx';
 import UserActions from '../actions/user';
 
 /**
@@ -25,6 +26,19 @@ export class GuestHeader extends Component {
     this.openPasswordReset = this.openPasswordReset.bind(this);
     this.onChange = this.onChange.bind(this);
     this.submitResetPassword = this.submitResetPassword.bind(this);
+  }
+
+  /**
+  * description: controls what happens when state is about to change
+  * @param {object} nextProps The next state
+  * @return {void} void
+  */
+  componentWillReceiveProps(nextProps) {
+    if (this.props !== nextProps) {
+      this.setState({
+        responseMsg: nextProps.sentMail.responseMsg
+      });
+    }
   }
 
   /**
@@ -51,34 +65,19 @@ export class GuestHeader extends Component {
         responseMsg: 'The two passwords did not match'
       });
     } else {
-      this.props.sendPasswordResetMail(this.state.email, this.state.password)
-        .then(() => {
-          if (this.props.sentMail.responseMsg !== '') {
-            this.setState({
-              responseMsg: this.props.sentMail.responseMsg
-            });
-          } else if (this.props.sentMail.error) {
-            this.setState({
-              responseMsg: 'Sorry, your request could not be sent'
-            });
-          } else if (this.props.sentMail.loading) {
-            this.setState({
-              responseMsg: 'Loading...'
-            });
-          }
-        });
+      this.props.sendPasswordResetMail(this.state.email, this.state.password);
     }
   }
-
 
   /**
   * description: It opens the resetPassword modal dynamically
   * @param {event} event the event being executed
   * @return {void} void
   */
+  //eslint-disable-next-line
   openPasswordReset(event) {
-    event.preventDefault()
-      $('#modal3').modal('open');
+    event.preventDefault();
+    $('#resetPassword').modal('open');
   }
 
 
@@ -103,7 +102,7 @@ export class GuestHeader extends Component {
             <ul className="right">
               <li><a
                 className="waves-effect waves-light btn modal-trigger red darken-4"
-                href="#modal3"
+                href="#resetPassword"
                 onClick={this.openPasswordReset}
               >Reset Password
               </a>
@@ -118,16 +117,21 @@ export class GuestHeader extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    sentMail: state.sentMail
-  };
+GuestHeader.propTypes = {
+  sendPasswordResetMail: PropTypes.func.isRequired,
+  sentMail: PropTypes.shape({
+    responseMsg: PropTypes.string,
+    error: PropTypes.bool,
+    loading: PropTypes.bool
+  }).isRequired
 };
 
-const matchDispatchToProps = (dispatch) => {
-  return bindActionCreators({
-    sendPasswordResetMail: UserActions.sendPasswordResetMail
-  }, dispatch);
-};
+const mapStateToProps = state => ({
+  sentMail: state.sentMail
+});
+
+const matchDispatchToProps = dispatch => bindActionCreators({
+  sendPasswordResetMail: UserActions.sendPasswordResetMail
+}, dispatch);
 
 export default connect(mapStateToProps, matchDispatchToProps)(GuestHeader);

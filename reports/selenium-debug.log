@@ -1,15 +1,22 @@
-08:28:26.152 INFO - Selenium build info: version: '3.5.0', revision: '8def36e068'
-08:28:26.153 INFO - Launching a standalone Selenium Server
-2017-09-04 08:28:26.184:INFO::main: Logging initialized @361ms to org.seleniumhq.jetty9.util.log.StdErrLog
-08:28:26.254 INFO - Driver class not found: com.opera.core.systems.OperaDriver
-08:28:26.301 INFO - Driver provider class org.openqa.selenium.ie.InternetExplorerDriver registration is skipped:
+22:15:53.139 INFO - Selenium build info: version: '3.5.0', revision: '8def36e068'
+22:15:53.140 INFO - Launching a standalone Selenium Server
+2017-09-04 22:15:53.163:INFO::main: Logging initialized @267ms to org.seleniumhq.jetty9.util.log.StdErrLog
+22:15:53.221 INFO - Driver class not found: com.opera.core.systems.OperaDriver
+22:15:53.262 INFO - Driver provider class org.openqa.selenium.ie.InternetExplorerDriver registration is skipped:
  registration capabilities Capabilities [{ensureCleanSession=true, browserName=internet explorer, version=, platform=WINDOWS}] does not match the current platform MAC
-08:28:26.301 INFO - Driver provider class org.openqa.selenium.edge.EdgeDriver registration is skipped:
+22:15:53.262 INFO - Driver provider class org.openqa.selenium.edge.EdgeDriver registration is skipped:
  registration capabilities Capabilities [{browserName=MicrosoftEdge, version=, platform=WINDOWS}] does not match the current platform MAC
-08:28:26.355 INFO - Using the passthrough mode handler
-2017-09-04 08:28:26.398:INFO:osjs.Server:main: jetty-9.4.5.v20170502
-2017-09-04 08:28:26.428:WARN:osjs.SecurityHandler:main: ServletContext@o.s.j.s.ServletContextHandler@185d8b6{/,null,STARTING} has uncovered http methods for path: /
-2017-09-04 08:28:26.434:INFO:osjsh.ContextHandler:main: Started o.s.j.s.ServletContextHandler@185d8b6{/,null,AVAILABLE}
-2017-09-04 08:28:26.473:INFO:osjs.AbstractConnector:main: Started ServerConnector@421b7b50{HTTP/1.1,[http/1.1]}{0.0.0.0:4444}
-2017-09-04 08:28:26.475:INFO:osjs.Server:main: Started @653ms
-08:28:26.476 INFO - Selenium Server is up and running
+22:15:53.300 INFO - Using the passthrough mode handler
+2017-09-04 22:15:53.332:INFO:osjs.Server:main: jetty-9.4.5.v20170502
+2017-09-04 22:15:53.359:WARN:osjs.SecurityHandler:main: ServletContext@o.s.j.s.ServletContextHandler@185d8b6{/,null,STARTING} has uncovered http methods for path: /
+2017-09-04 22:15:53.365:INFO:osjsh.ContextHandler:main: Started o.s.j.s.ServletContextHandler@185d8b6{/,null,AVAILABLE}
+2017-09-04 22:15:53.402:INFO:osjs.AbstractConnector:main: Started ServerConnector@30b8a058{HTTP/1.1,[http/1.1]}{0.0.0.0:4444}
+2017-09-04 22:15:53.403:INFO:osjs.Server:main: Started @507ms
+22:15:53.403 INFO - Selenium Server is up and running
+2017-09-04 22:15:53.922:INFO:osjshC.ROOT:qtp380894366-10: org.openqa.selenium.remote.server.WebDriverServlet-14acaea5: Initialising WebDriverServlet
+22:15:53.976 INFO - Binding default provider to: org.openqa.selenium.chrome.ChromeDriverService
+22:15:53.977 INFO - Found handler: org.openqa.selenium.remote.server.BeginSession@d67f206
+22:15:53.980 INFO - /session: Executing POST on /session (handler: BeginSession)
+22:15:54.005 INFO - Capabilities are: Capabilities {acceptSslCerts=true, marionette=true, name=User, browserName=firefox, javascriptEnabled=true, platformName=ANY, platform=ANY, }
+22:15:54.006 INFO - Capabilities {acceptSslCerts=true, marionette=true, name=User, browserName=firefox, javascriptEnabled=true, platformName=ANY, platform=ANY, } matched class org.openqa.selenium.remote.server.ServicedSession$Factory (provider: org.openqa.selenium.firefox.GeckoDriverService)
+22:15:54.007 INFO - Capabilities {acceptSslCerts=true, marionette=true, name=User, browserName=firefox, javascriptEnabled=true, platformName=ANY, platform=ANY, } matched class org.openqa.selenium.remote.server.ServicedSession$Factory (provider: org.openqa.selenium.chrome.ChromeDriverService)

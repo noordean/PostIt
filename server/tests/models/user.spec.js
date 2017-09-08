@@ -1,5 +1,6 @@
 import chai from 'chai';
-import user from '../../services/user';
+
+import user from '../../services/User';
 
 const should = chai.should();
 describe('<Unit Test>', () => {

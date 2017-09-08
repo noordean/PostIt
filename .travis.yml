@@ -10,7 +10,7 @@ before_script:
     - npm install -g nyc
     - npm install -g sequelize-cli
 script: 
-    - npm run server-test
+    - npm run server:test
 after_script: 
     - npm run coverage
 after_success:

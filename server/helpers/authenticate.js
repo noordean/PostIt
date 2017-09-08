@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
 dotenv.config();
-const JWT_SECRET = process.env.JWT_SECRET;
+const jwtSecret = process.env.jwtSecret;
 /**
  * @description: protects the routes with jwt
  * @class Authenticate
@@ -14,7 +14,7 @@ export default class Authenticate {
  * @return {String} the generated token
  */
   static generateToken(payload) {
-    const token = jwt.sign(payload, JWT_SECRET, {
+    const token = jwt.sign(payload, jwtSecret, {
       expiresIn: '720h'
     });
     return token;
@@ -30,7 +30,7 @@ export default class Authenticate {
   static verifyToken(req, res, next) {
     const token = req.headers.token || req.body.token;
     if (token) {
-      jwt.verify(token, JWT_SECRET, (err, decode) => {
+      jwt.verify(token, jwtSecret, (err, decode) => {
         if (decode === undefined) {
           return res.status(401).json({ message: 'Access denied!. Kindly login' });
         }

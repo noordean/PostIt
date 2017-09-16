@@ -101,7 +101,8 @@ export default class Validate {
  * @return {Object} response containing the validation status
  */
   static checkMessage(req, res, next) {
-    const [groupID, message, priority, expectedPriority] = [req.params.groupID, req.body.message, req.body.priority, ['Normal', 'Urgent', 'Critical']];
+    const [groupID, message, priority, expectedPriority] = [req.params.groupID,
+      req.body.message, req.body.priority, ['Normal', 'Urgent', 'Critical']];
 
     const parameters = { message, priority };
     const validationErrors = [];
@@ -156,7 +157,9 @@ export default class Validate {
     if (password === undefined) {
       return res.status(400).json({ message: 'Password must be supplied' });
     } else if (/^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z\d]{5,12}$/.test(password) === false) {
-      return res.status(400).json({ message: 'Password must be alphanumeric and should contain 5-12 characters' });
+      return res.status(400).json({
+        message: 'Password must be alphanumeric and should contain 5-12 characters'
+      });
     }
     return next();
   }

@@ -1,26 +1,24 @@
 import chaiHttp from 'chai-http';
 import chai from 'chai';
+
 import app from '../../server';
 
 chai.use(chaiHttp);
 const should = chai.should();
 let sentToken = '';
 describe('PostIt Endpoints', () => {
-  describe('POST api/v1/user/signin', () => {
-    it('should log a user in, to get login token', (done) => {
-      chai.request(app)
-        .post('/api/v1/user/signin')
-        .send({
-          username: 'existing',
-          password: 'exist123'
-        })
-        .end((err, res) => {
-          sentToken = res.body.user.token;
-          done();
-        });
-    });
+  before((done) => {
+    chai.request(app)
+      .post('/api/v1/user/signin')
+      .send({
+        username: 'existing',
+        password: 'exist123'
+      })
+      .end((err, res) => {
+        sentToken = res.body.user.token;
+        done();
+      });
   });
-
   describe('POST api/v1/group/:groupID/message', () => {
     it('should respond with error message if token is not defined', (done) => {
       chai.request(app)
@@ -96,7 +94,7 @@ describe('PostIt Endpoints', () => {
           res.should.have.status(404);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
-          res.body.message.should.be.eql('Invalid group id');
+          res.body.message.should.be.eql('Group does not exist');
           done();
         });
     });
@@ -162,65 +160,86 @@ describe('PostIt Endpoints', () => {
           res.body.should.have.property('message');
           res.body.message.should.be.eql('Message posted successfully');
           res.body.Message.message.should.be.eql('Hello guyz');
+          res.body.Message.priority.should.be.eql('Critical');
           done();
         });
     });
   });
 
-  describe('GET api/v1/group/:groupID/messages', () => {
-    it('should produce all messages in a valid group', (done) => {
+  describe('POST api/v1/user/notification', () => {
+    it('should return an error message if array is not supplied as userId', (done) => {
       chai.request(app)
-        .get('/api/v1/group/1/messages')
-        .set('token', sentToken)
+        .post('/api/v1/user/notification')
+        .send({
+          userId: 3,
+          groupName: 'test',
+          message: 'hello here',
+          postedby: 'noordean'
+        })
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.message.should.be.eql('You need to supply an array for userId');
+          done();
+        });
+    });
+    it('should save notification into database if correct details are supplied', (done) => {
+      chai.request(app)
+        .post('/api/v1/user/notification')
+        .send({
+          userId: [3, 4],
+          groupName: 'test',
+          message: 'hello here',
+          postedby: 'noordean'
+        })
+        .end((err, res) => {
+          res.should.have.status(201);
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.message.should.be.eql('notification saved');
+          done();
+        });
+    });
+  });
+
+  describe('GET api/v1/user/:userId/notification', () => {
+    it('should return notifications if correct details are supplied', (done) => {
+      chai.request(app)
+        .get('/api/v1/user/1/notification')
+        .send({})
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('messages');
-          res.body.messages[0].postedby.should.be.eql('existing');
-          res.body.messages[0].message.should.be.eql('Hello guyz');
-          res.body.messages[0].priority.should.be.eql('Critical');
+          res.body.should.have.property('notifications');
+          res.body.notifications[0].groupName.should.be.eql('from Seeders');
+          res.body.notifications[0].message.should.be.eql('Hello guyz');
           done();
         });
     });
-    it('should respond with an error message if incorrect groupId is supplied', (done) => {
+  });
+
+  describe('DELETE api/v1/user/:userId/notification', () => {
+    it('should return notifications if correct details are supplied', (done) => {
       chai.request(app)
-        .get('/api/v1/group/ghhjgdhskfjgf/messages')
-        .set('token', sentToken)
+        .delete('/api/v1/user/1/notification')
+        .send({})
         .end((err, res) => {
-          res.should.have.status(400);
+          res.should.have.status(200);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
-          res.body.message.should.be.eql('The supplied id must be integer');
+          res.body.message.should.be.eql('Deleted successfully');
           done();
         });
     });
-    it('should respond with an error message if invalid groupId is supplied', (done) => {
+  });
+
+  describe('DELETE api/message/:messageID', () => {
+    it('should not have access to delete message if token is not supplied', (done) => {
       chai.request(app)
-        .get('/api/v1/group/10/messages')
-        .set('token', sentToken)
-        .end((err, res) => {
-          res.should.have.status(404);
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.message.should.be.eql('Invalid group id');
-          done();
-        });
-    });
-    it('should respond with an error message if groupId is not supplied', (done) => {
-      chai.request(app)
-        .get('/api/v1/group/ /messages')
-        .set('token', sentToken)
-        .end((err, res) => {
-          res.should.have.status(400);
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.message.should.be.eql('groupID cannot be empty');
-          done();
-        });
-    });
-    it('should respond with an error message if token is not supplied', (done) => {
-      chai.request(app)
-        .get('/api/v1/group/1/messages')
+        .delete('/api/v1/message/54678')
+        .send({
+        })
         .end((err, res) => {
           res.should.have.status(401);
           res.body.should.be.a('object');
@@ -229,15 +248,78 @@ describe('PostIt Endpoints', () => {
           done();
         });
     });
-    it('should respond with an error message if invalid token is supplied', (done) => {
+    it('should return error message if the is supplied is not found', (done) => {
       chai.request(app)
-        .get('/api/v1/group/1/messages')
-        .set('token', 'invalidToken')
+        .delete('/api/v1/message/54678')
+        .send({
+          token: sentToken
+        })
         .end((err, res) => {
-          res.should.have.status(401);
+          res.should.have.status(404);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
-          res.body.message.should.be.eql('Access denied!. Kindly login');
+          res.body.message.should.be.eql('Invalid message id');
+          done();
+        });
+    });
+    it('should delete a message if correct messageId is supplied', (done) => {
+      chai.request(app)
+        .delete('/api/v1/message/1')
+        .send({
+          token: sentToken
+        })
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.have.property('message');
+          res.body.message.should.be.eql('message deleted');
+          done();
+        });
+    });
+  });
+
+  describe('POST api/v1/group/:groupId/message/archive', () => {
+    it('should return an error message if messageIds is not an array', (done) => {
+      chai.request(app)
+        .post('/api/v1/group/:groupId/message/archive')
+        .send({
+          groupId: 5,
+          messageIds: 4,
+          userId: 1
+        })
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.message.should.be.eql('Please supply an array for messageIds');
+          done();
+        });
+    });
+    it('should return an error message if messageIds is not an array', (done) => {
+      chai.request(app)
+        .post('/api/v1/group/2/message/archive')
+        .send({
+          messageIds: [4],
+          userId: 1
+        })
+        .end((err, res) => {
+          res.should.have.status(201);
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.message.should.be.eql('read messages added');
+          done();
+        });
+    });
+  });
+
+  describe('POST api/v1/message/:messageId/user', () => {
+    it('should return an error message if messageIds is not an array', (done) => {
+      chai.request(app)
+        .get('/api/v1/message/4/user?groupId=6')
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.a('object');
+          res.body.should.have.property('users');
+          res.body.users[0].username.should.be.eql('existing');
           done();
         });
     });

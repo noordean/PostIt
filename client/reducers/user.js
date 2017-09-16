@@ -12,15 +12,17 @@ export default class UserReducers {
   * Reducer for registering users
   *
   * @static
+  *
   * @param {Object} state The initial state
   * @param {Object} action The dispatched action
   * @returns {Object} current state
+  *
   * @memberof UserReducers
   */
   static register(state = initialState, action) {
     switch (action.type) {
       case 'REGISTRATION_BEGINS':
-        return { ...state, reqStatus: action.payload, loading: true };
+        return { ...state, loading: true };
       case 'REGISTRATION_SUCCESSFUL':
       case 'REGISTRATION_UNSUCCESSFUL':
         return { ...state, reqStatus: action.payload };
@@ -35,15 +37,18 @@ export default class UserReducers {
   * Reducer for login users
   *
   * @static
+  *
   * @param {Object} state The initial state
   * @param {Object} action The dispatched action
+  *
   * @returns {Object} current state
+  *
   * @memberof UserReducers
   */
   static login(state = initialState, action) {
     switch (action.type) {
       case 'LOGIN_BEGINS':
-        return { ...state, reqStatus: action.payload, loading: true };
+        return { ...state, loading: true };
       case 'LOGIN_SUCCESSFUL':
       case 'LOGIN_UNSUCCESSFUL':
         return { ...state, reqStatus: action.payload };
@@ -57,9 +62,12 @@ export default class UserReducers {
   * Reducer for adding members to a group
   *
   * @static
+  *
   * @param {Object} state The initial state
   * @param {Object} action The dispatched action
+  *
   * @returns {Object} current state
+  *
   * @memberof UserReducers
   */
   static groupMembers(state = { members: [], responseMsg: '', reqError: false }, action) {
@@ -196,6 +204,58 @@ export default class UserReducers {
         return { ...state, responseMsg: action.payload, loading: false };
       case 'SEND_SMS_NOTIFICATION_REJECTED':
         return { ...state, responseMsg: '', error: true };
+      default:
+        return state;
+    }
+  }
+
+  /**
+  * Reducer for sending mail for notification
+  *
+  * @static
+  * @param {Object} state The initial state
+  * @param {Object} action The dispatched action
+  * @returns {Object} current state
+  * @memberof UserReducers
+  */
+  static readMessages(state = { users: [], loading: false, error: false }, action) {
+    switch (action.type) {
+      case 'GET_READ_USERS_BEGINS':
+        return { ...state, loading: true };
+      case 'GET_READ_USERS_SUCCESSFUL':
+        return { ...state, users: action.payload, loading: false };
+      case 'GET_READ_USERS_UNSUCCESSFUL':
+        return { ...state, loading: false, error: true };
+      case 'GET_READ_USERS_REJECTED':
+        return { ...state, error: true };
+      default:
+        return state;
+    }
+  }
+
+  /**
+  * Reducer for saving app notification
+  *
+  * @static
+  * @param {Object} state The initial state
+  * @param {Object} action The dispatched action
+  * @returns {Object} current state
+  * @memberof UserReducers
+  */
+  static appNotification(state = { notification: [], loading: false, error: false, responseMsg: '' }, action) {
+    switch (action.type) {
+      case 'SAVE_NOTIFICATION_SUCCESSFUL':
+      case 'SAVE_NOTIFICATION_UNSUCCESSFUL':
+        return { ...state, users: action.payload };
+      case 'GET_NOTIFICATION_SUCCESSFUL':
+        return { ...state, notification: action.payload };
+      case 'DELETE_NOTIFICATION_SUCCESSFUL':
+        return { ...state, responseMsg: action.payload };
+      case 'SAVE_NOTIFICATION_REJECTED':
+      case 'GET_NOTIFICATION_REJECTED':
+      case 'DELETE_NOTIFICATION_UNSUCCESSFUL':
+      case 'DELETE_NOTIFICATION_REJECTED':
+        return { ...state, error: true };
       default:
         return state;
     }

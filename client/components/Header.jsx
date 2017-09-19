@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import GuestHeader from './GuestHeader.jsx';
-import GroupActions from '../actions/group';
+import GroupActions from '../actions/GroupActions';
 import displayError from '../utils/errorDisplay';
 
 /**
@@ -14,6 +14,7 @@ import displayError from '../utils/errorDisplay';
 export class Header extends Component {
 /**
   * @constructor
+  *
   * @param {object} props
   */
   constructor(props) {
@@ -216,6 +217,7 @@ const mapStateToProps = state => ({
 });
 
 const matchDispatchToProps = dispatch => bindActionCreators({
-  createGroup: GroupActions.createGroup, getGroups: GroupActions.getGroups }, dispatch);
+  createGroup: GroupActions.createGroup,
+  getGroups: GroupActions.getGroups }, dispatch);
 
 export default connect(mapStateToProps, matchDispatchToProps)(Header);

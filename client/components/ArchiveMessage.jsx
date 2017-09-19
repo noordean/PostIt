@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import Home from '../components/Home.jsx';
-import MessageActions from '../actions/message';
+import MessageActions from '../actions/MessageActions';
 
 /**
   * @class ArchiveMessage
@@ -28,7 +28,8 @@ export class ArchiveMessage extends Component {
   * @return {void} void
   */
   componentDidMount() {
-    this.props.getArchivedMessages(this.props.params.groupId, JSON.parse(localStorage.user).id);
+    this.props.getArchivedMessages(this.props.params.groupId,
+      JSON.parse(localStorage.user).id);
   }
 
   /**
@@ -89,7 +90,9 @@ export class ArchiveMessage extends Component {
         </div>
       ));
     } else {
-      archiveBoard = <div className="center">There is no archived message yet</div>;
+      archiveBoard = (<div className="center">
+      There is no archived message yet
+      </div>);
     }
 
     return (

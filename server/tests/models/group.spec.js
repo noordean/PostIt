@@ -25,13 +25,14 @@ describe('<Unit Test>', () => {
           done();
         });
       });
-      it('should be able to return empty array if the id is invalid', (done) => {
-        group.getGroupById(1327, (groups) => {
-          groups.should.be.a('array');
-          groups.length.should.eql(0);
-          done();
+      it('should be able to return empty array if the id is invalid',
+        (done) => {
+          group.getGroupById(1327, (groups) => {
+            groups.should.be.a('array');
+            groups.length.should.eql(0);
+            done();
+          });
         });
-      });
     });
     describe('Method deleteGroup', () => {
       it('should be able to delete a group by id', (done) => {

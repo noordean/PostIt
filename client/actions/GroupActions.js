@@ -25,7 +25,8 @@ export default class GroupActions {
         description
       })
         .then((response) => {
-          dispatch({ type: 'CREATE_GROUP_SUCCESSFUL', groups: response.data.group });
+          dispatch({ type: 'CREATE_GROUP_SUCCESSFUL',
+            groups: response.data.group });
         })
         .catch((err) => {
           if (err.response.status === 500) {

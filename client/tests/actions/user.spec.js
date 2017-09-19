@@ -3,7 +3,7 @@ import thunk from 'redux-thunk';
 import configureMockStore from 'redux-mock-store';
 import expect from 'expect';
 
-import UserActions from '../../actions/user';
+import UserActions from '../../actions/UserActions';
 
 const middleware = [thunk];
 const mockStore = configureMockStore(middleware);
@@ -39,7 +39,8 @@ describe('User Actions', () => {
         });
       done();
     });
-    it('Should dispatch appropraite action type if invalid username is supplied',
+    it(
+      'Should dispatch appropraite action type if invalid username is supplied',
       (done) => {
         moxios.stubRequest('/api/v1/user/signup', {
           status: 400,
@@ -118,7 +119,8 @@ describe('User Actions', () => {
             }
           }
         }];
-      store.dispatch(UserActions.loginUser('akinoau', 'nigeria123')).then(() => {
+      store.dispatch(UserActions.loginUser('akinoau',
+        'nigeria123')).then(() => {
         expect(store.getActions()).toEqual(expectedAction);
       });
       done();
@@ -136,7 +138,8 @@ describe('User Actions', () => {
           {
             type: 'LOGIN_UNSUCCESSFUL'
           }];
-        store.dispatch(UserActions.loginUser('akinoau', 'nigeria123')).then(() => {
+        store.dispatch(UserActions.loginUser('akinoau',
+          'nigeria123')).then(() => {
           expect(store.getActions()).toEqual(expectedAction);
         });
         done();
@@ -154,7 +157,8 @@ describe('User Actions', () => {
           {
             type: 'LOGIN_REJECTED'
           }];
-        store.dispatch(UserActions.loginUser('akinoau', 'nigeria123')).then(() => {
+        store.dispatch(UserActions.loginUser('akinoau',
+          'nigeria123')).then(() => {
           expect(store.getActions()).toEqual(expectedAction);
         });
         done();
@@ -165,21 +169,25 @@ describe('User Actions', () => {
       moxios.stubRequest('/api/v1/group/12/users', {
         status: 200,
         response: {
-          users: [{ id: 1, username: 'noordean', email: 'ebroyeem90@gmail.com' }]
+          users: [{
+            id: 1, username: 'noordean', email: 'ebroyeem90@gmail.com' }]
         }
       });
       const store = mockStore({});
       const expectedAction = [
         {
           type: 'GOT_MEMBERS',
-          payload: [{ id: 1, username: 'noordean', email: 'ebroyeem90@gmail.com' }]
+          payload: [{ id: 1,
+            username: 'noordean',
+            email: 'ebroyeem90@gmail.com' }]
         }];
       store.dispatch(UserActions.getGroupMembers(12)).then(() => {
         expect(store.getActions()).toEqual(expectedAction);
       });
       done();
     });
-    it('Should dispatch appropraite action type if there\'s an unexpected error',
+    it(
+      'Should dispatch appropraite action type if there\'s an unexpected error',
       (done) => {
         moxios.stubRequest('/api/v1/group/12/users', {
           status: 400,
@@ -217,22 +225,23 @@ describe('User Actions', () => {
       });
       done();
     });
-    it("Should dispatch appropraite action type if there's an error", (done) => {
-      moxios.stubRequest('/api/v1/group/12/user', {
-        status: 400,
-        response: { message: 'Couldnt add members' }
+    it("Should dispatch appropraite action type if there's an error",
+      (done) => {
+        moxios.stubRequest('/api/v1/group/12/user', {
+          status: 400,
+          response: { message: 'Couldnt add members' }
+        });
+        const store = mockStore({});
+        const expectedAction = [
+          {
+            type: 'ADD_MEMBERS_FAILED',
+            payload: 'Couldnt add members'
+          }];
+        store.dispatch(UserActions.addGroupMembers(12)).then(() => {
+          expect(store.getActions()).toEqual(expectedAction);
+        });
+        done();
       });
-      const store = mockStore({});
-      const expectedAction = [
-        {
-          type: 'ADD_MEMBERS_FAILED',
-          payload: 'Couldnt add members'
-        }];
-      store.dispatch(UserActions.addGroupMembers(12)).then(() => {
-        expect(store.getActions()).toEqual(expectedAction);
-      });
-      done();
-    });
   });
 
   describe('sendResetPasswordMail Action', () => {
@@ -253,7 +262,8 @@ describe('User Actions', () => {
             type: 'RESET_PASSWORD_SUCCESSFUL',
             payload: 'A message has been sent to your mail'
           }];
-        store.dispatch(UserActions.sendPasswordResetMail('akin@gmail.com', 'nigeria123'))
+        store.dispatch(UserActions.mailPassword('akin@gmail.com',
+          'nigeria123'))
           .then(() => {
             expect(store.getActions()).toEqual(expectedAction);
           });
@@ -276,7 +286,8 @@ describe('User Actions', () => {
             type: 'RESET_PASSWORD_UNSUCCESSFUL',
             payload: 'Could not send mail'
           }];
-        store.dispatch(UserActions.sendPasswordResetMail('akin@gmail.com', 'nigeria123'))
+        store.dispatch(UserActions.mailPassword('akin@gmail.com',
+          'nigeria123'))
           .then(() => {
             expect(store.getActions()).toEqual(expectedAction);
           });
@@ -295,7 +306,8 @@ describe('User Actions', () => {
           {
             type: 'RESET_PASSWORD_REJECTED'
           }];
-        store.dispatch(UserActions.sendPasswordResetMail('akin@gmail.com', 'nigeria123'))
+        store.dispatch(UserActions.mailPassword('akin@gmail.com',
+          'nigeria123'))
           .then(() => {
             expect(store.getActions()).toEqual(expectedAction);
           });
@@ -321,7 +333,7 @@ describe('User Actions', () => {
             type: 'VERIFY_PASSWORD_SUCCESSFUL',
             payload: 'Token verified'
           }];
-        store.dispatch(UserActions.verifyPasswordReset('token')).then(() => {
+        store.dispatch(UserActions.verifyPassword('token')).then(() => {
           expect(store.getActions()).toEqual(expectedAction);
         });
         done();
@@ -343,12 +355,13 @@ describe('User Actions', () => {
             type: 'VERIFY_PASSWORD_UNSUCCESSFUL',
             payload: 'Could not verify token'
           }];
-        store.dispatch(UserActions.verifyPasswordReset('token')).then(() => {
+        store.dispatch(UserActions.verifyPassword('token')).then(() => {
           expect(store.getActions()).toEqual(expectedAction);
         });
         done();
       });
-    it('should dispatch appropraite action type if there\'s an unexpected error',
+    it(
+      'should dispatch appropraite action type if there\'s an unexpected error',
       (done) => {
         moxios.stubRequest('/api/v1/user/email/verify', {
           status: 500
@@ -361,7 +374,7 @@ describe('User Actions', () => {
           {
             type: 'VERIFY_PASSWORD_REJECTED'
           }];
-        store.dispatch(UserActions.verifyPasswordReset('token')).then(() => {
+        store.dispatch(UserActions.verifyPassword('token')).then(() => {
           expect(store.getActions()).toEqual(expectedAction);
         });
         done();
@@ -369,7 +382,8 @@ describe('User Actions', () => {
   });
 
   describe('registerUserFromGoogle Action', () => {
-    it('should make a request to register a user signing up with google account',
+    it(
+      'should make a request to register a user signing up with google account',
       (done) => {
         moxios.stubRequest('/api/v1/user/signup/google', {
           status: 201,
@@ -385,10 +399,12 @@ describe('User Actions', () => {
           {
             type: 'REGISTER_GOOGLE_USER_SUCCESSFUL',
             payload: {
-              user: { id: 1, username: 'noordean', email: 'ebroyeem90@gmail.com' }
+              user: {
+                id: 1, username: 'noordean', email: 'ebroyeem90@gmail.com' }
             }
           }];
-        store.dispatch(UserActions.registerUserFromGoogle('username', 'email@gmail.com'))
+        store.dispatch(UserActions.registerGoogleUser('username',
+          'email@gmail.com'))
           .then(() => {
             expect(store.getActions()).toEqual(expectedAction);
           });
@@ -415,13 +431,15 @@ describe('User Actions', () => {
               user: { id: 1, username: 'existing', email: 'exist90@gmail.com' }
             }
           }];
-        store.dispatch(UserActions.registerUserFromGoogle('username', 'email@gmail.com'))
+        store.dispatch(UserActions.registerGoogleUser('username',
+          'email@gmail.com'))
           .then(() => {
             expect(store.getActions()).toEqual(expectedAction);
           });
         done();
       });
-    it('should dispatch appropraite action type if there\'s an unexpected error',
+    it(
+      'should dispatch appropraite action type if there\'s an unexpected error',
       (done) => {
         moxios.stubRequest('/api/v1/user/signup/google', {
           status: 500
@@ -434,7 +452,8 @@ describe('User Actions', () => {
           {
             type: 'REGISTER_GOOGLE_USER_REJECTED'
           }];
-        store.dispatch(UserActions.registerUserFromGoogle('username', 'email@gmail.com'))
+        store.dispatch(UserActions.registerGoogleUser('username',
+          'email@gmail.com'))
           .then(() => {
             expect(store.getActions()).toEqual(expectedAction);
           });
@@ -460,7 +479,8 @@ describe('User Actions', () => {
             type: 'SEND_EMAIL_NOTIFICATION_SUCCESSFUL',
             payload: 'Mail sent'
           }];
-        store.dispatch(UserActions.sendMailForNotification('group@gmail.com', 'group',
+        store.dispatch(UserActions.mailNotification('group@gmail.com',
+          'group',
           'sent it', 'Nurudeen'))
           .then(() => {
             expect(store.getActions()).toEqual(expectedAction);
@@ -484,14 +504,15 @@ describe('User Actions', () => {
             type: 'SEND_EMAIL_NOTIFICATION_UNSUCCESSFUL',
             payload: 'Could not send mail'
           }];
-        store.dispatch(UserActions.sendMailForNotification('group@gmail.com', 'group',
-          'sent it', 'Nurudeen'))
+        store.dispatch(UserActions.mailNotification('group@gmail.com',
+          'group', 'sent it', 'Nurudeen'))
           .then(() => {
             expect(store.getActions()).toEqual(expectedAction);
           });
         done();
       });
-    it('should dispatch appropraite action type if there\'s an unexpected error',
+    it(
+      'should dispatch appropraite action type if there\'s an unexpected error',
       (done) => {
         moxios.stubRequest('/api/v1/user/email', {
           status: 500
@@ -504,8 +525,8 @@ describe('User Actions', () => {
           {
             type: 'SEND_EMAIL_NOTIFICATION_REJECTED'
           }];
-        store.dispatch(UserActions.sendMailForNotification('group@gmail.com', 'group',
-          'sent it', 'Nurudeen'))
+        store.dispatch(UserActions.mailNotification(
+          'group@gmail.com', 'group', 'sent it', 'Nurudeen'))
           .then(() => {
             expect(store.getActions()).toEqual(expectedAction);
           });
@@ -531,7 +552,7 @@ describe('User Actions', () => {
             type: 'SEND_SMS_NOTIFICATION_SUCCESSFUL',
             payload: 'Messages sent'
           }];
-        store.dispatch(UserActions.sendSmsForNotification({
+        store.dispatch(UserActions.smsNotification({
           from: 'noordean',
           to: 'users',
           message: 'thanks'
@@ -558,7 +579,7 @@ describe('User Actions', () => {
             type: 'SEND_SMS_NOTIFICATION_UNSUCCESSFUL',
             payload: 'Could not send message'
           }];
-        store.dispatch(UserActions.sendSmsForNotification({
+        store.dispatch(UserActions.smsNotification({
           from: 'noordean',
           to: 'users',
           message: 'thanks'
@@ -568,7 +589,8 @@ describe('User Actions', () => {
           });
         done();
       });
-    it('should dispatch appropraite action type if there\'s an unexpected error',
+    it(
+      'should dispatch appropraite action type if there\'s an unexpected error',
       (done) => {
         moxios.stubRequest('/api/v1/user/sms', {
           status: 500
@@ -581,7 +603,7 @@ describe('User Actions', () => {
           {
             type: 'SEND_SMS_NOTIFICATION_REJECTED'
           }];
-        store.dispatch(UserActions.sendSmsForNotification({
+        store.dispatch(UserActions.smsNotification({
           from: 'noordean',
           to: 'users',
           message: 'thanks'
@@ -616,27 +638,28 @@ describe('User Actions', () => {
         });
         done();
       });
-    it('should dispatch appropraite action type if there\'s an error', (done) => {
-      moxios.stubRequest('/api/v1/message/2/user?groupId=12', {
-        status: 400,
-        response: {
-          users: [{ id: 1, username: 'noordean' }]
-        }
+    it('should dispatch appropraite action type if there\'s an error',
+      (done) => {
+        moxios.stubRequest('/api/v1/message/2/user?groupId=12', {
+          status: 400,
+          response: {
+            users: [{ id: 1, username: 'noordean' }]
+          }
+        });
+        const store = mockStore({});
+        const expectedAction = [
+          {
+            type: 'GET_READ_USERS_BEGINS'
+          },
+          {
+            type: 'GET_READ_USERS_UNSUCCESSFUL',
+            payload: [{ id: 1, username: 'noordean' }]
+          }];
+        store.dispatch(UserActions.getReadMessageUsers(2, 12)).then(() => {
+          expect(store.getActions()).toEqual(expectedAction);
+        });
+        done();
       });
-      const store = mockStore({});
-      const expectedAction = [
-        {
-          type: 'GET_READ_USERS_BEGINS'
-        },
-        {
-          type: 'GET_READ_USERS_UNSUCCESSFUL',
-          payload: [{ id: 1, username: 'noordean' }]
-        }];
-      store.dispatch(UserActions.getReadMessageUsers(2, 12)).then(() => {
-        expect(store.getActions()).toEqual(expectedAction);
-      });
-      done();
-    });
   });
 
   describe('saveInAppNotification Action', () => {
@@ -659,24 +682,25 @@ describe('User Actions', () => {
         });
         done();
       });
-    it('should dispatch appropraite action type if there\'s an error', (done) => {
-      moxios.stubRequest('/api/v1/user/notification', {
-        status: 400,
-        response: {
-          message: 'Could not save notoification'
-        }
+    it('should dispatch appropraite action type if there\'s an error',
+      (done) => {
+        moxios.stubRequest('/api/v1/user/notification', {
+          status: 400,
+          response: {
+            message: 'Could not save notoification'
+          }
+        });
+        const store = mockStore({});
+        const expectedAction = [
+          {
+            type: 'SAVE_NOTIFICATION_UNSUCCESSFUL',
+            payload: 'Could not save notoification'
+          }];
+        store.dispatch(UserActions.saveInAppNotification()).then(() => {
+          expect(store.getActions()).toEqual(expectedAction);
+        });
+        done();
       });
-      const store = mockStore({});
-      const expectedAction = [
-        {
-          type: 'SAVE_NOTIFICATION_UNSUCCESSFUL',
-          payload: 'Could not save notoification'
-        }];
-      store.dispatch(UserActions.saveInAppNotification()).then(() => {
-        expect(store.getActions()).toEqual(expectedAction);
-      });
-      done();
-    });
   });
 
   describe('saveInAppNotification Action', () => {
@@ -699,20 +723,21 @@ describe('User Actions', () => {
         });
         done();
       });
-    it('should dispatch appropraite action type if there\'s an error', (done) => {
-      moxios.stubRequest('/api/v1/user/4/notification', {
-        status: 400,
-        response: { message: 'couldnt get notification' }
+    it('should dispatch appropraite action type if there\'s an error',
+      (done) => {
+        moxios.stubRequest('/api/v1/user/4/notification', {
+          status: 400,
+          response: { message: 'couldnt get notification' }
+        });
+        const store = mockStore({});
+        const expectedAction = [
+          {
+            type: 'GET_NOTIFICATION_UNSUCCESSFUL'
+          }];
+        store.dispatch(UserActions.getNotifications(4)).then(() => {
+          expect(store.getActions()).toEqual(expectedAction);
+        });
+        done();
       });
-      const store = mockStore({});
-      const expectedAction = [
-        {
-          type: 'GET_NOTIFICATION_UNSUCCESSFUL'
-        }];
-      store.dispatch(UserActions.getNotifications(4)).then(() => {
-        expect(store.getActions()).toEqual(expectedAction);
-      });
-      done();
-    });
   });
 });

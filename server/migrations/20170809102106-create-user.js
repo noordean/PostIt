@@ -27,14 +27,7 @@ module.exports = {
       },
       phoneNumber: {
         type: Sequelize.STRING,
-        allowNull: false,
-        unique: true,
-        validate: {
-          is: {
-            args: /^[0-9]$/i,
-            msg: 'Phone number should not contain letters'
-          }
-        }
+        allowNull: true
       },
       createdAt: {
         allowNull: false,

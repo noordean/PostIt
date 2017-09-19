@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import ResetPassword from './ResetPasswod.jsx';
-import UserActions from '../actions/user';
+import UserActions from '../actions/UserActions';
 import displayError from '../utils/errorDisplay';
 
 /**
@@ -14,6 +14,7 @@ import displayError from '../utils/errorDisplay';
 export class GuestHeader extends Component {
 /**
   * @constructor
+  *
   * @param {object} props
   */
   constructor(props) {
@@ -30,7 +31,9 @@ export class GuestHeader extends Component {
 
   /**
   * description: controls inputs state
-  * @param {object} element the current elementv
+  *
+  * @param {object} element the current element
+  *
   * @return {void} void
   */
   onChange(element) {
@@ -52,9 +55,10 @@ export class GuestHeader extends Component {
     if (this.state.password !== this.state.confirmPassword) {
       return displayError('The two passwords did not match!');
     }
-    this.props.sendPasswordResetMail(this.state.email, this.state.password)
+    this.props.mailPassword(this.state.email, this.state.password)
       .then(() => {
-        if (!this.props.sentMail.success && this.props.sentMail.responseMsg.length > 0) {
+        if (!this.props.sentMail.success &&
+          this.props.sentMail.responseMsg.length > 0) {
           return displayError(this.props.sentMail.responseMsg);
         }
         if (this.props.sentMail.success) {
@@ -95,6 +99,7 @@ export class GuestHeader extends Component {
 
   /**
   * description: renders the component
+  *
   * @return {void} void
   */
   render() {
@@ -109,7 +114,11 @@ export class GuestHeader extends Component {
         />
         <nav>
           <div className="nav-wrapper red darken-4">
-            <Link id="navLogo" href="/" className="brand-logo left">PostIt</Link>
+            <Link
+              id="navLogo"
+              href="/"
+              className="brand-logo left"
+            >PostIt</Link>
             <ul className="right">
               <li><a
                 className="waves-effect waves-light btn modal-trigger red darken-4 reset-pass"
@@ -129,7 +138,7 @@ export class GuestHeader extends Component {
 }
 
 GuestHeader.propTypes = {
-  sendPasswordResetMail: PropTypes.func.isRequired,
+  mailPassword: PropTypes.func.isRequired,
   sentMail: PropTypes.shape({
     responseMsg: PropTypes.string,
     success: PropTypes.bool,
@@ -143,7 +152,7 @@ const mapStateToProps = state => ({
 });
 
 const matchDispatchToProps = dispatch => bindActionCreators({
-  sendPasswordResetMail: UserActions.sendPasswordResetMail
+  mailPassword: UserActions.mailPassword
 }, dispatch);
 
 export default connect(mapStateToProps, matchDispatchToProps)(GuestHeader);

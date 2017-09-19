@@ -2,7 +2,6 @@ import React from 'react';
 import expect from 'expect';
 import { mount, shallow } from 'enzyme';
 import sinon from 'sinon';
-import $ from 'jquery';
 
 import { GuestHeader } from '../../components/GuestHeader.jsx';
 import localStorageMock from '../__mocks__/localStorageMock';
@@ -15,14 +14,14 @@ localStorageMock.user = JSON.stringify({
 const setup = () => {
   const props = {
     sentMail: {},
-    sendPasswordResetMail: () => {}
+    mailPassword: () => {}
   };
   return mount(<GuestHeader {...props} />);
 };
 const wrapper = setup();
 describe('<GuestHeader />', () => {
   it('should display the necessary elements', () => {
-    expect(wrapper.find('div').length).toBe(13);
+    expect(wrapper.find('div').length).toBe(12);
     expect(wrapper.find('div').exists()).toBe(true);
   });
   it('should call onChange', () => {
@@ -38,13 +37,9 @@ describe('<GuestHeader />', () => {
   it('should call openPasswordReset() when .reset-pass btn is clicked', () => {
     const spy = sinon.spy();
     GuestHeader.prototype.openPasswordReset = spy;
-    const shallowWrapper = shallow(<GuestHeader sentMail={{}} sendPasswordResetMail={() => {}} />);
+    const shallowWrapper = shallow(
+      <GuestHeader sentMail={{}} mailPassword={() => {}} />);
     shallowWrapper.find('.reset-pass').simulate('click');
     expect(spy.calledOnce).toBe(true);
-  });
-  it('should contain neccessary states', () => {
-    const shallowWrapper = shallow(<GuestHeader sentMail={{}} sendPasswordResetMail={() => {}} />);
-    const responseMsg = shallowWrapper.state().responseMsg;
-    expect(responseMsg).toBe('');
   });
 });

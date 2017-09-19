@@ -6,7 +6,7 @@ $(document).ready(() => {
   $('#addMembers').click(() => {
     axios.get('/api/v1/users', {
       headers: {
-        userrs: $('#getMembers').val(),
+        currentmembers: $('#getMembers').val(),
         token: JSON.parse(localStorage.user).token
       }
     })

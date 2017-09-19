@@ -26,7 +26,8 @@ export default class Validate {
       }
     });
     if (validationErrors.length > 0) {
-      return res.status(400).json({ message: `${validationErrors[0]} must be supplied` });
+      return res.status(400).json(
+        { message: `${validationErrors[0]} must be supplied` });
     } else if (groupName.trim().length === 0) {
       return res.status(400).json({ message: 'groupName cannot be empty' });
     }
@@ -42,8 +43,8 @@ export default class Validate {
  * 
  * @return {Object} response containing the validation status
  */
-  static checkGroupUserId(req, res, next) {
-    const [groupId, userId] = [req.params.groupID, req.body.userId];
+  static checkIds(req, res, next) {
+    const [groupId, userId] = [req.params.groupId, req.body.userId];
     if (groupId === undefined) {
       return res.status(400).json({ message: 'groupId must be supplied' });
     } else if (userId === undefined) {
@@ -53,9 +54,11 @@ export default class Validate {
     } else if (userId.length === 0) {
       return res.status(400).json({ message: 'userId\'s cannot be empty' });
     } else if (isNaN(groupId)) {
-      return res.status(400).json({ message: 'The supplied id\'s must be integers' });
+      return res.status(400).json(
+        { message: 'The supplied id\'s must be integers' });
     } else if (!Array.isArray(userId)) {
-      return res.status(400).json({ message: 'The userId\'s must be an array' });
+      return res.status(400).json(
+        { message: 'The userId\'s must be an array' });
     }
     return next();
   }
@@ -70,13 +73,14 @@ export default class Validate {
  * @return {Object} response containing the validation status
  */
   static checkGroupId(req, res, next) {
-    const groupID = req.params.groupID;
-    if (groupID === undefined) {
-      return res.status(400).json({ message: 'groupID must be supplied' });
-    } else if (groupID.trim().length === 0) {
-      return res.status(400).json({ message: 'groupID cannot be empty' });
-    } else if (isNaN(groupID)) {
-      return res.status(400).json({ message: 'The supplied id must be integer' });
+    const groupId = req.params.groupId;
+    if (groupId === undefined) {
+      return res.status(400).json({ message: 'groupId must be supplied' });
+    } else if (groupId.trim().length === 0) {
+      return res.status(400).json({ message: 'groupId cannot be empty' });
+    } else if (isNaN(groupId)) {
+      return res.status(400).json(
+        { message: 'The supplied id must be integer' });
     }
     return next();
   }
@@ -97,7 +101,8 @@ export default class Validate {
     } else if (userId.trim().length === 0) {
       return res.status(400).json({ message: 'userId cannot be empty' });
     } else if (isNaN(userId)) {
-      return res.status(400).json({ message: 'The supplied id must be integer' });
+      return res.status(400).json(
+        { message: 'The supplied id must be integer' });
     }
     return next();
   }
@@ -112,7 +117,7 @@ export default class Validate {
  * @return {Object} response containing the validation status
  */
   static checkMessage(req, res, next) {
-    const [groupID, message, priority, expectedPriority] = [req.params.groupID,
+    const [groupId, message, priority, expectedPriority] = [req.params.groupId,
       req.body.message, req.body.priority, ['Normal', 'Urgent', 'Critical']];
 
     const parameters = { message, priority };
@@ -124,15 +129,18 @@ export default class Validate {
       }
     });
     if (validationErrors.length > 0) {
-      return res.status(400).json({ message: `${validationErrors[0]} must be supplied` });
+      return res.status(400).json(
+        { message: `${validationErrors[0]} must be supplied` });
     } else if (expectedPriority.indexOf(priority) === -1) {
-      return res.status(400).json({ message: 'Priority can either be Normal, Urgent or Critical' });
-    } else if (groupID.trim().length === 0) {
-      return res.status(400).json({ message: 'groupID cannot be empty' });
+      return res.status(400).json(
+        { message: 'Priority can either be Normal, Urgent or Critical' });
+    } else if (groupId.trim().length === 0) {
+      return res.status(400).json({ message: 'groupId cannot be empty' });
     } else if (message.trim().length === 0) {
       return res.status(400).json({ message: 'message cannot be empty' });
-    } else if (isNaN(groupID)) {
-      return res.status(400).json({ message: 'The supplied id must be an integer' });
+    } else if (isNaN(groupId)) {
+      return res.status(400).json(
+        { message: 'The supplied id must be an integer' });
     }
     return next();
   }
@@ -147,13 +155,14 @@ export default class Validate {
  * @return {Object} response containing the validation status
  */
   static checkMessageId(req, res, next) {
-    const messageID = req.params.messageID;
-    if (messageID === undefined) {
+    const messageId = req.params.messageId;
+    if (messageId === undefined) {
       return res.status(400).json({ message: 'messageId must be supplied' });
-    } else if (messageID.trim().length === 0) {
+    } else if (messageId.trim().length === 0) {
       return res.status(400).json({ message: 'messageId cannot be empty' });
-    } else if (isNaN(messageID)) {
-      return res.status(400).json({ message: 'The supplied id must be integer' });
+    } else if (isNaN(messageId)) {
+      return res.status(400).json(
+        { message: 'The supplied id must be integer' });
     }
     return next();
   }
@@ -171,7 +180,8 @@ export default class Validate {
     const password = req.body.password;
     if (password === undefined) {
       return res.status(400).json({ message: 'Password must be supplied' });
-    } else if (/^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z\d]{5,12}$/.test(password) === false) {
+    } else if (
+      /^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z\d]{5,12}$/.test(password) === false) {
       return res.status(400).json({
         message: 'Password must be alphanumeric and should contain 5-12 characters'
       });
@@ -188,7 +198,7 @@ export default class Validate {
  * 
  * @return {Object} response containing the validation status
  */
-  static checkUserPass(req, res, next) {
+  static checkUser(req, res, next) {
     const [username, password] = [req.body.username, req.body.password];
     const parameters = { username, password };
     const validationErrors = [];
@@ -199,7 +209,8 @@ export default class Validate {
       }
     });
     if (validationErrors.length > 0) {
-      return res.status(400).json({ message: `${validationErrors[0]} must be supplied` });
+      return res.status(400).json(
+        { message: `${validationErrors[0]} must be supplied` });
     }
     return next();
   }
@@ -212,7 +223,8 @@ export default class Validate {
  * @return {Object} response object
  */
   static hasInternalServerError(dbResponse) {
-    if (dbResponse instanceof Object && !Array.isArray(dbResponse)) {
+    if (dbResponse instanceof Object && !Array.isArray(dbResponse)
+      && dbResponse.dataValues === undefined) {
       return true;
     }
   }

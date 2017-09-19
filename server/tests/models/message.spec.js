@@ -16,13 +16,14 @@ describe('<Unit Test>', () => {
       });
     });
     describe('Method getMessage', () => {
-      it('should be able to return empty array if the id is invalid', (done) => {
-        message.getMessageById(1327, (msg) => {
-          msg.should.be.a('array');
-          msg.length.should.eql(0);
-          done();
+      it('should be able to return empty array if the id is invalid',
+        (done) => {
+          message.getMessageById(1327, (msg) => {
+            msg.should.be.a('array');
+            msg.length.should.eql(0);
+            done();
+          });
         });
-      });
       it('should be able to delete a message by messageId', (done) => {
         message.deleteMessage(2, (msg) => {
           msg.should.eql(1);

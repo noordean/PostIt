@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import GoogleLogin from 'react-google-login';
 import PropTypes from 'prop-types';
 
-import UserActions from '../actions/user';
+import UserActions from '../actions/UserActions';
 import authorization from '../utils/authorization';
 
 /**
@@ -31,9 +31,10 @@ export class LoginWithGoogle extends Component {
   responseGoogle(response) {
     const username = response.profileObj.name;
     const email = response.profileObj.email;
-    this.props.registerUserFromGoogle(username, email)
+    this.props.registerGoogleUser(username, email)
       .then(() => {
-        localStorage.setItem('user', JSON.stringify(this.props.userFromGoogle.response.user));
+        localStorage.setItem('user',
+          JSON.stringify(this.props.userFromGoogle.response.user));
         authorization(this.props.userFromGoogle.response.user.token);
         browserHistory.push('/dashboard');
       });
@@ -58,7 +59,7 @@ export class LoginWithGoogle extends Component {
 }
 
 LoginWithGoogle.propTypes = {
-  registerUserFromGoogle: PropTypes.func.isRequired,
+  registerGoogleUser: PropTypes.func.isRequired,
   userFromGoogle: PropTypes.shape({
     response: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
     error: PropTypes.bool,
@@ -71,7 +72,7 @@ const mapStateToProps = state => ({
 });
 
 const matchDispatchToProps = dispatch => bindActionCreators({
-  registerUserFromGoogle: UserActions.registerUserFromGoogle
+  registerGoogleUser: UserActions.registerGoogleUser
 }, dispatch);
 
 export default connect(mapStateToProps, matchDispatchToProps)(LoginWithGoogle);

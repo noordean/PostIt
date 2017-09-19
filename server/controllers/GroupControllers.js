@@ -14,7 +14,7 @@ const jwtSecret = process.env.jwtSecret;
  * class Group: controls all group routes
  * @class
  */
-export default class Group {
+export default class GroupControllers {
   /**
  * @description: creates a group through route POST: api/group
  * 
@@ -24,18 +24,28 @@ export default class Group {
  * @return {Object} response containing the created group
  */
   static createGroup(req, res) {
-    const [groupName, description, decode] = [req.body.groupName, req.body.description,
-      jwt.verify(req.headers.token || req.body.token, jwtSecret)];
+    const [groupName, description, decode] = [req.body.groupName,
+      req.body.description, jwt.verify(req.headers.token ||
+      req.body.token, jwtSecret)];
     group.saveGroup(groupName, decode.username, description, (groups) => {
       if (groups[1] === false) {
-        res.status(409).json({ message: 'There is already an existing group with this name' });
+        res.status(409).json({ message:
+          'There is already an existing group with this name' });
       } else {
         user.getUser(decode.username, (users) => {
           if (users.length === 0) {
             res.status(409).json({ message: 'Invalid user detected' });
           } else {
             groupUser.addUser(groups[0].id, users[0].id, () => {
-              res.status(201).json({ message: 'Group successfully created', group: { id: groups[0].id, name: groups[0].groupname, createdby: groups[0].createdby, description: groups[0].description } });
+              res.status(201).json({
+                message: 'Group successfully created',
+                group: {
+                  id: groups[0].id,
+                  name: groups[0].groupname,
+                  createdby: groups[0].createdby,
+                  description: groups[0].description
+                }
+              });
             });
           }
         });
@@ -48,7 +58,7 @@ export default class Group {
 
 
   /**
- * @description: add a user to group through route POST: api/group/:groupID/user
+ * @description: add a user to group through route POST: api/group/:groupId/user
  * 
  * @param {Object} req request object
  * @param {Object} res response object
@@ -56,17 +66,20 @@ export default class Group {
  * @return {Object} response containing the added user
  */
   static addUserToGroup(req, res) {
-    const [groupId, userId, decode] = [req.params.groupID, req.body.userId,
+    const [groupId, userId, decode] = [req.params.groupId, req.body.userId,
       jwt.verify(req.headers.token || req.body.token, jwtSecret)];
     group.getGroupById(groupId, (groups) => {
       if (groups.length === 0) {
         res.status(404).json({ message: 'Invalid group id supplied' });
       } else if (decode.username !== groups[0].createdby) {
-        res.status(401).json({ message: 'Only the creator of groups can add members' });
+        res.status(401).json({ message:
+          'Only the creator of groups can add members' });
       } else if (userId.length === 1) {
         groupUser.addUser(groupId, userId[0], (useR) => {
           if (useR[1] === true) {
-            res.status(201).json({ message: 'User successfully added', user: useR[0] });
+            res.status(201).json({ message:
+              'User successfully added',
+            user: useR[0] });
           } else {
             res.status(409).json({ message: 'User already in the group' });
           }
@@ -85,7 +98,8 @@ export default class Group {
   }
 
   /**
- * @description: retrieves messages from a group through route GET: api/group/:groupID/messages
+ * @description: retrieves messages from a group through
+ * route GET: api/group/:groupID/messages
  * 
  * @param {Object} req request object
  * @param {Object} res response object
@@ -93,21 +107,23 @@ export default class Group {
  * @return {Object} response containing the retrieved messages
  */
   static getGroupMessages(req, res) {
-    const groupID = req.params.groupID;
-    group.getGroupById(groupID, (groups) => {
+    const groupId = req.params.groupId;
+    group.getGroupById(groupId, (groups) => {
       if (groups.length === 0) {
         res.status(404).json({ message: 'Group does not exist' });
       } else {
-        group.getGroupMessages(groupID, (groupMessages) => {
+        group.getGroupMessages(groupId, (groupMessages) => {
           if (req.query.userId !== undefined) {
             const userId = req.query.userId;
-            readMessageService.getMessages(groupID, userId, (messages) => {
+            readMessageService.getMessages(groupId, userId, (messages) => {
               if (Array.isArray(messages) && messages.length >= 0) {
                 const dueMessages = messages.filter(msgs => ((
                   Date.now() - new Date(msgs.createdAt).getTime() > 180000)));
-                const dueMessagesIds = dueMessages.map(dueMsgs => dueMsgs.messageId);
-                const displayMessages = groupMessages.messages.filter(groupMsg => (
-                  dueMessagesIds.indexOf(groupMsg.id) === -1));
+                const dueMessagesIds = dueMessages.map(
+                  dueMsgs => dueMsgs.messageId);
+                const displayMessages = groupMessages.messages.filter(
+                  groupMsg => (
+                    dueMessagesIds.indexOf(groupMsg.id) === -1));
                 res.status(200).json({ messages: displayMessages });
               }
             });
@@ -123,7 +139,7 @@ export default class Group {
   }
 
   /**
- * @description: deletes a group through route DELETE: api/group/:groupID
+ * @description: deletes a group through route DELETE: api/group/:groupId
  * 
  * @param {Object} req request object
  * @param {Object} res response object
@@ -131,15 +147,16 @@ export default class Group {
  * @return {Object} response containing the number of deleted groups
  */
   static deleteGroup(req, res) {
-    const groupID = req.params.groupID;
+    const groupId = req.params.groupId;
     const decode = jwt.verify(req.headers.token || req.body.token, jwtSecret);
-    group.getGroupById(groupID, (groups) => {
+    group.getGroupById(groupId, (groups) => {
       if (groups.length === 0) {
         res.status(404).json({ message: 'Group does not exist' });
       } else if (groups[0].createdby !== decode.username) {
-        res.status(403).json({ message: 'Only the creator of this group can delete it' });
+        res.status(403).json({ message:
+          'Only the creator of this group can delete it' });
       } else {
-        group.deleteGroup(groupID, () => {
+        group.deleteGroup(groupId, () => {
           res.status(200).json({ message: 'Group deleted' });
         });
       }
@@ -147,7 +164,8 @@ export default class Group {
   }
 
   /**
- * @description: retieves all groups a user belongs to through route GET: api/user/groups
+ * @description: retieves all groups a user belongs
+ * to through route GET: api/user/groups
  * 
  * @param {Object} req request object
  * @param {Object} res response object
@@ -156,7 +174,8 @@ export default class Group {
  */
   static getUserGroups(req, res) {
     const [limit, offset, decode] = [req.query.limit || 6,
-      req.query.offset || 0, jwt.verify(req.headers.token || req.body.token, jwtSecret)];
+      req.query.offset || 0, jwt.verify(req.headers.token
+      || req.body.token, jwtSecret)];
     user.getUserById(decode.id, (users) => {
       if (users.length === 0) {
         res.status(404).json({ message: 'Invalid user id' });
@@ -167,7 +186,8 @@ export default class Group {
               res.status(200).json({ groups: userGroups });
             });
           } else {
-            res.status(404).json({ message: 'This user does not have any group yet' });
+            res.status(404).json({ message:
+              'This user does not have any group yet' });
           }
           if (validate.hasInternalServerError(groups)) {
             res.status(500).json(validate.sendInternalServerError);

@@ -1,6 +1,6 @@
 import expect from 'expect';
 
-import GroupReducers from '../../reducers/group';
+import GroupReducers from '../../reducers/GroupReducers';
 
 const initialState = {
   groups: [],
@@ -26,10 +26,18 @@ describe('Group Reducer', () => {
   it('should update the state when CREATE_GROUP_SUCCESSFUL is passed', () => {
     const action = {
       type: 'CREATE_GROUP_SUCCESSFUL',
-      groups: { id: 16, name: 'Andela-49', createdby: 'akinoau', description: 'for testing...' }
+      groups: {
+        id: 16,
+        name: 'Andela-49',
+        createdby: 'akinoau',
+        description: 'for testing...' }
     };
     const expected = {
-      groups: [{ id: 16, name: 'Andela-49', createdby: 'akinoau', description: 'for testing...' }],
+      groups: [{
+        id: 16,
+        name: 'Andela-49',
+        createdby: 'akinoau',
+        description: 'for testing...' }],
       responseMsg: '',
       loading: false,
       error: false
@@ -39,7 +47,8 @@ describe('Group Reducer', () => {
   });
   it('should update the state when CREATE_GROUP_UNSUCCESSFUL is passed', () => {
     const action = {
-      type: 'CREATE_GROUP_UNSUCCESSFUL', errorMessage: 'Creating group unsuccessful'
+      type: 'CREATE_GROUP_UNSUCCESSFUL',
+      errorMessage: 'Creating group unsuccessful'
     };
     const expected = {
       groups: [],
@@ -52,11 +61,11 @@ describe('Group Reducer', () => {
   });
   it('should update the state when CREATE_GROUP_REJECTED is passed', () => {
     const action = {
-      type: 'CREATE_GROUP_REJECTED'
+      type: 'CREATE_GROUP_REJECTED', errorMessage: 'internal server error'
     };
     const expected = {
       groups: [],
-      responseMsg: '',
+      responseMsg: 'internal server error',
       loading: false,
       error: true
     };
@@ -78,10 +87,20 @@ describe('Group Reducer', () => {
   });
   it('should update the state when GET_GROUPS_SUCCESSFUL is passed', () => {
     const action = {
-      type: 'GET_GROUPS_SUCCESSFUL', groups: [{ id: 1, name: 'Andela-49', createdby: 'akinoau', description: 'for testing...' }], pageCount: 1
+      type: 'GET_GROUPS_SUCCESSFUL',
+      groups: [{
+        id: 1,
+        name: 'Andela-49',
+        createdby: 'akinoau',
+        description: 'for testing...' }],
+      pageCount: 1
     };
     const expected = {
-      groups: [{ id: 1, name: 'Andela-49', createdby: 'akinoau', description: 'for testing...' }],
+      groups: [{
+        id: 1,
+        name: 'Andela-49',
+        createdby: 'akinoau',
+        description: 'for testing...' }],
       pageCount: 1,
       responseMsg: '',
       loading: false,

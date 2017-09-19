@@ -29,7 +29,7 @@ ReactDOM.render(<Provider store={store}>
       <Route path="signup" component={Signup} />
       <Route path="signin" component={Signin} />
       <Route path="dashboard" component={Dashboard} />
-      <Route path="message-board/:groupID/:groupName" component={MessageBoard} />
+      <Route path="message-board/:groupId/:groupName" component={MessageBoard} />
       <Route path="reset-password/:token" component={ConfirmResetPassword} />
       <Route path="archive-board/:groupId" component={ArchiveMessage} />
       <Route path="*" component={PageNotFound} />

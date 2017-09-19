@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import UserActions from '../actions/user';
+import UserActions from '../actions/UserActions';
 import displayError from '../utils/errorDisplay';
 
 /**
@@ -57,7 +57,7 @@ export class SideNav extends Component {
   * @return {void} void
   */
   getMembersHandler() {
-    this.props.getGroupMembers(this.props.groupID);
+    this.props.getGroupMembers(this.props.groupId);
   }
 
   /**
@@ -96,7 +96,7 @@ export class SideNav extends Component {
     if (selectedMembers[0] === '') {
       return displayError('Kindly select members to add');
     }
-    this.props.addGroupMembers(this.props.groupID, selectedMembers,
+    this.props.addGroupMembers(this.props.groupId, selectedMembers,
       JSON.parse(localStorage.user).token)
       .then(() => {
         if (this.props.member.responseMsg.length > 0) {
@@ -171,7 +171,7 @@ export class SideNav extends Component {
             <div>
               <Link
                 className="waves-effect waves-light btn archive red darken-4"
-                to={`/archive-board/${this.props.groupID}`}
+                to={`/archive-board/${this.props.groupId}`}
               >
                 View Archived Messages
               </Link>
@@ -188,7 +188,11 @@ export class SideNav extends Component {
               <i className="material-icons right">arrow_drop_down</i>
             </a>
           </li>
-          <li><input type="hidden" id="getMembers" value={this.state.groupMembers.join('-')} /></li>
+          <li><input
+            type="hidden"
+            id="getMembers"
+            value={this.state.groupMembers.join('-')}
+          /></li>
           <li><input type="hidden" id="getChips" /></li>
         </ul>
         <ul id="dropdown3" className="dropdown-content">
@@ -208,7 +212,7 @@ export class SideNav extends Component {
 
 
 SideNav.propTypes = {
-  groupID: PropTypes.string.isRequired,
+  groupId: PropTypes.string.isRequired,
   groupName: PropTypes.string.isRequired,
   addGroupMembers: PropTypes.func.isRequired,
   getGroupMembers: PropTypes.func.isRequired,

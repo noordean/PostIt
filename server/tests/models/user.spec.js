@@ -7,12 +7,13 @@ describe('<Unit Test>', () => {
   describe('Model User:', () => {
     describe('Method saveUser', () => {
       it('should be able to save user details', (done) => {
-        user.saveUser('mUser', 'mUser1', 'mUser@gmail.com', '08123456576', (users) => {
-          users.should.be.a('object');
-          users.should.have.property('dataValues');
-          users.dataValues.username.should.eql('mUser');
-          done();
-        });
+        user.saveUser('mUser', 'mUser1', 'mUser@gmail.com', '08123456576',
+          (users) => {
+            users.should.be.a('object');
+            users.should.have.property('dataValues');
+            users.dataValues.username.should.eql('mUser');
+            done();
+          });
       });
     });
 
@@ -25,13 +26,14 @@ describe('<Unit Test>', () => {
           done();
         });
       });
-      it('should be able to return empty array if user is not found', (done) => {
-        user.getUser('notExist', (users) => {
-          users.should.be.a('array');
-          users.length.should.eql(0);
-          done();
+      it('should be able to return empty array if user is not found',
+        (done) => {
+          user.getUser('notExist', (users) => {
+            users.should.be.a('array');
+            users.length.should.eql(0);
+            done();
+          });
         });
-      });
     });
     describe('Method getUserById', () => {
       it('should be able to get a user by id', (done) => {
@@ -42,13 +44,14 @@ describe('<Unit Test>', () => {
           done();
         });
       });
-      it('should be able to return empty array if the id is invalid', (done) => {
-        user.getUserById(1327, (users) => {
-          users.should.be.a('array');
-          users.length.should.eql(0);
-          done();
+      it('should be able to return empty array if the id is invalid',
+        (done) => {
+          user.getUserById(1327, (users) => {
+            users.should.be.a('array');
+            users.length.should.eql(0);
+            done();
+          });
         });
-      });
     });
     describe('Method deleteUser', () => {
       it('should be able delete a user', (done) => {

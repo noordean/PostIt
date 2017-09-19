@@ -70,7 +70,8 @@ export default class UserReducers {
   *
   * @memberof UserReducers
   */
-  static groupMembers(state = { members: [], responseMsg: '', reqError: false }, action) {
+  static groupMembers(state = {
+    members: [], responseMsg: '', reqError: false }, action) {
     switch (action.type) {
       case 'GOT_MEMBERS':
         return { ...state, members: action.payload, responseMsg: '' };
@@ -101,16 +102,26 @@ export default class UserReducers {
   *
   * @memberof UserReducers
   */
-  static sendPasswordResetMail(state = { responseMsg: '', loading: false, error: false, success: false }, action) {
+  static mailPassword(state = {
+    responseMsg: '', loading: false, error: false, success: false }, action) {
     switch (action.type) {
       case 'RESET_PASSWORD_BEGINS':
         return { ...state, responseMsg: '', loading: true, success: false };
       case 'RESET_PASSWORD_SUCCESSFUL':
-        return { ...state, responseMsg: action.payload, loading: false, success: true };
+        return { ...state,
+          responseMsg: action.payload,
+          loading: false,
+          success: true };
       case 'RESET_PASSWORD_UNSUCCESSFUL':
-        return { ...state, responseMsg: action.payload, loading: false, success: false };
+        return { ...state,
+          responseMsg: action.payload,
+          loading: false,
+          success: false };
       case 'RESET_PASSWORD_REJECTED':
-        return { ...state, responseMsg: action.payload, error: true, success: false };
+        return { ...state,
+          responseMsg: action.payload,
+          error: true,
+          success: false };
       default:
         return state;
     }
@@ -125,7 +136,8 @@ export default class UserReducers {
   * @returns {Object} current state
   * @memberof UserReducers
   */
-  static verifyPasswordReset(state = { responseMsg: '', loading: false, error: false }, action) {
+  static verifyPassword(state = {
+    responseMsg: '', loading: false, error: false }, action) {
     switch (action.type) {
       case 'VERIFY_PASSWORD_BEGINS':
         return { ...state, responseMsg: '', loading: true };
@@ -149,7 +161,8 @@ export default class UserReducers {
   * @returns {Object} current state
   * @memberof UserReducers
   */
-  static registerUserFromGoogle(state = { response: [], loading: false, error: false }, action) {
+  static registerGoogleUser(state = {
+    response: [], loading: false, error: false }, action) {
     switch (action.type) {
       case 'REGISTER_GOOGLE_USER_BEGINS':
         return { ...state, loading: true };
@@ -173,7 +186,8 @@ export default class UserReducers {
   * @returns {Object} current state
   * @memberof UserReducers
   */
-  static sendMailForNotification(state = { responseMsg: '', loading: false, error: false }, action) {
+  static mailNotification(state = {
+    responseMsg: '', loading: false, error: false }, action) {
     switch (action.type) {
       case 'SEND_EMAIL_NOTIFICATION_BEGINS':
         return { ...state, responseMsg: '', loading: true };
@@ -197,7 +211,8 @@ export default class UserReducers {
   * @returns {Object} current state
   * @memberof UserReducers
   */
-  static sendSmsForNotification(state = { responseMsg: '', loading: false, error: false }, action) {
+  static smsNotification(state = {
+    responseMsg: '', loading: false, error: false }, action) {
     switch (action.type) {
       case 'SEND_SMS_NOTIFICATION_BEGINS':
         return { ...state, responseMsg: '', loading: true };
@@ -221,7 +236,8 @@ export default class UserReducers {
   * @returns {Object} current state
   * @memberof UserReducers
   */
-  static readMessages(state = { users: [], loading: false, error: false }, action) {
+  static readMessages(state = {
+    users: [], loading: false, error: false }, action) {
     switch (action.type) {
       case 'GET_READ_USERS_BEGINS':
         return { ...state, loading: true };
@@ -245,7 +261,8 @@ export default class UserReducers {
   * @returns {Object} current state
   * @memberof UserReducers
   */
-  static appNotification(state = { notification: [], loading: false, error: false, responseMsg: '' }, action) {
+  static appNotification(state = {
+    notification: [], loading: false, error: false, responseMsg: '' }, action) {
     switch (action.type) {
       case 'SAVE_NOTIFICATION_SUCCESSFUL':
       case 'SAVE_NOTIFICATION_UNSUCCESSFUL':

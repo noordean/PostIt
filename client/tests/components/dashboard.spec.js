@@ -41,8 +41,8 @@ describe('Dashboard component', () => {
     global.Materialize = { toast: () => {} };
   });
   it('should render neccessary elements', () => {
-    expect(shallowWrapper.find('div').length).toBe(6);
-    expect(shallowWrapper.find('p').length).toBe(1);
+    expect(shallowWrapper.find('div').length).toBe(3);
+    expect(shallowWrapper.find('p').length).toBe(0);
   });
   it('should call componentDidMount', () => {
     sinon.spy(Dashboard.prototype, 'componentDidMount');
@@ -63,7 +63,8 @@ describe('Dashboard component', () => {
     const mountWrapper = setup(mount);
     expect(mountWrapper.props().group.pageCount).toBe(3);
     expect(mountWrapper.props().group.loading).toBe(false);
-    expect(mountWrapper.props().group.groups[0].description).toBe('some description');
+    expect(mountWrapper.props().group.groups[0].description)
+      .toBe('some description');
   });
 });
 

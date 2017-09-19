@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { browserHistory } from 'react-router';
+import { browserHistory, Link } from 'react-router';
 import PropTypes from 'prop-types';
 
-import UsersActions from '../actions/user';
+import UsersActions from '../actions/UserActions';
 import displayError from '../utils/errorDisplay';
 
 /**
@@ -86,7 +86,11 @@ export class SignUp extends Component {
       <div className="container">
         <div id="register-page" className="row">
           <div className="col s12 z-depth-4 card-panel">
-            <form className="register-form" onSubmit={this.registerHandler} id="formElement">
+            <form
+              className="register-form"
+              onSubmit={this.registerHandler}
+              id="formElement"
+            >
               <div className="row margin">
                 <div className="input-field col s12">
                   <i className="material-icons prefix">account_circle</i>
@@ -98,7 +102,10 @@ export class SignUp extends Component {
                     onChange={this.onChange}
                     required
                   />
-                  <label htmlFor="username" className="center-align">Username</label>
+                  <label
+                    htmlFor="username"
+                    className="center-align"
+                  >Username</label>
                 </div>
               </div>
               <div className="row margin">
@@ -126,7 +133,10 @@ export class SignUp extends Component {
                     onChange={this.onChange}
                     required
                   />
-                  <label htmlFor="email" className="center-align">Phone Number</label>
+                  <label
+                    htmlFor="email"
+                    className="center-align"
+                  >Phone Number</label>
                 </div>
               </div>
               <div className="row margin">
@@ -166,7 +176,7 @@ export class SignUp extends Component {
                 <div className="input-field col s12">
                   <p className="margin center medium-small sign-up">
                     Already have an account?
-                    <a href="page-login.html">Login</a></p>
+                    <Link to="/signin">Login</Link></p>
                 </div>
               </div>
             </form>

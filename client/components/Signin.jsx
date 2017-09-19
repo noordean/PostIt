@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Link, browserHistory } from 'react-router';
 import PropTypes from 'prop-types';
 
-import UsersActions from '../actions/user';
+import UsersActions from '../actions/UserActions';
 import GoogleLogin from './GoogleLogin.jsx';
 import displayError from '../utils/errorDisplay';
 
@@ -50,7 +50,8 @@ class SignIn extends Component {
     this.props.loginUser(username, password)
       .then(() => {
         if (this.props.userLogin.reqStatus.message === 'You are now logged in') {
-          localStorage.setItem('user', JSON.stringify(this.props.userLogin.reqStatus.user));
+          localStorage.setItem('user',
+            JSON.stringify(this.props.userLogin.reqStatus.user));
           browserHistory.push('/dashboard');
           return displayError('You are now logged in');
         }
@@ -91,7 +92,10 @@ class SignIn extends Component {
                     onChange={this.onChange}
                     required
                   />
-                  <label htmlFor="username" className="center-align">Username</label>
+                  <label
+                    htmlFor="username"
+                    className="center-align"
+                  >Username</label>
                 </div>
               </div>
               <div className="row margin">
@@ -128,7 +132,9 @@ class SignIn extends Component {
               </div>
               <div className="row">
                 <div className="input-field col s6 m6 l6">
-                  <p className="margin medium-small"><Link to="/signup">Register Now!</Link></p>
+                  <p
+                    className="margin medium-small"
+                  ><Link to="/signup">Register Now!</Link></p>
                 </div>
                 <div className="input-field col s6 m6 l6">
                   <p className="margin right-align medium-small">

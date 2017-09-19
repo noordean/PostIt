@@ -93,7 +93,9 @@ Note: Login token must be supplied in the headers before accessing all the route
 - Push your changes to your remote branch with ```git push origin your-feature-branch```
 - Open a pull request to the master branch, and describe how your feature works
 
+Ensure your codes follow <a href="https://github.com/airbnb/javascript">AirBnB Javascript Styles Guide</a>
+
 The full API documentation can be viewed at <a href="https://app.swaggerhub.com/apis/postit1/PostIt/1.0.0" target="_blank">here</a>
 
-##Author
+### Author
 Nurudeen Ibrahim

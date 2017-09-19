@@ -34,13 +34,7 @@ export class Dashboard extends Component {
   * @return {void} void
   */
   componentDidMount() {
-    this.props.getGroups(this.state.groupLimit, 0)
-      .then(() => {
-        this.setState({
-          groups: this.props.group.groups,
-          groupCount: this.props.group.pageCount
-        });
-      });
+    this.props.getGroups(this.state.groupLimit, 0);
     this.getNotificationHandler();
   }
 
@@ -114,7 +108,7 @@ export class Dashboard extends Component {
         </div>
       </div>));
     } else {
-      dashboard = <div className="center">{this.state.responseMsg}</div>;
+      dashboard = <div className="center">{this.props.group.responseMsg}</div>;
     }
 
     return (

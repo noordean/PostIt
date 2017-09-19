@@ -27,7 +27,7 @@ export default class UserReducers {
       case 'REGISTRATION_UNSUCCESSFUL':
         return { ...state, reqStatus: action.payload };
       case 'REGISTRATION_REJECTED':
-        return { ...state, reqError: true };
+        return { ...state, reqError: true, reqStatus: action.payload };
       default:
         return state;
     }
@@ -53,7 +53,7 @@ export default class UserReducers {
       case 'LOGIN_UNSUCCESSFUL':
         return { ...state, reqStatus: action.payload };
       case 'LOGIN_REJECTED':
-        return { ...state, reqError: true };
+        return { ...state, reqError: true, reqStatus: action.payload };
       default:
         return state;
     }
@@ -83,7 +83,7 @@ export default class UserReducers {
         return { ...state, responseMsg: action.payload };
       case 'ADD_MEMBERS_REJECTED':
       case 'GET_MEMBERS_REJECTED':
-        return { ...state, reqError: true };
+        return { ...state, reqError: true, responseMsg: action.payload };
       default:
         return state;
     }
@@ -93,21 +93,24 @@ export default class UserReducers {
   * Reducer for sending mail for password reset
   *
   * @static
+  *
   * @param {Object} state The initial state
   * @param {Object} action The dispatched action
+  *
   * @returns {Object} current state
+  *
   * @memberof UserReducers
   */
-  static sendPasswordResetMail(state = { responseMsg: '', loading: false, error: false }, action) {
+  static sendPasswordResetMail(state = { responseMsg: '', loading: false, error: false, success: false }, action) {
     switch (action.type) {
       case 'RESET_PASSWORD_BEGINS':
-        return { ...state, responseMsg: '', loading: true };
+        return { ...state, responseMsg: '', loading: true, success: false };
       case 'RESET_PASSWORD_SUCCESSFUL':
-        return { ...state, responseMsg: action.payload, loading: false };
+        return { ...state, responseMsg: action.payload, loading: false, success: true };
       case 'RESET_PASSWORD_UNSUCCESSFUL':
-        return { ...state, responseMsg: action.payload, loading: false };
+        return { ...state, responseMsg: action.payload, loading: false, success: false };
       case 'RESET_PASSWORD_REJECTED':
-        return { ...state, responseMsg: '', error: true };
+        return { ...state, responseMsg: action.payload, error: true, success: false };
       default:
         return state;
     }
@@ -131,7 +134,7 @@ export default class UserReducers {
       case 'VERIFY_PASSWORD_UNSUCCESSFUL':
         return { ...state, responseMsg: action.payload, loading: false };
       case 'VERIFY_PASSWORD_REJECTED':
-        return { ...state, responseMsg: '', error: true };
+        return { ...state, responseMsg: action.payload, error: true };
       default:
         return state;
     }
@@ -155,7 +158,7 @@ export default class UserReducers {
       case 'REGISTER_GOOGLE_USER_UNSUCCESSFUL':
         return { ...state, response: action.payload, loading: false };
       case 'REGISTER_GOOGLE_USER_REJECTED':
-        return { ...state, error: true };
+        return { ...state, error: true, response: action.payload };
       default:
         return state;
     }
@@ -179,7 +182,7 @@ export default class UserReducers {
       case 'SEND_EMAIL_NOTIFICATION_UNSUCCESSFUL':
         return { ...state, responseMsg: action.payload, loading: false };
       case 'SEND_EMAIL_NOTIFICATION_REJECTED':
-        return { ...state, responseMsg: '', error: true };
+        return { ...state, responseMsg: action.payload, error: true };
       default:
         return state;
     }
@@ -203,7 +206,7 @@ export default class UserReducers {
       case 'SEND_SMS_NOTIFICATION_UNSUCCESSFUL':
         return { ...state, responseMsg: action.payload, loading: false };
       case 'SEND_SMS_NOTIFICATION_REJECTED':
-        return { ...state, responseMsg: '', error: true };
+        return { ...state, responseMsg: action.payload, error: true };
       default:
         return state;
     }
@@ -246,7 +249,7 @@ export default class UserReducers {
     switch (action.type) {
       case 'SAVE_NOTIFICATION_SUCCESSFUL':
       case 'SAVE_NOTIFICATION_UNSUCCESSFUL':
-        return { ...state, users: action.payload };
+        return { ...state, responseMsg: action.payload };
       case 'GET_NOTIFICATION_SUCCESSFUL':
         return { ...state, notification: action.payload };
       case 'DELETE_NOTIFICATION_SUCCESSFUL':

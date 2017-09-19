@@ -7,6 +7,7 @@ import UserActions from '../actions/user';
 import MessageActions from '../actions/message';
 import SideNav from './Sidenav.jsx';
 import Home from './Home.jsx';
+import displayError from '../utils/errorDisplay';
 
 /**
   * @class MessageBoard
@@ -77,18 +78,8 @@ export class MessageBoard extends Component {
   getMessagesHandler() {
     this.props.getMessages(this.props.params.groupID, JSON.parse(localStorage.user).id)
       .then(() => {
-        if (this.props.groupMessages.messages.length > 0) {
-          this.setState({
-            messages: this.props.groupMessages.messages,
-          });
-        } else if (this.props.groupMessages.error) {
-          this.setState({
-            responseMsg: 'Sorry, messages could not be fetched'
-          });
-        } else if (this.props.groupMessages.responseMsg !== '') {
-          this.setState({
-            responseMsg: this.props.groupMessages.responseMsg
-          });
+        if (this.props.groupMessages.responseMsg.length > 0) {
+          return displayError(this.props.groupMessages.responseMsg);
         }
         this.archiveMessageHandler();
       });
@@ -121,6 +112,17 @@ export class MessageBoard extends Component {
     }
   }
 
+  /**
+  * description: clears the createGroup state inputs
+  *
+  * @return {void} void
+  */
+  clearPostMessageState() {
+    this.setState({
+      messageInput: '',
+      msgStatus: 'Normal'
+    });
+  }
 
   /**
   * description: posts message to a group
@@ -135,41 +137,33 @@ export class MessageBoard extends Component {
     if (msg.length !== 0) {
       this.props.postGroupMessage(this.props.params.groupID, msg, this.state.msgStatus)
         .then(() => {
-          this.setState({
-            messageInput: ''
-          });
-          if (this.props.groupMessages.responseMsg !== '') {
-            this.setState({
-              responseMsg: this.props.groupMessages.responseMsg
+          if (this.props.groupMessages.responseMsg.length > 0) {
+            return displayError(this.props.groupMessages.responseMsg);
+          }
+          this.clearPostMessageState();
+          const postedMessage = this.props.groupMessages.messages[
+            this.props.groupMessages.messages.length - 1];
+          if (postedMessage.priority === 'Normal') {
+            const recepients = this.props.member.members.filter(
+              member => (member.username !== JSON.parse(localStorage.user).username));
+            if (recepients.length > 0) {
+              this.props.saveInAppNotification(recepients,
+                this.props.params.groupName, postedMessage.message, postedMessage.postedby);
+            }
+          }
+          if (postedMessage.priority !== 'Normal') {
+            this.sendMailNotification(this.props.member.members, decodeURI(msg));
+          }
+          if (postedMessage.priority === 'Critical') {
+            const members = this.props.member.members.map((member) => {
+              const membersObj = {};
+              membersObj.to = member.phoneNumber;
+              membersObj.from = 'PostIt App';
+              membersObj.message = `Hi! ${postedMessage.postedby} just posted a message in
+               ${this.props.params.groupName}: ${decodeURI(postedMessage.message)}`;
+              return membersObj;
             });
-          } else if (this.props.groupMessages.error) {
-            this.setState({
-              responseMsg: 'Sorry, message could not be posted'
-            });
-          } else {
-            const postedMessage = this.props.groupMessages.messages[
-              this.props.groupMessages.messages.length - 1];
-            if (postedMessage.priority === 'Normal') {
-              const recepients = this.props.member.members.filter(
-                member => (member.username !== JSON.parse(localStorage.user).username));
-              if (recepients.length > 0) {
-                this.props.saveInAppNotification(recepients,
-                  this.props.params.groupName, postedMessage.message, postedMessage.postedby);
-              }
-            }
-            if (postedMessage.priority !== 'Normal') {
-              this.sendMailNotification(this.props.member.members, decodeURI(msg));
-            }
-            if (postedMessage.priority === 'Critical') {
-              const members = this.props.member.members.map((member) => {
-                const membersObj = {};
-                membersObj.to = member.phoneNumber;
-                membersObj.from = 'PostIt App';
-                membersObj.message = `Hi! ${postedMessage.postedby} just posted a message in ${this.props.params.groupName}: ${decodeURI(postedMessage.message)}`;
-                return membersObj;
-              });
-              this.props.sendSmsForNotification(members);
-            }
+            this.props.sendSmsForNotification(members);
           }
         });
     }
@@ -224,9 +218,7 @@ export class MessageBoard extends Component {
     }
 
     let messageBoard;
-    if (this.state.responseMsg !== '') {
-      messageBoard = <div className="center">{this.state.responseMsg}</div>;
-    } else if (this.props.groupMessages.loading) {
+    if (this.props.groupMessages.loading) {
       messageBoard = <div className="center">Loading messages...</div>;
     } else if (this.state.messages.length > 0) {
       messageBoard = this.state.messages.map(message => (

@@ -1,9 +1,9 @@
 import React from 'react';
 import expect from 'expect';
-import { shallow, mount } from 'enzyme';
+import { mount } from 'enzyme';
 import sinon from 'sinon';
 
-import { Dashboard } from '../../components/dashboard.jsx';
+import { Dashboard } from '../../components/Dashboard.jsx';
 
 import localStorageMock from '../__mocks__/localStorageMock';
 

@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 
+require('./src/public/js/style.js');
+
 import store from './store';
 import Inndex from './components/Index.jsx';
 import Home from './components/Home.jsx';
@@ -12,9 +14,8 @@ import Dashboard from './components/Dashboard.jsx';
 import MessageBoard from './components/MessageBoard.jsx';
 import ConfirmResetPassword from './components/ConfirmResetPassword.jsx';
 import ArchiveMessage from './components/ArchiveMessage.jsx';
+import PageNotFound from './components/PageNotFound.jsx';
 import authorization from './utils/authorization';
-
-require('./src/public/js/style.js');
 
 
 if (localStorage.user) {
@@ -31,6 +32,7 @@ ReactDOM.render(<Provider store={store}>
       <Route path="message-board/:groupID/:groupName" component={MessageBoard} />
       <Route path="reset-password/:token" component={ConfirmResetPassword} />
       <Route path="archive-board/:groupId" component={ArchiveMessage} />
+      <Route path="*" component={PageNotFound} />
     </Route>
   </Router>
 </Provider>,

@@ -5,6 +5,7 @@ import group from '../services/Group';
 import groupUser from '../services/GroupUser';
 import user from '../services/User';
 import readMessageService from '../services/ReadMessage';
+import validate from '../helpers/validate';
 
 dotenv.config();
 const jwtSecret = process.env.jwtSecret;
@@ -37,10 +38,10 @@ export default class Group {
               res.status(201).json({ message: 'Group successfully created', group: { id: groups[0].id, name: groups[0].groupname, createdby: groups[0].createdby, description: groups[0].description } });
             });
           }
-          if (users instanceof Object && !Array.isArray(users)) {
-            res.status(500).json({ message: 'Sorry, unexpected error occurred' });
-          }
         });
+      }
+      if (validate.hasInternalServerError(groups)) {
+        res.status(500).json(validate.sendInternalServerError);
       }
     });
   }
@@ -68,6 +69,9 @@ export default class Group {
             res.status(201).json({ message: 'User successfully added', user: useR[0] });
           } else {
             res.status(409).json({ message: 'User already in the group' });
+          }
+          if (validate.hasInternalServerError(useR)) {
+            res.status(500).json(validate.sendInternalServerError);
           }
         });
       } else {
@@ -109,6 +113,9 @@ export default class Group {
             });
           } else {
             res.status(200).json({ messages: groupMessages.messages });
+          }
+          if (validate.hasInternalServerError(groupMessages)) {
+            res.status(500).json(validate.sendInternalServerError);
           }
         });
       }
@@ -161,6 +168,9 @@ export default class Group {
             });
           } else {
             res.status(404).json({ message: 'This user does not have any group yet' });
+          }
+          if (validate.hasInternalServerError(groups)) {
+            res.status(500).json(validate.sendInternalServerError);
           }
         });
       }

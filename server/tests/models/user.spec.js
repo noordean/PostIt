@@ -8,9 +8,9 @@ describe('<Unit Test>', () => {
     describe('Method saveUser', () => {
       it('should be able to save user details', (done) => {
         user.saveUser('mUser', 'mUser1', 'mUser@gmail.com', '08123456576', (users) => {
-          users.should.be.a('array');
-          users.length.should.eql(2);
-          users[0].username.should.eql('mUser');
+          users.should.be.a('object');
+          users.should.have.property('dataValues');
+          users.dataValues.username.should.eql('mUser');
           done();
         });
       });

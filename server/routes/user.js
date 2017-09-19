@@ -11,7 +11,7 @@ userRouter.post('/api/v1/user/signup', validate.checkPassword, user.signUp);
 userRouter.post('/api/v1/user/signin', validate.checkUserPass, user.signIn);
 userRouter.post('/api/v1/user/reset-password', user.sendMailForPasswordReset);
 userRouter.post('/api/v1/user/email/verify', user.verifyPasswordReset);
-userRouter.post('/api/v1/user/email', user.sendMailForPasswordReset);
+userRouter.post('/api/v1/user/email', user.sendMailForNotification);
 userRouter.post('/api/v1/user/sms', user.sendSmsForNotification);
 userRouter.post('/api/v1/user/signup/google', user.registerUserFromGoogle);
 userRouter.get('/api/v1/users', authenticate.verifyToken, user.getAllUsers);

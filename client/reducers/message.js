@@ -34,7 +34,7 @@ export default class MessageReducers {
         return { ...state, responseMsg: action.payload, loading: false };
       case 'POST_MESSAGE_REJECTED':
       case 'GET_MESSAGES_REJECTED':
-        return { ...state, error: true, loading: false, responseMsg: '' };
+        return { ...state, error: true, loading: false, responseMsg: action.payload };
       default:
         return state;
     }
@@ -55,15 +55,16 @@ export default class MessageReducers {
       case 'ARCHIVE_MESSAGES_UNSUCCESSFUL':
         return { ...state, responseMsg: action.message };
       case 'ARCHIVE_MESSAGES_FAILED_UNEXPECTEDLY':
-        return { ...state, error: true };
+        return { ...state, error: true, responseMsg: action.message };
       case 'GET_ARCHIVE_MESSAGES_BEGINS':
+      case 'ARCHIVE_MESSAGES_BEGINS':
         return { ...state, loading: true };
       case 'GET_ARCHIVE_MESSAGES_SUCCESSFUL':
         return { ...state, messages: action.payload, responseMsg: '', loading: false };
       case 'GET_ARCHIVE_MESSAGES_UNSUCCESSFUL':
         return { ...state, responseMsg: action.payload, loading: false };
       case 'GET_ARCHIVE_MESSAGES_REJECTED':
-        return { ...state, error: true, loading: false, responseMsg: '' };
+        return { ...state, error: true, loading: false, responseMsg: action.payload };
       default:
         return state;
     }

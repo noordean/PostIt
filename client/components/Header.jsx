@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 
 import GuestHeader from './GuestHeader.jsx';
 import GroupActions from '../actions/group';
+import displayError from '../utils/errorDisplay';
 
 /**
   * @class GuestHeader
@@ -26,6 +27,7 @@ export class Header extends Component {
     this.createGroup = this.createGroup.bind(this);
     this.logoutHandler = this.logoutHandler.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.openCreateGroupModal = this.openCreateGroupModal.bind(this);
   }
 
   /**
@@ -52,28 +54,39 @@ export class Header extends Component {
     event.preventDefault();
     this.props.createGroup(this.state.groupName, this.state.groupDescription)
       .then(() => {
-        if (this.props.group.error) {
-          this.setState({
-            responseMsg: 'Sorry, group could not be created'
-          });
-        } else if (this.props.group.responseMsg !== '') {
-          this.setState({
-            responseMsg: this.props.group.responseMsg
-          });
-        } else if (this.props.group.loading) {
-          this.setState({
-            responseMsg: 'Creating group...'
-          });
-        } else {
-          this.setState({
-            responseMsg: 'Group created successfully',
-            groupName: '',
-            groupDescription: ''
-          });
-          this.props.getGroups(this.state.groupLimit, 0);
-          $('#modal1').modal('close');
+        if (this.props.group.responseMsg.length > 0) {
+          return displayError(this.props.group.responseMsg);
         }
+        this.props.getGroups(this.state.groupLimit, 0);
+        $('#createGroup').modal('close');
+        return displayError('Group created successfully');
       });
+  }
+
+  /**
+  * description: clears the createGroup state inputs
+  *
+  * @return {void} void
+  */
+  clearCreateGroupState() {
+    this.setState({
+      groupName: '',
+      groupDescription: ''
+    });
+  }
+  /**
+  * description: It opens the createGroup modal dynamically
+  *
+  * @param {event} event the event being executed
+  *
+  * @return {void} void
+  */
+  //eslint-disable-next-line
+  openCreateGroupModal(event) {
+    event.preventDefault();
+    $('#createGroup').modal('open', {
+      complete: this.clearCreateGroupState()
+    });
   }
 
   /**
@@ -99,14 +112,12 @@ export class Header extends Component {
   render() {
     $('.modal').modal();
     $('.dropdown-button').dropdown();
-    const errorMsg = <div className="center">{this.state.responseMsg}</div>;
     const userHeader =
       (<div>
-        <div id="modal1" className="modal">
+        <div id="createGroup" className="modal">
           <div className="modal-content">
             <form className="group-form" id="createForm">
               <div className="row">
-                {errorMsg}
                 <div className="input-field col s12">
                   <input
                     type="text"
@@ -153,13 +164,28 @@ export class Header extends Component {
         </ul>
         <nav>
           <div className="nav-wrapper red darken-4">
-            <Link id="navLogo" to={localStorage.user ? '/dashboard' : '/'} className="brand-logo left">PostIt</Link>
+            <Link
+              id="navLogo"
+              to={localStorage.user ? '/dashboard' : '/'}
+              className="brand-logo left"
+            >
+            PostIt
+            </Link>
             <ul className="right">
               <li><a
                 className="waves-effect waves-light btn modal-trigger red darken-4"
-                href="#modal1"
+                href="##"
+                onClick={this.openCreateGroupModal}
               >Create Group</a></li>
-              <li><a className="dropdown-button" href="" data-activates="dropdown1">{localStorage.user ? JSON.parse(localStorage.user).username : ''}<i className="material-icons right">arrow_drop_down</i></a></li>
+              <li>
+                <a
+                  className="dropdown-button"
+                  href=""
+                  data-activates="dropdown1"
+                >{localStorage.user ? JSON.parse(localStorage.user).username : ''}
+                  <i className="material-icons right">arrow_drop_down</i>
+                </a>
+              </li>
             </ul>
           </div>
         </nav>

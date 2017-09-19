@@ -1,3 +1,5 @@
+import expect from 'expect';
+
 import GroupReducers from '../../reducers/group';
 
 const initialState = {

@@ -235,6 +235,8 @@ describe('PostIt Endpoints', () => {
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.should.have.property('user');
+          res.body.user.username.should.be.eql('existing');
+          res.body.user.email.should.be.eql('existing@gmail.com');
           res.body.message.should.be.eql('You are now logged in');
           done();
         });
@@ -293,11 +295,14 @@ describe('PostIt Endpoints', () => {
           token: sentToken
         })
         .end((err, res) => {
+          console.log(res.body);
+          console.log('check herrrrrrrreeee');
           res.should.have.status(201);
           res.body.should.be.a('object');
           res.body.should.have.property('message');
           res.body.message.should.be.eql('User successfully added');
           res.body.should.have.property('user');
+          res.body.user.groupId.should.be.eql(1);
           res.body.user.userId.should.be.eql(1);
           done();
         });
@@ -432,6 +437,7 @@ describe('PostIt Endpoints', () => {
           res.body.should.be.a('object');
           res.body.should.have.property('users');
           res.body.users[0].username.should.be.eql('existing');
+          res.body.users[0].email.should.be.eql('existing@gmail.com');
           done();
         });
     });

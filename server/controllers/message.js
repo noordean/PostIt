@@ -6,6 +6,7 @@ import message from '../services/Message';
 import groupUser from '../services/GroupUser';
 import userService from '../services/User';
 import readMessageService from '../services/ReadMessage';
+import validate from '../helpers/validate';
 
 dotenv.config();
 const jwtSecret = process.env.jwtSecret;
@@ -107,9 +108,13 @@ export default class Message {
         Date.now() - new Date(msg.createdAt).getTime() > 180000)));
       const dueMessagesIds = dueMessages.map(dueMsgs => dueMsgs.messageId);
       group.getGroupMessages(groupId, (groupMessages) => {
-        const archivedMsgs = groupMessages.messages.filter(archMsgs => (
-          dueMessagesIds.indexOf(archMsgs.id) !== -1));
-        res.status(200).json({ messages: archivedMsgs });
+        if (validate.hasInternalServerError(groupMessages)) {
+          res.status(500).json(validate.sendInternalServerError);
+        } else {
+          const archivedMsgs = groupMessages.messages.filter(archMsgs => (
+            dueMessagesIds.indexOf(archMsgs.id) !== -1));
+          res.status(200).json({ messages: archivedMsgs });
+        }
       });
     });
   }
@@ -127,8 +132,12 @@ export default class Message {
     readMessageService.getUsers(messageId, groupId, (users) => {
       const readUsers = users.map(user => user.userId);
       userService.getTotalUsers((user) => {
-        const displayUser = user.filter(userData => (readUsers.indexOf(userData.id) !== -1));
-        res.status(200).json({ users: displayUser });
+        if (validate.hasInternalServerError(user)) {
+          res.status(500).json(validate.sendInternalServerError);
+        } else {
+          const displayUser = user.filter(userData => (readUsers.indexOf(userData.id) !== -1));
+          res.status(200).json({ users: displayUser });
+        }
       });
     });
   }

@@ -1,3 +1,5 @@
+import expect from 'expect';
+
 import UserReducers from '../../reducers/user';
 
 const initialState = {
@@ -9,6 +11,8 @@ const initialState = {
 const memberInitialState = { members: [], responseMsg: '', reqError: false };
 const passwordResetInitialState = { responseMsg: '', loading: false, error: false };
 const googleUserInitialState = { response: [], loading: false, error: false };
+const readMessagesInitial = { users: [], loading: false, error: false };
+const notificationInitial = { notification: [], loading: false, error: false, responseMsg: '' };
 
 describe('User Reducer', () => {
   it('should update the state when REGISTRATION_SUCCESSFUL is passed', () => {
@@ -103,6 +107,30 @@ describe('User Reducer', () => {
       members: [{ id: 1, username: 'nuru', email: 'ebroyeem@gmail.com' }],
       reqError: false,
       responseMsg: ''
+    };
+    const newState = UserReducers.groupMembers(memberInitialState, action);
+    expect(newState).toEqual(expected);
+  });
+  it('should update the state when GET_MEMBERS_FAILED is passed', () => {
+    const action = {
+      type: 'GET_MEMBERS_FAILED', payload: 'could not get members'
+    };
+    const expected = {
+      members: [],
+      reqError: false,
+      responseMsg: 'could not get members'
+    };
+    const newState = UserReducers.groupMembers(memberInitialState, action);
+    expect(newState).toEqual(expected);
+  });
+  it('should update the state when ADD_MEMBERS_FAILED is passed', () => {
+    const action = {
+      type: 'ADD_MEMBERS_FAILED', payload: 'could not add members'
+    };
+    const expected = {
+      members: [],
+      reqError: false,
+      responseMsg: 'could not add members'
     };
     const newState = UserReducers.groupMembers(memberInitialState, action);
     expect(newState).toEqual(expected);
@@ -269,6 +297,80 @@ describe('User Reducer', () => {
     };
     const expected = { response: [], loading: false, error: true };
     const newState = UserReducers.registerUserFromGoogle(googleUserInitialState, action);
+    expect(newState).toEqual(expected);
+  });
+
+  it('should update the state when GET_READ_USERS_BEGINS is passed', () => {
+    const action = {
+      type: 'GET_READ_USERS_BEGINS'
+    };
+    const expected = { users: [], loading: true, error: false };
+    const newState = UserReducers.readMessages(readMessagesInitial, action);
+    expect(newState).toEqual(expected);
+  });
+  it('should update the state when GET_READ_USERS_SUCCESSFUL is passed', () => {
+    const action = {
+      type: 'GET_READ_USERS_SUCCESSFUL', payload: [{ id: 1, username: 'noordean' }]
+    };
+    const expected = { users: [{ id: 1, username: 'noordean' }], loading: false, error: false };
+    const newState = UserReducers.readMessages(readMessagesInitial, action);
+    expect(newState).toEqual(expected);
+  });
+  it('should update the state when GET_READ_USERS_UNSUCCESSFUL is passed', () => {
+    const action = {
+      type: 'GET_READ_USERS_UNSUCCESSFUL'
+    };
+    const expected = { users: [], loading: false, error: true };
+    const newState = UserReducers.readMessages(readMessagesInitial, action);
+    expect(newState).toEqual(expected);
+  });
+  it('should update the state when GET_READ_USERS_REJECTED is passed', () => {
+    const action = {
+      type: 'GET_READ_USERS_REJECTED'
+    };
+    const expected = { users: [], loading: false, error: true };
+    const newState = UserReducers.readMessages(readMessagesInitial, action);
+    expect(newState).toEqual(expected);
+  });
+
+  it('should update the state when SAVE_NOTIFICATION_SUCCESSFUL is passed', () => {
+    const action = {
+      type: 'SAVE_NOTIFICATION_SUCCESSFUL', payload: 'notifications saved'
+    };
+    const expected = { notification: [], loading: false, error: false, responseMsg: 'notifications saved' };
+    const newState = UserReducers.appNotification(notificationInitial, action);
+    expect(newState).toEqual(expected);
+  });
+  it('should update the state when SAVE_NOTIFICATION_UNSUCCESSFUL is passed', () => {
+    const action = {
+      type: 'SAVE_NOTIFICATION_SUCCESSFUL', payload: 'notifications could not be saved'
+    };
+    const expected = { notification: [], loading: false, error: false, responseMsg: 'notifications could not be saved' };
+    const newState = UserReducers.appNotification(notificationInitial, action);
+    expect(newState).toEqual(expected);
+  });
+  it('should update the state when SAVE_NOTIFICATION_REJECTED is passed', () => {
+    const action = {
+      type: 'SAVE_NOTIFICATION_REJECTED'
+    };
+    const expected = { notification: [], loading: false, error: true, responseMsg: '' };
+    const newState = UserReducers.appNotification(notificationInitial, action);
+    expect(newState).toEqual(expected);
+  });
+  it('should update the state when GET_NOTIFICATION_SUCCESSFUL is passed', () => {
+    const action = {
+      type: 'GET_NOTIFICATION_SUCCESSFUL', payload: [{ id: 1, message: 'i am here', postedby: 'kola' }]
+    };
+    const expected = { notification: [{ id: 1, message: 'i am here', postedby: 'kola' }], loading: false, error: false, responseMsg: '' };
+    const newState = UserReducers.appNotification(notificationInitial, action);
+    expect(newState).toEqual(expected);
+  });
+  it('should update the state when DELETE_NOTIFICATION_SUCCESSFUL is passed', () => {
+    const action = {
+      type: 'DELETE_NOTIFICATION_SUCCESSFUL', payload: 'notification deleted'
+    };
+    const expected = { notification: [], loading: false, error: false, responseMsg: 'notification deleted' };
+    const newState = UserReducers.appNotification(notificationInitial, action);
     expect(newState).toEqual(expected);
   });
 });

@@ -6,6 +6,7 @@ import Jusibe from 'node-jusibe';
 
 import user from '../services/User';
 import group from '../services/Group';
+import validate from '../helpers/validate';
 import groupUser from '../services/GroupUser';
 import authenticate from '../helpers/authenticate';
 import notificationService from '../services/Notification';
@@ -36,24 +37,24 @@ export default class User {
         message: 'Username should contain only letters and must have between 5-12 characters'
       });
     } else {
-      user.saveUser(username, hashedPassword, email, phoneNumber, (users) => {
-        if (users instanceof Object) {
-          if (Array.isArray(users)) {
-            if (users[1] === false) {
-              res.status(409).json({
-                message: 'You already have an existing account. Kindly go and login'
-              });
-            } else {
+      user.checkUser(username, (checkedUser) => {
+        if (checkedUser.length !== 0) {
+          res.status(409).json({
+            message: 'You already have an existing account. Kindly go and login'
+          });
+        } else {
+          user.saveUser(username, hashedPassword, email, phoneNumber, (users) => {
+            if (users instanceof Object && users.dataValues !== undefined) {
               res.status(201).json({
                 message: 'Registration successful',
-                user: { id: users[0].id, username: users[0].username, email: users[0].email }
+                user: { id: users.id, username: users.username, email: users.email }
               });
+            } else if (typeof users === 'string') {
+              res.status(400).json({ message: users });
+            } else {
+              res.status(500).json({ message: 'Sorry, an unexpected error occurred' });
             }
-          } else {
-            res.status(500).json({ message: 'Sorry, an unexpected error occurred' });
-          }
-        } else {
-          res.status(400).json({ message: users });
+          });
         }
       });
     }
@@ -81,8 +82,8 @@ export default class User {
       } else {
         res.status(401).json({ message: 'Incorrect password' });
       }
-      if (users instanceof Object && !Array.isArray(users)) {
-        res.status(500).json({ message: 'Sorry, unexpected error occurred' });
+      if (validate.hasInternalServerError(users)) {
+        res.status(500).json(validate.sendInternalServerError);
       }
     });
   }
@@ -101,7 +102,11 @@ export default class User {
       res.status(400).json({ message: 'users to ignore should be supplied' });
     } else {
       user.getAllUsers(userrs, (users) => {
-        res.status(200).json({ users });
+        if (validate.hasInternalServerError(users)) {
+          res.status(500).json(validate.sendInternalServerError);
+        } else {
+          res.status(200).json({ users });
+        }
       });
     }
   }
@@ -131,6 +136,9 @@ export default class User {
             } else {
               res.status(404).json({ message: 'This group does not contain any member' });
             }
+            if (validate.hasInternalServerError(users)) {
+              res.status(500).json(validate.sendInternalServerError);
+            }
           });
         }
       });
@@ -154,6 +162,9 @@ export default class User {
       res.status(400).json({ message: 'Both recepient(email) and newPassword are required' });
     } else {
       user.getUserByEmail((recepient), (users) => {
+        if (validate.hasInternalServerError(users)) {
+          res.status(500).json(validate.sendInternalServerError);
+        }
         if (users.length === 0) {
           res.status(404).json({ message: 'Email not found' });
         } else {
@@ -226,12 +237,16 @@ export default class User {
     user.saveUserFromGoogle(username, password, email, phoneNumber, (users) => {
       if (users === 'email must be unique') {
         user.getUserByEmail(email, (userrs) => {
-          const token = authenticate.generateToken({ username: userrs[0].username,
-            id: userrs[0].id });
-          res.status(409).json({
-            message: 'Email already existing',
-            user: { id: userrs[0].id, user: userrs[0].username, email: userrs[0].email, token }
-          });
+          if (validate.hasInternalServerError(userrs)) {
+            res.status(500).json(validate.sendInternalServerError);
+          } else {
+            const token = authenticate.generateToken({ username: userrs[0].username,
+              id: userrs[0].id });
+            res.status(409).json({
+              message: 'Email already existing',
+              user: { id: userrs[0].id, user: userrs[0].username, email: userrs[0].email, token }
+            });
+          }
         });
       } else {
         const token = authenticate.generateToken({
@@ -335,8 +350,6 @@ export default class User {
   static getNotifications(req, res) {
     const userId = req.params.userId;
     notificationService.getNotification(userId, (notification) => {
-      console.log(notification);
-      console.log('check here')
       res.status(200).json({ notifications: notification });
     });
   }

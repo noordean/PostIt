@@ -21,15 +21,11 @@ export default class User {
  * @return {Object} savedData
  */
   static saveUser(username, password, email, phoneNumber, done) {
-    return Users.findOrCreate({
-      where: {
-        username
-      },
-      defaults: {
-        password,
-        email,
-        phoneNumber
-      }
+    return Users.create({
+      username,
+      password,
+      email,
+      phoneNumber
     }).then((user) => {
       done(user);
     }).catch((err) => {
@@ -46,7 +42,7 @@ export default class User {
   }
 
   /**
- * @description: saves user to database
+ * @description: saves user from google to database
  * 
  * @param {String} username username of the user
  * @param {String} password password of the user
@@ -219,6 +215,24 @@ export default class User {
       done(user);
     }).catch((err) => {
       done({ err });
+    });
+  }
+
+  /**
+ * @description: delete a user using the username
+ * 
+ * @param {String} userName username of the user
+ * @param {Function} done callback function
+ * 
+ * @return {Object} deletedData
+ */
+  static checkUser(userName, done) {
+    return Users.findAll({
+      where: {
+        username: { $iLike: userName }
+      }
+    }).then((user) => {
+      done(user);
     });
   }
 }

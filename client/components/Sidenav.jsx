@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import UserActions from '../actions/user';
+import displayError from '../utils/errorDisplay';
 
 /**
   * @class SideNav
@@ -21,6 +22,7 @@ export class SideNav extends Component {
       groupMembers: []
     };
     this.addMembersHandler = this.addMembersHandler.bind(this);
+    this.openAddMembers = this.openAddMembers.bind(this);
   }
 
   /**
@@ -55,17 +57,32 @@ export class SideNav extends Component {
   * @return {void} void
   */
   getMembersHandler() {
-    this.props.getGroupMembers(this.props.groupID)
-      .then(() => {
-        if (this.props.member.members.length > 0) {
-          const newMembers = this.props.member.members.map(user => user.username);
-          this.setState({
-            groupMembers: newMembers
-          });
-        }
-      });
+    this.props.getGroupMembers(this.props.groupID);
   }
 
+  /**
+  * description: clears the addMembers state inputs
+  *
+  * @return {void} void
+  */
+  //eslint-disable-next-line
+  clearAddMembersState() {
+    $('#getChips').val('');
+  }
+  /**
+  * description: It opens the addMembers modal dynamically
+  *
+  * @param {event} event the event being executed
+  *
+  * @return {void} void
+  */
+  //eslint-disable-next-line
+  openAddMembers(event) {
+    event.preventDefault();
+    $('#addMembersModal').modal('open', {
+      complete: this.clearAddMembersState()
+    });
+  }
   /**
   * description: adds members to group
   *
@@ -77,33 +94,18 @@ export class SideNav extends Component {
     event.preventDefault();
     const selectedMembers = $('#getChips').val().split(' ');
     if (selectedMembers[0] === '') {
-      $('#errMsg').text('Kindly select members to add');
-    } else {
-      this.setState({
-        responseMsg: 'Processing...'
-      });
-      this.props.addGroupMembers(this.props.groupID, selectedMembers,
-        JSON.parse(localStorage.user).token)
-        .then(() => {
-          if (this.props.member.reqError) {
-            this.setState({
-              responseMsg: 'Sorry, members could not be added'
-            });
-          } else if (this.props.member.responseMsg !== '') {
-            this.setState({
-              responseMsg: this.props.member.responseMsg
-            });
-          } else {
-            this.setState({
-              responseMsg: 'Members added successfully'
-            });
-            $('#getChips').val('');
-            this.getMembersHandler();
-            $('#modal2').modal('close');
-          }
-        });
-      $('#errMsg').text('');
+      return displayError('Kindly select members to add');
     }
+    this.props.addGroupMembers(this.props.groupID, selectedMembers,
+      JSON.parse(localStorage.user).token)
+      .then(() => {
+        if (this.props.member.responseMsg.length > 0) {
+          return displayError(this.props.member.responseMsg);
+        }
+        this.getMembersHandler();
+        $('#addMembersModal').modal('close');
+        return displayError('Users added');
+      });
   }
 
   /**
@@ -127,11 +129,9 @@ export class SideNav extends Component {
     }
     return (
       <div>
-        <div id="modal2" className="modal">
+        <div id="addMembersModal" className="modal">
           <div className="modal-content">
             <form className="group-form">
-              <div className="center" id="errMsg" />
-              <div className="center">{this.state.responseMsg}</div>
               <div className="input-field row">
                 <div id="chips" className="chips chips-autocomplete" />
               </div>
@@ -160,7 +160,8 @@ export class SideNav extends Component {
           <li>
             <a
               className="waves-effect waves-light btn modal-trigger red darken-4"
-              href="#modal2"
+              href="##"
+              onClick={this.openAddMembers}
               id="addMembers"
             >
               Add members

@@ -35,7 +35,7 @@ export default class GroupReducers {
         return { ...state, responseMsg: action.errorMessage, loading: false };
       case 'CREATE_GROUP_REJECTED':
       case 'GET_GROUPS_REJECTED':
-        return { ...state, error: true, responseMsg: '', loading: false };
+        return { ...state, error: true, responseMsg: action.errorMessage, loading: false };
       default:
         return state;
     }

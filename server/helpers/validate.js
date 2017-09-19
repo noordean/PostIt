@@ -1,14 +1,17 @@
 
 /**
  * @description: validates the supplied req.body for each route
+ * 
  * @class Validate
  */
 export default class Validate {
 /**
  * @description: validates the group details
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
  * @param {Function} next callback function
+ * 
  * @return {Object} response containing the validation status
  */
   static checkGroupName(req, res, next) {
@@ -32,9 +35,11 @@ export default class Validate {
 
   /**
  * @description: validates both groupId and userId
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
  * @param {Function} next callback function
+ * 
  * @return {Object} response containing the validation status
  */
   static checkGroupUserId(req, res, next) {
@@ -57,9 +62,11 @@ export default class Validate {
 
   /**
  * @description: validates the groupId
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
  * @param {Function} next callback function
+ * 
  * @return {Object} response containing the validation status
  */
   static checkGroupId(req, res, next) {
@@ -76,9 +83,11 @@ export default class Validate {
 
   /**
  * @description: validates the userId
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
  * @param {Function} next callback function
+ * 
  * @return {Object} response containing the validation status
  */
   static checkUserId(req, res, next) {
@@ -95,9 +104,11 @@ export default class Validate {
 
   /**
  * @description: validates message details
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
  * @param {Function} next callback function
+ * 
  * @return {Object} response containing the validation status
  */
   static checkMessage(req, res, next) {
@@ -128,9 +139,11 @@ export default class Validate {
 
   /**
  * @description: validates messageId
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
  * @param {Function} next callback function
+ * 
  * @return {Object} response containing the validation status
  */
   static checkMessageId(req, res, next) {
@@ -147,9 +160,11 @@ export default class Validate {
 
   /**
  * @description: validates user's password
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
  * @param {Function} next callback function
+ * 
  * @return {Object} response containing the validation status
  */
   static checkPassword(req, res, next) {
@@ -166,9 +181,11 @@ export default class Validate {
 
   /**
  * @description: validates both username and password
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
  * @param {Function} next callback function
+ * 
  * @return {Object} response containing the validation status
  */
   static checkUserPass(req, res, next) {
@@ -185,5 +202,27 @@ export default class Validate {
       return res.status(400).json({ message: `${validationErrors[0]} must be supplied` });
     }
     return next();
+  }
+
+  /**
+ * @description: checks for internal server error from services
+ * 
+ * @param {Object} dbResponse response from services
+ * 
+ * @return {Object} response object
+ */
+  static hasInternalServerError(dbResponse) {
+    if (dbResponse instanceof Object && !Array.isArray(dbResponse)) {
+      return true;
+    }
+  }
+
+  /**
+ * @description: sends response for internal server error
+ * 
+ * @return {Object} response object
+ */
+  static sendInternalServerError() {
+    return ({ message: 'Sorry, unexpected error occurred' });
   }
 }

@@ -1,6 +1,9 @@
 import moxios from 'moxios';
 import thunk from 'redux-thunk';
 import configureMockStore from 'redux-mock-store';
+import expect from 'expect';
+
+
 import GroupActions from '../../actions/group';
 
 const middleware = [thunk];
@@ -27,12 +30,13 @@ describe('Group Actions', () => {
           type: 'CREATE_GROUP_SUCCESSFUL',
           groups: { id: 1, groupMame: 'myGroup' },
         }];
-      store.dispatch(GroupActions.createGroup('groupName', 'description', 'groupMembers')).then(() => {
-        expect(store.getActions()).toEqual(expectedAction);
-      });
+      store.dispatch(GroupActions.createGroup('groupName', 'description', 'groupMembers'))
+        .then(() => {
+          expect(store.getActions()).toEqual(expectedAction);
+        });
       done();
     });
-    it("Should dispatch appropraite action type if there's an error", (done) => {
+    it('Should dispatch appropraite action type if group creation is not successful', (done) => {
       moxios.stubRequest('/api/v1/group', {
         status: 400,
         response: {
@@ -48,19 +52,19 @@ describe('Group Actions', () => {
           type: 'CREATE_GROUP_UNSUCCESSFUL',
           errorMessage: 'Group could not be created'
         }];
-      store.dispatch(GroupActions.createGroup('groupName', 'description', 'groupMembers')).then(() => {
-        expect(store.getActions()).toEqual(expectedAction);
-      });
+      store.dispatch(GroupActions.createGroup('groupName', 'description', 'groupMembers'))
+        .then(() => {
+          expect(store.getActions()).toEqual(expectedAction);
+        });
       done();
     });
   });
 
   describe('Get Groups', () => {
-    const user = 'akinoau';
     const offset = 0;
-    const limit = 6;
+    const limit = 1;
     it('Should make a get request to get all the groups a user belongs to', (done) => {
-      moxios.stubRequest(`/api/v1/groups/${user}/${offset}/${limit}`, {
+      moxios.stubRequest(`/api/v1/user/groups?limit=${limit}&offset=${offset}`, {
         status: 200,
         response: {
           rows: [{ id: 1, groupName: 'anonymous' }],
@@ -73,16 +77,17 @@ describe('Group Actions', () => {
           type: 'GET_GROUPS_BEGINS'
         },
         {
-          type: 'GeT_GROUPS_SUCCESSFUL',
-          groups: [{ id: 1, groupName: 'anonymous' }], pageCount: 100
+          type: 'GET_GROUPS_SUCCESSFUL',
+          groups: [{ id: 1, groupName: 'anonymous' }],
+          pageCount: 100
         }];
-      store.dispatch(GroupActions.getGroups()).then(() => {
+      store.dispatch(GroupActions.getGroups(1, 0)).then(() => {
         expect(store.getActions()).toEqual(expectedAction);
       });
       done();
     });
     it("Should dispatch appropraite action type if there's an error", (done) => {
-      moxios.stubRequest('/api/v1/user/2/groups?limit=6&offset=0', {
+      moxios.stubRequest(`/api/v1/user/groups?limit=${limit}&offset=${offset}`, {
         status: 400,
         response: {
           message: 'could not get groups',
@@ -94,24 +99,10 @@ describe('Group Actions', () => {
           type: 'GET_GROUPS_BEGINS'
         },
         {
-          type: 'GET_GROUPS_REJECTED',
+          type: 'GET_GROUPS_UNSUCCESSFUL',
           errorMessage: 'could not get groups'
         }];
-      store.dispatch(GroupActions.getGroups()).then(() => {
-        expect(store.getActions()).toEqual(expectedAction);
-      });
-      done();
-    });
-    it("Should dispatch appropraite action type if there's an unexpected error", (done) => {
-      moxios.stubRequest('/api/v1/user/2/groups?limit=6&offset=0', {
-        status: 500
-      });
-      const store = mockStore({});
-      const expectedAction = [
-        {
-          type: 'GET_GROUPS_REJECTED'
-        }];
-      store.dispatch(GroupActions.getGroups(2)).then(() => {
+      store.dispatch(GroupActions.getGroups(1, 0)).then(() => {
         expect(store.getActions()).toEqual(expectedAction);
       });
       done();

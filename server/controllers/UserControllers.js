@@ -91,7 +91,7 @@ export default class UserControllers {
         res.status(401).json({ message: 'Incorrect password' });
       }
       if (validate.hasInternalServerError(users)) {
-        res.status(500).json(validate.sendInternalServerError);
+        res.status(500).json(validate.sendInternalServerError());
       }
     });
   }
@@ -112,7 +112,7 @@ export default class UserControllers {
     } else {
       user.getAllUsers(currentMembers, (users) => {
         if (validate.hasInternalServerError(users)) {
-          res.status(500).json(validate.sendInternalServerError);
+          res.status(500).json(validate.sendInternalServerError());
         } else {
           res.status(200).json({ users });
         }
@@ -148,7 +148,7 @@ export default class UserControllers {
                 'This group does not contain any member' });
             }
             if (validate.hasInternalServerError(users)) {
-              res.status(500).json(validate.sendInternalServerError);
+              res.status(500).json(validate.sendInternalServerError());
             }
           });
         }
@@ -179,7 +179,7 @@ export default class UserControllers {
       email: recepient });
       user.getUserByEmail((recepient), (users) => {
         if (validate.hasInternalServerError(users)) {
-          res.status(500).json(validate.sendInternalServerError);
+          res.status(500).json(validate.sendInternalServerError());
         }
         if (users.length === 0) {
           res.status(404).json({ message: 'Email not found' });
@@ -242,7 +242,7 @@ export default class UserControllers {
       if (users === 'email must be unique') {
         user.getUserByEmail(email, (userrs) => {
           if (validate.hasInternalServerError(userrs)) {
-            res.status(500).json(validate.sendInternalServerError);
+            res.status(500).json(validate.sendInternalServerError());
           } else {
             const token = authenticate.generateToken(
               { username: userrs[0].username,

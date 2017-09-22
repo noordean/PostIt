@@ -51,7 +51,7 @@ export default class GroupControllers {
         });
       }
       if (validate.hasInternalServerError(groups)) {
-        res.status(500).json(validate.sendInternalServerError);
+        res.status(500).json(validate.sendInternalServerError());
       }
     });
   }
@@ -84,7 +84,7 @@ export default class GroupControllers {
             res.status(409).json({ message: 'User already in the group' });
           }
           if (validate.hasInternalServerError(useR)) {
-            res.status(500).json(validate.sendInternalServerError);
+            res.status(500).json(validate.sendInternalServerError());
           }
         });
       } else {
@@ -131,7 +131,7 @@ export default class GroupControllers {
             res.status(200).json({ messages: groupMessages.messages });
           }
           if (validate.hasInternalServerError(groupMessages)) {
-            res.status(500).json(validate.sendInternalServerError);
+            res.status(500).json(validate.sendInternalServerError());
           }
         });
       }
@@ -190,7 +190,7 @@ export default class GroupControllers {
               'This user does not have any group yet' });
           }
           if (validate.hasInternalServerError(groups)) {
-            res.status(500).json(validate.sendInternalServerError);
+            res.status(500).json(validate.sendInternalServerError());
           }
         });
       }

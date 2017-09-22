@@ -119,7 +119,7 @@ export default class MessageControllers {
       const dueMessagesIds = dueMessages.map(dueMsgs => dueMsgs.messageId);
       group.getGroupMessages(groupId, (groupMessages) => {
         if (validate.hasInternalServerError(groupMessages)) {
-          res.status(500).json(validate.sendInternalServerError);
+          res.status(500).json(validate.sendInternalServerError());
         } else {
           const archivedMsgs = groupMessages.messages.filter(archMsgs => (
             dueMessagesIds.indexOf(archMsgs.id) !== -1));
@@ -144,7 +144,7 @@ export default class MessageControllers {
       const readUsers = users.map(user => user.userId);
       userService.getTotalUsers((user) => {
         if (validate.hasInternalServerError(user)) {
-          res.status(500).json(validate.sendInternalServerError);
+          res.status(500).json(validate.sendInternalServerError());
         } else {
           const displayUser = user.filter(userData => (
             readUsers.indexOf(userData.id) !== -1));

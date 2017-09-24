@@ -96,7 +96,7 @@ export class Dashboard extends Component {
     if (!localStorage.user) {
       dashboard = <Home />;
     } else if (this.props.group.loading) {
-      dashboard = <div className="text center">Loading...</div>;
+      dashboard = <div className="text center loading-groups">Loading...</div>;
     } else if (this.state.groups.length > 0) {
       dashboard = this.state.groups.map(group => (<div
         className="col s12 m6"
@@ -105,7 +105,7 @@ export class Dashboard extends Component {
         <div className="card">
           <div className="card-content grey lighten-4 text">
             <span className="card-title">{group.groupname}</span>
-            <p>{group.description}</p>
+            <p className="group-desc">{group.description}</p>
           </div>
           <div className="card-action grey lighten-4">
             <Link

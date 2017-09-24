@@ -228,7 +228,7 @@ export class MessageBoard extends Component {
 
     let messageBoard;
     if (this.props.groupMessages.loading) {
-      messageBoard = <div className="center">Loading messages...</div>;
+      messageBoard = <div className="center loading-messages">Loading messages...</div>;
     } else if (this.state.messages.length > 0) {
       messageBoard = this.state.messages.map(message => (
         <div key={message.id}>

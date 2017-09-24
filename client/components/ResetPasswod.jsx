@@ -42,7 +42,7 @@ export const ResetPassword = props => (
           <div className="input-field col s12">
             <a
               href="##"
-              className="btn waves-effect waves-light col s12 red darken-4"
+              className="btn waves-effect waves-light col s12 red darken-4 pass"
               onClick={props.onSubmit}
             >Submit</a>
           </div>

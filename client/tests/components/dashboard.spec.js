@@ -66,5 +66,27 @@ describe('Dashboard component', () => {
     expect(mountWrapper.props().group.groups[0].description)
       .toBe('some description');
   });
+  it('should render groups when state is updated with created groups',
+    () => {
+      const mountWrapper = setup(mount);
+      mountWrapper.setState({
+        groups: [{ id: 1, groupname: 'Fengshui', description: 'for sims' }] });
+      const eleName = mountWrapper.find('.card-title');
+      const eleDesc = mountWrapper.find('.group-desc');
+      expect(eleName.text()).toBe('Fengshui');
+      expect(eleDesc.text()).toBe('for sims');
+    });
+  it('should render loading... when props "loading" is true',
+    () => {
+      const mountWrapper = setup(mount);
+      mountWrapper.setProps({ group: {
+        groups: [],
+        error: false,
+        pageCount: 3,
+        loading: true
+      } });
+      const eleLoading = mountWrapper.find('.loading-groups');
+      expect(eleLoading.text()).toBe('Loading...');
+    });
 });
 

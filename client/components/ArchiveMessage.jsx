@@ -58,9 +58,19 @@ export class ArchiveMessage extends Component {
 
     let archiveBoard;
     if (this.state.responseMsg !== '') {
-      archiveBoard = <div className="center">{this.state.responseMsg}</div>;
+      archiveBoard = (
+        <div
+          className="center error-message"
+        >
+          {this.state.responseMsg}
+        </div>);
     } else if (this.props.archivedMessages.loading) {
-      archiveBoard = <div className="center">Loading messages...</div>;
+      archiveBoard = (
+        <div
+          className="center loading-messages"
+        >
+          Loading messages...
+        </div>);
     } else if (this.state.messages.length > 0) {
       archiveBoard = this.state.messages.map(message => (
         <div key={message.id}>

@@ -11,7 +11,7 @@ import displayError from '../utils/errorDisplay';
 /**
   * @class Dashboard
   */
-class SignIn extends Component {
+export class SignIn extends Component {
 /**
   * @constructor
   * @param {object} props

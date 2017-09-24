@@ -204,11 +204,7 @@ Header.propTypes = {
   createGroup: PropTypes.func.isRequired,
   getGroups: PropTypes.func.isRequired,
   group: PropTypes.shape({
-    error: PropTypes.bool,
-    responseMsg: PropTypes.string,
-    loading: PropTypes.bool,
-    groups: PropTypes.arrayOf(PropTypes.object.isRequired),
-    pageCount: PropTypes.number
+    responseMsg: PropTypes.string
   }).isRequired,
 };
 

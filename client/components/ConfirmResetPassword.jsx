@@ -55,7 +55,7 @@ export class ConfirmResetPassword extends Component {
     let status;
     if (this.state.responseMsg === 'success') {
       status =
-      (<p className="text center">
+      (<p className="text center success-message">
         Password successfully changed. You can now click
         <Link to="/signin">here</Link> to login
       </p>);

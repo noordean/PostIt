@@ -32,4 +32,12 @@ describe('<ConfirmResetPassword />', () => {
     expect(ConfirmResetPassword.prototype.componentWillMount.calledOnce)
       .toBe(true);
   });
+  it('should render a success message if password is successfully changed',
+    () => {
+      wrapper.setState({
+        responseMsg: 'success' });
+      const eleSuccess = wrapper.find('.success-message');
+      expect(eleSuccess.text()).toBe(
+        'Password successfully changed. You can now clickhere to login');
+    });
 });

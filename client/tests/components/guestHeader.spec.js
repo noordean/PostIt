@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import { mount, shallow } from 'enzyme';
+import { mount } from 'enzyme';
 import sinon from 'sinon';
 
 import { GuestHeader } from '../../components/GuestHeader.jsx';
@@ -14,12 +14,15 @@ localStorageMock.user = JSON.stringify({
 const setup = () => {
   const props = {
     sentMail: {},
-    mailPassword: () => {}
+    mailPassword: () => Promise.resolve()
   };
   return mount(<GuestHeader {...props} />);
 };
 const wrapper = setup();
 describe('<GuestHeader />', () => {
+  beforeEach(() => {
+    global.Materialize = { toast: () => {} };
+  });
   it('should display the necessary elements', () => {
     expect(wrapper.find('div').length).toBe(12);
     expect(wrapper.find('div').exists()).toBe(true);
@@ -34,12 +37,22 @@ describe('<GuestHeader />', () => {
     wrapper.instance().onChange(event);
     expect(wrapper.state().name).toEqual('value');
   });
-  it('should call openPasswordReset() when .reset-pass btn is clicked', () => {
-    const spy = sinon.spy();
-    GuestHeader.prototype.openPasswordReset = spy;
-    const shallowWrapper = shallow(
-      <GuestHeader sentMail={{}} mailPassword={() => {}} />);
-    shallowWrapper.find('.reset-pass').simulate('click');
+  it('should run clearResetPasswordState when called and then reset state',
+    () => {
+      const spy = sinon.spy(GuestHeader.prototype, 'clearResetPasswordState');
+      wrapper.instance().clearResetPasswordState();
+      expect(spy.calledOnce).toBe(true);
+      expect(wrapper.state().email).toEqual('');
+      expect(wrapper.state().password).toEqual('');
+      expect(wrapper.state().confirmPassword).toEqual('');
+    });
+  it('should run submitResetPassword when called and then reset state', () => {
+    const spy = sinon.spy(GuestHeader.prototype, 'submitResetPassword');
+    const newWrapper = setup();
+    newWrapper.instance().submitResetPassword({ preventDefault() {} });
     expect(spy.calledOnce).toBe(true);
+    expect(newWrapper.state().email).toEqual('');
+    expect(newWrapper.state().password).toEqual('');
+    expect(newWrapper.state().confirmPassword).toEqual('');
   });
 });

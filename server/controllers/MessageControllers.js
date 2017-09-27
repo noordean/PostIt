@@ -6,6 +6,7 @@ import message from '../services/Message';
 import groupUser from '../services/GroupUser';
 import userService from '../services/User';
 import readMessageService from '../services/ReadMessage';
+import validate from '../helpers/validate';
 
 dotenv.config();
 const jwtSecret = process.env.jwtSecret;
@@ -15,29 +16,35 @@ const jwtSecret = process.env.jwtSecret;
  * 
  * @class
  */
-export default class Message {
+export default class MessageControllers {
   /**
- * @description: posts a message to a group through route POST: api/group/:groupID/message
+ * @description: posts a message to a group through
+ * route POST: api/group/:groupId/message
  * 
  * @param {Object} req request object
  * @param {Object} res response object
  * 
  * @return {Object} response containing the posted message
  */
-  static postMessageToGroup(req, res) {
-    const [groupID, mssg, priority, decode] = [req.params.groupID, req.body.message,
-      req.body.priority, jwt.verify(req.headers.token || req.body.token, jwtSecret)];
-    group.getGroupById(groupID, (groups) => {
+  static postMessage(req, res) {
+    const [groupId, mssg, priority, decode] = [req.params.groupId,
+      req.body.message, req.body.priority, jwt.verify(req.headers.token ||
+      req.body.token, jwtSecret)];
+    group.getGroupById(groupId, (groups) => {
       if (groups.length === 0) {
         res.status(404).json({ message: 'Group does not exist' });
       } else {
-        groupUser.getUser(decode.id, groupID, (member) => {
+        groupUser.getUser(decode.id, groupId, (member) => {
           if (member.length > 0) {
-            message.postMessage(groupID, decode.username, mssg, priority, (msg) => {
-              res.status(201).json({ message: 'Message posted successfully', Message: msg });
-            });
+            message.postMessage(groupId,
+              decode.username, mssg, priority, (msg) => {
+                res.status(201).json({ message:
+                  'Message posted successfully',
+                Message: msg });
+              });
           } else {
-            res.status(401).json({ message: 'You do not belong to this group' });
+            res.status(401).json({ message:
+              'You do not belong to this group' });
           }
         });
       }
@@ -45,7 +52,7 @@ export default class Message {
   }
 
   /**
- * @description: delete a message through route DELETE: api/message/:messageID
+ * @description: delete a message through route DELETE: api/message/:messageId
  * 
  * @param {Object} req request object
  * @param {Object} res response object
@@ -53,15 +60,16 @@ export default class Message {
  * @return {Object} response containing the number of deleted messages
  */
   static deleteMessage(req, res) {
-    const messageID = req.params.messageID;
+    const messageId = req.params.messageId;
     const decode = jwt.verify(req.headers.token || req.body.token, jwtSecret);
-    message.getMessageById(messageID, (msg) => {
+    message.getMessageById(messageId, (msg) => {
       if (msg.length === 0) {
         res.status(404).json({ message: 'Invalid message id' });
       } else if (msg[0].postedby !== decode.username) {
-        res.status(403).json({ message: 'Only the poster of the message can delete it' });
+        res.status(403).json({ message:
+          'Only the poster of the message can delete it' });
       } else {
-        message.deleteMessage(messageID, () => {
+        message.deleteMessage(messageId, () => {
           res.status(200).json({ message: 'message deleted' });
         });
       }
@@ -69,14 +77,15 @@ export default class Message {
   }
 
   /**
- * @description: adds a read message through api/v1/group/:groupId/message/archive
+ * @description: adds a read message through
+ * api/v1/group/:groupId/message/archive
  * 
  * @param {Object} req request object
  * @param {Object} res response object
  * 
  * @return {Object} response containing the number of deleted messages
  */
-  static archiveReadMessage(req, res) {
+  static archiveMessage(req, res) {
     const groupId = req.params.groupId;
     const messageIds = req.body.messageIds;
     const userId = req.body.userId;
@@ -87,12 +96,14 @@ export default class Message {
       });
       res.status(201).json({ message: 'read messages added' });
     } else {
-      res.status(400).json({ message: 'Please supply an array for messageIds' });
+      res.status(400).json({ message:
+        'Please supply an array for messageIds' });
     }
   }
 
   /**
- * @description: adds a read message through route api/v1/group/:groupId/message/archive
+ * @description: adds a read message through
+ * route api/v1/group/:groupId/message/archive
  * 
  * @param {Object} req request object
  * @param {Object} res response object
@@ -107,28 +118,38 @@ export default class Message {
         Date.now() - new Date(msg.createdAt).getTime() > 180000)));
       const dueMessagesIds = dueMessages.map(dueMsgs => dueMsgs.messageId);
       group.getGroupMessages(groupId, (groupMessages) => {
-        const archivedMsgs = groupMessages.messages.filter(archMsgs => (
-          dueMessagesIds.indexOf(archMsgs.id) !== -1));
-        res.status(200).json({ messages: archivedMsgs });
+        if (validate.hasInternalServerError(groupMessages)) {
+          res.status(500).json(validate.sendInternalServerError());
+        } else {
+          const archivedMsgs = groupMessages.messages.filter(archMsgs => (
+            dueMessagesIds.indexOf(archMsgs.id) !== -1));
+          res.status(200).json({ messages: archivedMsgs });
+        }
       });
     });
   }
   /**
- * @description: adds a read message through route api/v1/message/:messageId/user
+ * @description: gets users that have read a message through
+ * route api/v1/message/:messageId/user
  * 
  * @param {Object} req request object
  * @param {Object} res response object
  * 
  * @return {Object} response containing the number of deleted messages
  */
-  static getReadMessageUser(req, res) {
+  static getUser(req, res) {
     const messageId = req.params.messageId;
     const groupId = req.query.groupId;
     readMessageService.getUsers(messageId, groupId, (users) => {
       const readUsers = users.map(user => user.userId);
       userService.getTotalUsers((user) => {
-        const displayUser = user.filter(userData => (readUsers.indexOf(userData.id) !== -1));
-        res.status(200).json({ users: displayUser });
+        if (validate.hasInternalServerError(user)) {
+          res.status(500).json(validate.sendInternalServerError());
+        } else {
+          const displayUser = user.filter(userData => (
+            readUsers.indexOf(userData.id) !== -1));
+          res.status(200).json({ users: displayUser });
+        }
       });
     });
   }

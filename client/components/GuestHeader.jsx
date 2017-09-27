@@ -5,7 +5,8 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import ResetPassword from './ResetPasswod.jsx';
-import UserActions from '../actions/user';
+import UserActions from '../actions/UserActions';
+import displayError from '../utils/errorDisplay';
 
 /**
   * @class GuestHeader
@@ -13,6 +14,7 @@ import UserActions from '../actions/user';
 export class GuestHeader extends Component {
 /**
   * @constructor
+  *
   * @param {object} props
   */
   constructor(props) {
@@ -21,7 +23,6 @@ export class GuestHeader extends Component {
       email: '',
       password: '',
       confirmPassword: '',
-      responseMsg: ''
     };
     this.openPasswordReset = this.openPasswordReset.bind(this);
     this.onChange = this.onChange.bind(this);
@@ -29,21 +30,10 @@ export class GuestHeader extends Component {
   }
 
   /**
-  * description: controls what happens when state is about to change
-  * @param {object} nextProps The next state
-  * @return {void} void
-  */
-  componentWillReceiveProps(nextProps) {
-    if (this.props !== nextProps) {
-      this.setState({
-        responseMsg: nextProps.sentMail.responseMsg
-      });
-    }
-  }
-
-  /**
   * description: controls inputs state
-  * @param {object} element the current elementv
+  *
+  * @param {object} element the current element
+  *
   * @return {void} void
   */
   onChange(element) {
@@ -55,41 +45,67 @@ export class GuestHeader extends Component {
 
   /**
   * description: controls the resetPassword form
+  *
   * @param {object} event the event being executed
+  *
   * @return {void} void
   */
   submitResetPassword(event) {
     event.preventDefault();
     if (this.state.password !== this.state.confirmPassword) {
-      this.setState({
-        responseMsg: 'The two passwords did not match'
-      });
-    } else {
-      this.props.sendPasswordResetMail(this.state.email, this.state.password);
+      return displayError('The two passwords did not match!');
     }
+    this.props.mailPassword(this.state.email, this.state.password)
+      .then(() => {
+        if (!this.props.sentMail.success &&
+          this.props.sentMail.responseMsg.length > 0) {
+          return displayError(this.props.sentMail.responseMsg);
+        }
+        if (this.props.sentMail.success) {
+          $('#resetPassword').modal('close');
+          return displayError(this.props.sentMail.responseMsg);
+        }
+      });
+  }
+
+  /**
+  * description: clears the resetPassword state inputs
+  *
+  * @return {void} void
+  */
+  clearResetPasswordState() {
+    this.setState({
+      email: '',
+      password: '',
+      confirmPassword: ''
+    });
   }
 
   /**
   * description: It opens the resetPassword modal dynamically
+  *
   * @param {event} event the event being executed
+  *
   * @return {void} void
   */
   //eslint-disable-next-line
   openPasswordReset(event) {
     event.preventDefault();
-    $('#resetPassword').modal('open');
+    $('#resetPassword').modal('open', {
+      complete: this.clearResetPasswordState()
+    });
   }
 
 
   /**
   * description: renders the component
+  *
   * @return {void} void
   */
   render() {
     return (
       <div>
         <ResetPassword
-          errorMsg={this.state.responseMsg}
           onChange={this.onChange}
           emailInput={this.state.email}
           passwordInput={this.state.password}
@@ -98,10 +114,14 @@ export class GuestHeader extends Component {
         />
         <nav>
           <div className="nav-wrapper red darken-4">
-            <Link id="navLogo" href="/" className="brand-logo left">PostIt</Link>
+            <Link
+              id="navLogo"
+              href="/"
+              className="brand-logo left"
+            >PostIt</Link>
             <ul className="right">
               <li><a
-                className="waves-effect waves-light btn modal-trigger red darken-4"
+                className="waves-effect waves-light btn modal-trigger red darken-4 reset-pass"
                 href="#resetPassword"
                 onClick={this.openPasswordReset}
               >Reset Password
@@ -118,9 +138,10 @@ export class GuestHeader extends Component {
 }
 
 GuestHeader.propTypes = {
-  sendPasswordResetMail: PropTypes.func.isRequired,
+  mailPassword: PropTypes.func.isRequired,
   sentMail: PropTypes.shape({
     responseMsg: PropTypes.string,
+    success: PropTypes.bool,
     error: PropTypes.bool,
     loading: PropTypes.bool
   }).isRequired
@@ -131,7 +152,7 @@ const mapStateToProps = state => ({
 });
 
 const matchDispatchToProps = dispatch => bindActionCreators({
-  sendPasswordResetMail: UserActions.sendPasswordResetMail
+  mailPassword: UserActions.mailPassword
 }, dispatch);
 
 export default connect(mapStateToProps, matchDispatchToProps)(GuestHeader);

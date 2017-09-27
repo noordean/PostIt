@@ -14,7 +14,7 @@ localStorageMock.user = JSON.stringify({
 const setup = () => {
   const props = {
     params: { token: '' },
-    verifyPasswordReset: () => {},
+    verifyPassword: () => {},
     verifyMailUrl: {}
   };
   return mount(<ConfirmResetPassword {...props} />);
@@ -29,6 +29,15 @@ describe('<ConfirmResetPassword />', () => {
   it('should call componentWillMount', () => {
     sinon.spy(ConfirmResetPassword.prototype, 'componentWillMount');
     setup(mount);
-    expect(ConfirmResetPassword.prototype.componentWillMount.calledOnce).toBe(true);
+    expect(ConfirmResetPassword.prototype.componentWillMount.calledOnce)
+      .toBe(true);
   });
+  it('should render a success message if password is successfully changed',
+    () => {
+      wrapper.setState({
+        responseMsg: 'success' });
+      const eleSuccess = wrapper.find('.success-message');
+      expect(eleSuccess.text()).toBe(
+        'Password successfully changed. You can now clickhere to login');
+    });
 });

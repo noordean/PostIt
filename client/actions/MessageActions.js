@@ -18,7 +18,7 @@ export default class MessageActions {
   *
   * @memberof MessageActions
   */
-  static postGroupMessage(groupID, message, priority) {
+  static postMessage(groupID, message, priority) {
     return (dispatch) => {
       dispatch({ type: 'POST_MESSAGE_BEGINS' });
       return axios.post(`/api/v1/group/${groupID}/message`, {
@@ -27,13 +27,16 @@ export default class MessageActions {
         priority
       })
         .then((response) => {
-          dispatch({ type: 'POST_MESSAGE_SUCCESSFUL', payload: response.data.Message });
+          dispatch({ type: 'POST_MESSAGE_SUCCESSFUL',
+            payload: response.data.Message });
         })
         .catch((err) => {
-          if (err.response.data.message) {
-            dispatch({ type: 'POST_MESSAGE_UNSUCCESSFUL', payload: err.response.data.message });
+          if (err.response.status === 500) {
+            dispatch({ type: 'POST_MESSAGE_REJECTED',
+              payload: 'Sorry, an unexpected error occurred' });
           } else {
-            dispatch({ type: 'POST_MESSAGE_REJECTED' });
+            dispatch({ type: 'POST_MESSAGE_UNSUCCESSFUL',
+              payload: err.response.data.message });
           }
         });
     };
@@ -57,13 +60,16 @@ export default class MessageActions {
       dispatch({ type: 'GET_MESSAGES_BEGINS' });
       return axios.get(`/api/v1/group/${groupID}/messages?userId=${userId}`)
         .then((response) => {
-          dispatch({ type: 'GET_MESSAGES_SUCCESSFUL', payload: response.data.messages });
+          dispatch({ type: 'GET_MESSAGES_SUCCESSFUL',
+            payload: response.data.messages });
         })
         .catch((err) => {
-          if (err.response.data.message) {
-            dispatch({ type: 'GET_MESSAGES_UNSUCCESSFUL', payload: err.response.data.message });
+          if (err.response.status === 500) {
+            dispatch({ type: 'GET_MESSAGES_REJECTED',
+              payload: 'Sorry, an unexpected error occurred' });
           } else {
-            dispatch({ type: 'GET_MESSAGES_REJECTED' });
+            dispatch({ type: 'GET_MESSAGES_UNSUCCESSFUL',
+              payload: err.response.data.message });
           }
         });
     };
@@ -84,18 +90,22 @@ export default class MessageActions {
   */
   static archiveReadMessages(groupId, userId, messageIds) {
     return (dispatch) => {
+      dispatch({ type: 'ARCHIVE_MESSAGES_BEGINS' });
       return axios.post(`/api/v1/group/${groupId}/message/archive`, {
         userId,
         messageIds
       })
         .then((response) => {
-          dispatch({ type: 'ARCHIVE_MESSAGES_SUCCESSFUL', message: response.data.message });
+          dispatch({ type: 'ARCHIVE_MESSAGES_SUCCESSFUL',
+            message: response.data.message });
         })
         .catch((err) => {
-          if (err.response.data.message) {
-            dispatch({ type: 'ARCHIVE_MESSAGES_UNSUCCESSFUL', message: err.response.data.message });
+          if (err.response.status === 500) {
+            dispatch({ type: 'ARCHIVE_MESSAGES_FAILED_UNEXPECTEDLY',
+              message: 'Sorry, an unexpected error occurred.' });
           } else {
-            dispatch({ type: 'ARCHIVE_MESSAGES_FAILED_UNEXPECTEDLY' });
+            dispatch({ type: 'ARCHIVE_MESSAGES_UNSUCCESSFUL',
+              message: err.response.data.message });
           }
         });
     };
@@ -117,15 +127,19 @@ export default class MessageActions {
   static getArchivedMessages(groupID, userId) {
     return (dispatch) => {
       dispatch({ type: 'GET_ARCHIVE_MESSAGES_BEGINS' });
-      return axios.get(`/api/v1/group/${groupID}/message/archive?userId=${userId}`)
+      return axios.get(
+        `/api/v1/group/${groupID}/message/archive?userId=${userId}`)
         .then((response) => {
-          dispatch({ type: 'GET_ARCHIVE_MESSAGES_SUCCESSFUL', payload: response.data.messages });
+          dispatch({ type: 'GET_ARCHIVE_MESSAGES_SUCCESSFUL',
+            payload: response.data.messages });
         })
         .catch((err) => {
-          if (err.response.data.message) {
-            dispatch({ type: 'GET_ARCHIVE_MESSAGES_UNSUCCESSFUL', payload: err.response.data.message });
+          if (err.response.status === 500) {
+            dispatch({ type: 'GET_ARCHIVE_MESSAGES_REJECTED',
+              payload: 'Sorry, an unexpected error occurred.' });
           } else {
-            dispatch({ type: 'GET_ARCHIVE_MESSAGES_REJECTED' });
+            dispatch({ type: 'GET_ARCHIVE_MESSAGES_UNSUCCESSFUL',
+              payload: err.response.data.message });
           }
         });
     };

@@ -1,23 +1,51 @@
 import express from 'express';
 
-import user from '../controllers/user';
-import group from '../controllers/group';
+import UserControllers from '../controllers/UserControllers';
+import GroupControllers from '../controllers/GroupControllers';
 import authenticate from '../helpers/authenticate';
 import validate from '../helpers/validate';
 
-const userRouter = express.Router();
+const user = express.Router();
 
-userRouter.post('/api/v1/user/signup', validate.checkPassword, user.signUp);
-userRouter.post('/api/v1/user/signin', validate.checkUserPass, user.signIn);
-userRouter.post('/api/v1/user/reset-password', user.sendMailForPasswordReset);
-userRouter.post('/api/v1/user/email/verify', user.verifyPasswordReset);
-userRouter.post('/api/v1/user/email', user.sendMailForPasswordReset);
-userRouter.post('/api/v1/user/sms', user.sendSmsForNotification);
-userRouter.post('/api/v1/user/signup/google', user.registerUserFromGoogle);
-userRouter.get('/api/v1/users', authenticate.verifyToken, user.getAllUsers);
-userRouter.post('/api/v1/user/notification', user.saveNotification);
-userRouter.get('/api/v1/user/:userId/notification', user.getNotifications);
-userRouter.get('/api/v1/user/groups', authenticate.verifyToken, group.getUserGroups);
-userRouter.delete('/api/v1/user/:userId/notification', user.deleteNotification);
+user.post('/api/v1/user/signup',
+  validate.checkPassword,
+  UserControllers.signUp
+);
+user.post('/api/v1/user/signin',
+  validate.checkUser,
+  UserControllers.signIn
+);
+user.post('/api/v1/user/reset-password',
+  UserControllers.mailPassword
+);
+user.post('/api/v1/user/email/verify',
+  UserControllers.verifyPassword
+);
+user.post('/api/v1/user/email',
+  UserControllers.mailNotification
+);
+user.post('/api/v1/user/sms',
+  UserControllers.smsNotification
+);
+user.post('/api/v1/user/signup/google',
+  UserControllers.registerGoogleUser
+);
+user.get('/api/v1/users',
+  authenticate.verifyToken,
+  UserControllers.getAvailableUsers
+);
+user.post('/api/v1/user/notification',
+  UserControllers.saveNotification
+);
+user.get('/api/v1/user/:userId/notification',
+  UserControllers.getNotifications
+);
+user.get('/api/v1/user/groups',
+  authenticate.verifyToken,
+  GroupControllers.getUserGroups
+);
+user.delete('/api/v1/user/:userId/notification',
+  UserControllers.deleteNotification
+);
 
-export default userRouter;
+export default user;

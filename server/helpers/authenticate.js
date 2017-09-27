@@ -5,12 +5,15 @@ dotenv.config();
 const jwtSecret = process.env.jwtSecret;
 /**
  * @description: protects the routes with jwt
+ * 
  * @class Authenticate
  */
 export default class Authenticate {
 /**
  * @description: generate a login token
+ * 
  * @param {Object} payload payload to generate token
+ * 
  * @return {String} the generated token
  */
   static generateToken(payload) {
@@ -22,9 +25,11 @@ export default class Authenticate {
 
   /**
  * @description: verifies the supplied token
+ * 
  * @param {Object} req request object
  * @param {Object} res response object
  * @param {Function} next callback function
+ * 
  * @return {Object} response containing user's access status
  */
   static verifyToken(req, res, next) {
@@ -32,12 +37,14 @@ export default class Authenticate {
     if (token) {
       jwt.verify(token, jwtSecret, (err, decode) => {
         if (decode === undefined) {
-          return res.status(401).json({ message: 'Access denied!. Kindly login' });
+          return res.status(401).json({ message:
+            'Access denied!. Kindly login' });
         }
         return next();
       });
     } else {
-      return res.status(401).json({ message: 'Your login token must be provided' });
+      return res.status(401).json(
+        { message: 'Your login token must be provided' });
     }
   }
 }

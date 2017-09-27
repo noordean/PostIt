@@ -7,7 +7,9 @@ const Home = () => {
     return <Dashboard />;
   }
   return (
-    <blockquote> A small group of thoughtful people could change the world </blockquote>
+    <blockquote>
+      A small group of thoughtful people could change the world
+    </blockquote>
   );
 };
 

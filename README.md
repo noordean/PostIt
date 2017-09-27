@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/noordean/PostIt.svg?branch=implement-feedback)](https://travis-ci.org/noordean/PostIt)
-[![Coverage Status](https://coveralls.io/repos/github/noordean/PostIt/badge.svg?branch=implement-feedback)](https://coveralls.io/github/noordean/PostIt?branch=implement-feedback)
+[![Coverage Status](https://coveralls.io/repos/github/noordean/PostIt/badge.svg?branch=chore%2Fsecond-feedback-implementation)](https://coveralls.io/github/noordean/PostIt?branch=chore%2Fsecond-feedback-implementation)
 [![Code Climate](https://codeclimate.com/github/noordean/PostIt/badges/gpa.svg)](https://codeclimate.com/github/noordean/PostIt)
 # PostIt
 PostIt is a simple application that allows friends and colleagues create groups for notifications. This application allows people to register, create group, add other users to the created group, and then send messages out to members of the group whenever they want. PostIt enhances group-work among people as group members can easily reach out to one another.
@@ -93,7 +93,9 @@ Note: Login token must be supplied in the headers before accessing all the route
 - Push your changes to your remote branch with ```git push origin your-feature-branch```
 - Open a pull request to the master branch, and describe how your feature works
 
+Ensure your codes follow <a href="https://github.com/airbnb/javascript">AirBnB Javascript Styles Guide</a>
+
 The full API documentation can be viewed at <a href="https://app.swaggerhub.com/apis/postit1/PostIt/1.0.0" target="_blank">here</a>
 
-##Author
+### Author
 Nurudeen Ibrahim

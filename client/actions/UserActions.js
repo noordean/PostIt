@@ -29,14 +29,16 @@ export default class UserActions {
         phoneNumber
       })
         .then((response) => {
-          dispatch({ type: actionTypes.REGISTRATION_SUCCESSFUL, payload: response.data });
+          dispatch({ type: actionTypes.REGISTRATION_SUCCESSFUL,
+            payload: response.data });
         })
         .catch((err) => {
-          if (err.response.status === 400
-            || err.response.status === 404 || err.response.status === 409) {
-            dispatch({ type: actionTypes.REGISTRATION_UNSUCCESSFUL, payload: err.response.data });
+          if (err.response.status === 500) {
+            dispatch({ type: actionTypes.REGISTRATION_REJECTED,
+              payload: { message: 'Sorry, an unexpected error occurred.' } });
           } else {
-            dispatch({ type: actionTypes.REGISTRATION_REJECTED });
+            dispatch({ type: actionTypes.REGISTRATION_UNSUCCESSFUL,
+              payload: err.response.data });
           }
         });
     };
@@ -66,10 +68,12 @@ export default class UserActions {
           authorization(response.data.user.token);
         })
         .catch((err) => {
-          if (err.response.data.message) {
-            dispatch({ type: 'LOGIN_UNSUCCESSFUL', payload: err.response.data });
+          if (err.response.status === 500) {
+            dispatch({ type: 'LOGIN_REJECTED',
+              payload: { message: 'Sorry, an unexpected error occurred.' } });
           } else {
-            dispatch({ type: 'LOGIN_REJECTED' });
+            dispatch({ type: 'LOGIN_UNSUCCESSFUL',
+              payload: err.response.data });
           }
         });
     };
@@ -80,23 +84,25 @@ export default class UserActions {
   *
   * @static
   *
-  * @param {Integer} groupID The id of the group to get members for
+  * @param {Integer} groupId The id of the group to get members for
   * @param {String} token the login token
   *
   * @returns {Object} dispatch object
   *
   * @memberof UserActions
   */
-  static getGroupMembers(groupID) {
-    return dispatch => axios.get(`/api/v1/group/${groupID}/users`)
+  static getGroupMembers(groupId) {
+    return dispatch => axios.get(`/api/v1/group/${groupId}/users`)
       .then((response) => {
         dispatch({ type: 'GOT_MEMBERS', payload: response.data.users });
       })
       .catch((err) => {
-        if (err.response.data.message) {
-          dispatch({ type: 'GET_MEMBERS_FAILED', payload: err.response.data.message });
+        if (err.response.status === 500) {
+          dispatch({ type: 'GET_MEMBERS_REJECTED',
+            payload: 'Sorry, an unexpected error occurred.' });
         } else {
-          dispatch({ type: 'GET_MEMBERS_REJECTED' });
+          dispatch({ type: 'GET_MEMBERS_FAILED',
+            payload: err.response.data.message });
         }
       });
   }
@@ -106,7 +112,7 @@ export default class UserActions {
   *
   * @static
   *
-  * @param {Integer} groupID The id of the group to add members to
+  * @param {Integer} groupId The id of the group to add members to
   * @param {String} userId The id's of the users to add
   * @param {String} token The JWToken to access the endpoint
   *
@@ -114,19 +120,21 @@ export default class UserActions {
   *
   * @memberof UserActions
   */
-  static addGroupMembers(groupID, userId) {
-    return dispatch => axios.post(`/api/v1/group/${groupID}/user`, {
-      groupID,
+  static addGroupMembers(groupId, userId) {
+    return dispatch => axios.post(`/api/v1/group/${groupId}/user`, {
+      groupId,
       userId
     })
       .then((response) => {
         dispatch({ type: 'MEMBERS_ADDED', payload: response.data.message });
       })
       .catch((err) => {
-        if (err.response.status === 400 || err.response.status === 409) {
-          dispatch({ type: 'ADD_MEMBERS_FAILED', payload: err.response.data.message });
+        if (err.response.status === 500) {
+          dispatch({ type: 'ADD_MEMBERS_REJECTED',
+            payload: 'Sorry, an unexpected error occurred.' });
         } else {
-          dispatch({ type: 'ADD_MEMBERS_REJECTED' });
+          dispatch({ type: 'ADD_MEMBERS_FAILED',
+            payload: err.response.data.message });
         }
       });
   }
@@ -137,28 +145,30 @@ export default class UserActions {
   * @static
   *
   * @param {String} recepient The email of the user
-  * @param {String} password The password of the user
+  * @param {String} newPassword The new password of the user
   *
   * @returns {Object} dispatched object
   *
   * @memberof UserActions
   */
-  static sendPasswordResetMail(recepient, password) {
+  static mailPassword(recepient, newPassword) {
     return (dispatch) => {
       dispatch({ type: 'RESET_PASSWORD_BEGINS' });
       return axios.post('/api/v1/user/reset-password', {
         recepient,
-        password
+        newPassword
       })
         .then((response) => {
-          dispatch({ type: 'RESET_PASSWORD_SUCCESSFUL', payload: response.data.message });
+          dispatch({ type: 'RESET_PASSWORD_SUCCESSFUL',
+            payload: response.data.message });
         })
         .catch((err) => {
-          if (err.response.status === 400
-          || err.response.status === 404) {
-            dispatch({ type: 'RESET_PASSWORD_UNSUCCESSFUL', payload: err.response.data.message });
+          if (err.response.status === 500) {
+            dispatch({ type: 'RESET_PASSWORD_REJECTED',
+              payload: 'Sorry, an unexpected error occurred.' });
           } else {
-            dispatch({ type: 'RESET_PASSWORD_REJECTED' });
+            dispatch({ type: 'RESET_PASSWORD_UNSUCCESSFUL',
+              payload: err.response.data.message });
           }
         });
     };
@@ -175,20 +185,23 @@ export default class UserActions {
   *
   * @memberof UserActions
   */
-  static verifyPasswordReset(mailToken) {
+  static verifyPassword(mailToken) {
     return (dispatch) => {
       dispatch({ type: 'VERIFY_PASSWORD_BEGINS' });
       return axios.post('/api/v1/user/email/verify', {
         mailToken
       })
         .then((response) => {
-          dispatch({ type: 'VERIFY_PASSWORD_SUCCESSFUL', payload: response.data.message });
+          dispatch({ type: 'VERIFY_PASSWORD_SUCCESSFUL',
+            payload: response.data.message });
         })
         .catch((err) => {
-          if (err.response.status === 401) {
-            dispatch({ type: 'VERIFY_PASSWORD_UNSUCCESSFUL', payload: err.response.data.message });
+          if (err.response.status === 500) {
+            dispatch({ type: 'VERIFY_PASSWORD_REJECTED',
+              payload: 'Sorry, an unexpected error occurred.' });
           } else {
-            dispatch({ type: 'VERIFY_PASSWORD_REJECTED' });
+            dispatch({ type: 'VERIFY_PASSWORD_UNSUCCESSFUL',
+              payload: err.response.data.message });
           }
         });
     };
@@ -206,7 +219,7 @@ export default class UserActions {
   *
   * @memberof UserActions
   */
-  static registerUserFromGoogle(username, email) {
+  static registerGoogleUser(username, email) {
     return (dispatch) => {
       dispatch({ type: 'REGISTER_GOOGLE_USER_BEGINS' });
       return axios.post('/api/v1/user/signup/google', {
@@ -214,13 +227,16 @@ export default class UserActions {
         email
       })
         .then((response) => {
-          dispatch({ type: 'REGISTER_GOOGLE_USER_SUCCESSFUL', payload: response.data });
+          dispatch({ type: 'REGISTER_GOOGLE_USER_SUCCESSFUL',
+            payload: response.data });
         })
         .catch((err) => {
-          if (err.response.status === 409) {
-            dispatch({ type: 'REGISTER_GOOGLE_USER_UNSUCCESSFUL', payload: err.response.data });
+          if (err.response.status === 500) {
+            dispatch({ type: 'REGISTER_GOOGLE_USER_REJECTED',
+              payload: 'Sorry, an unexpected error occurred.' });
           } else {
-            dispatch({ type: 'REGISTER_GOOGLE_USER_REJECTED' });
+            dispatch({ type: 'REGISTER_GOOGLE_USER_UNSUCCESSFUL',
+              payload: err.response.data });
           }
         });
     };
@@ -232,7 +248,7 @@ export default class UserActions {
   * @static
   *
   * @param {String} recepients The emails of the users to send to
-  * @param {String} group The group name
+  * @param {String} theGroup The group name
   * @param {String} message The message posted 
   * @param {String} poster username of the poster
   *
@@ -240,24 +256,26 @@ export default class UserActions {
   *
   * @memberof UserActions
   */
-  static sendMailForNotification(recepients, group, message, poster) {
+  static mailNotification(recepients, theGroup, message, poster) {
     return (dispatch) => {
       dispatch({ type: 'SEND_EMAIL_NOTIFICATION_BEGINS' });
       return axios.post('/api/v1/user/email', {
         recepients,
-        group,
+        theGroup,
         message,
         poster
       })
         .then((response) => {
-          dispatch({ type: 'SEND_EMAIL_NOTIFICATION_SUCCESSFUL', payload: response.data.message });
+          dispatch({ type: 'SEND_EMAIL_NOTIFICATION_SUCCESSFUL',
+            payload: response.data.message });
         })
         .catch((err) => {
-          if (err.response.status === 400
-          || err.response.status === 404) {
-            dispatch({ type: 'SEND_EMAIL_NOTIFICATION_UNSUCCESSFUL', payload: err.response.data.message });
+          if (err.response.status === 500) {
+            dispatch({ type: 'SEND_EMAIL_NOTIFICATION_REJECTED',
+              payload: 'Sorry, an unexpected error occurred.' });
           } else {
-            dispatch({ type: 'SEND_EMAIL_NOTIFICATION_REJECTED' });
+            dispatch({ type: 'SEND_EMAIL_NOTIFICATION_UNSUCCESSFUL',
+              payload: err.response.data.message });
           }
         });
     };
@@ -275,21 +293,23 @@ export default class UserActions {
   *
   * @memberof UserActions
   */
-  static sendSmsForNotification(members) {
+  static smsNotification(members) {
     return (dispatch) => {
       dispatch({ type: 'SEND_SMS_NOTIFICATION_BEGINS' });
       return axios.post('/api/v1/user/sms', {
         members
       })
         .then((response) => {
-          dispatch({ type: 'SEND_SMS_NOTIFICATION_SUCCESSFUL', payload: response.data.message });
+          dispatch({ type: 'SEND_SMS_NOTIFICATION_SUCCESSFUL',
+            payload: response.data.message });
         })
         .catch((err) => {
-          if (err.response.status === 500 || err.response.status === 400
-          || err.response.status === 404) {
-            dispatch({ type: 'SEND_SMS_NOTIFICATION_UNSUCCESSFUL', payload: err.response.data.message });
+          if (err.response.status === 500) {
+            dispatch({ type: 'SEND_SMS_NOTIFICATION_REJECTED',
+              payload: 'Sorry, an unexpected error occurred.' });
           } else {
-            dispatch({ type: 'SEND_SMS_NOTIFICATION_REJECTED' });
+            dispatch({ type: 'SEND_SMS_NOTIFICATION_UNSUCCESSFUL',
+              payload: err.response.data.message });
           }
         });
     };
@@ -312,13 +332,14 @@ export default class UserActions {
       dispatch({ type: 'GET_READ_USERS_BEGINS' });
       return axios.get(`/api/v1/message/${messageId}/user?groupId=${groupId}`)
         .then((response) => {
-          dispatch({ type: 'GET_READ_USERS_SUCCESSFUL', payload: response.data.users });
+          dispatch({ type: 'GET_READ_USERS_SUCCESSFUL',
+            payload: response.data.users });
         })
         .catch((err) => {
-          if (err.response.status === 400 || err.response.status === 409) {
-            dispatch({ type: 'GET_READ_USERS_UNSUCCESSFUL' });
-          } else {
+          if (err.response.status === 500) {
             dispatch({ type: 'GET_READ_USERS_REJECTED' });
+          } else {
+            dispatch({ type: 'GET_READ_USERS_UNSUCCESSFUL' });
           }
         });
     };
@@ -347,14 +368,16 @@ export default class UserActions {
         postedby
       })
         .then((response) => {
-          dispatch({ type: 'SAVE_NOTIFICATION_SUCCESSFUL', payload: response.data.message });
+          dispatch({ type: 'SAVE_NOTIFICATION_SUCCESSFUL',
+            payload: response.data.message });
         })
         .catch((err) => {
-          if (err.response.status === 500 || err.response.status === 400
-          || err.response.status === 404) {
-            dispatch({ type: 'SAVE_NOTIFICATION_UNSUCCESSFUL', payload: err.response.data.message });
+          if (err.response.status === 500) {
+            dispatch({ type: 'SAVE_NOTIFICATION_REJECTED',
+              payload: 'Sorry, an unexpected error occurred.' });
           } else {
-            dispatch({ type: 'SAVE_NOTIFICATION_REJECTED' });
+            dispatch({ type: 'SAVE_NOTIFICATION_UNSUCCESSFUL',
+              payload: err.response.data.message });
           }
         });
     };
@@ -375,13 +398,14 @@ export default class UserActions {
     return (dispatch) => {
       return axios.get(`/api/v1/user/${userId}/notification`)
         .then((response) => {
-          dispatch({ type: 'GET_NOTIFICATION_SUCCESSFUL', payload: response.data.notifications });
+          dispatch({ type: 'GET_NOTIFICATION_SUCCESSFUL',
+            payload: response.data.notifications });
         })
         .catch((err) => {
-          if (err.response.data.message) {
-            dispatch({ type: 'GET_NOTIFICATION_UNSUCCESSFUL' });
-          } else {
+          if (err.response.status === 500) {
             dispatch({ type: 'GET_NOTIFICATION_REJECTED' });
+          } else {
+            dispatch({ type: 'GET_NOTIFICATION_UNSUCCESSFUL' });
           }
         });
     };
@@ -402,13 +426,14 @@ export default class UserActions {
     return (dispatch) => {
       return axios.delete(`/api/v1/user/${userId}/notification`)
         .then((response) => {
-          dispatch({ type: 'DELETE_NOTIFICATION_SUCCESSFUL', payload: response.data.message });
+          dispatch({ type: 'DELETE_NOTIFICATION_SUCCESSFUL',
+            payload: response.data.message });
         })
         .catch((err) => {
-          if (err.response.data.message) {
-            dispatch({ type: 'DELETE_NOTIFICATION_UNSUCCESSFUL' });
-          } else {
+          if (err.response.status === 500) {
             dispatch({ type: 'DELETE_NOTIFICATION_REJECTED' });
+          } else {
+            dispatch({ type: 'DELETE_NOTIFICATION_UNSUCCESSFUL' });
           }
         });
     };

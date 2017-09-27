@@ -5,7 +5,6 @@ export const ResetPassword = props => (
   <div id="resetPassword" className="modal">
     <div className="modal-content">
       <form className="group-form">
-        <div className="text center">{props.errorMsg}</div>
         <div className="row">
           <div className="input-field col s12">
             <input
@@ -43,7 +42,7 @@ export const ResetPassword = props => (
           <div className="input-field col s12">
             <a
               href="##"
-              className="btn waves-effect waves-light col s12 red darken-4"
+              className="btn waves-effect waves-light col s12 red darken-4 pass"
               onClick={props.onSubmit}
             >Submit</a>
           </div>
@@ -54,7 +53,6 @@ export const ResetPassword = props => (
 );
 
 ResetPassword.propTypes = {
-  errorMsg: PropTypes.string.isRequired,
   emailInput: PropTypes.string.isRequired,
   passwordInput: PropTypes.string.isRequired,
   confirmPasswordInput: PropTypes.string.isRequired,

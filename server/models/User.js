@@ -23,14 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     phoneNumber: {
       type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-      validate: {
-        is: {
-          args: /^[0-9]{11,}$/i,
-          msg: 'Phone number should not contain letters and should be valid'
-        }
-      }
+      allowNull: true
     }
   }, {
     classMethods: {

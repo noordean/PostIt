@@ -4,13 +4,14 @@ import { connect } from 'react-redux';
 import { Link, browserHistory } from 'react-router';
 import PropTypes from 'prop-types';
 
-import UsersActions from '../actions/user';
+import UsersActions from '../actions/UserActions';
 import GoogleLogin from './GoogleLogin.jsx';
+import displayError from '../utils/errorDisplay';
 
 /**
   * @class Dashboard
   */
-class SignIn extends Component {
+export class SignIn extends Component {
 /**
   * @constructor
   * @param {object} props
@@ -18,23 +19,12 @@ class SignIn extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loginResponse: '',
       usernameInput: '',
       passwordInput: ''
     };
     this.loginHandler = this.loginHandler.bind(this);
     this.openResetPassword = this.openResetPassword.bind(this);
     this.onChange = this.onChange.bind(this);
-  }
-
-  /**
-  * description: executes just before the component gets mounted
-  * @return {void} void
-  */
-  componentWillUnmount() {
-    this.setState({
-      loginResponse: ''
-    });
   }
 
   /**
@@ -60,18 +50,12 @@ class SignIn extends Component {
     this.props.loginUser(username, password)
       .then(() => {
         if (this.props.userLogin.reqStatus.message === 'You are now logged in') {
-          localStorage.setItem('user', JSON.stringify(this.props.userLogin.reqStatus.user));
+          localStorage.setItem('user',
+            JSON.stringify(this.props.userLogin.reqStatus.user));
           browserHistory.push('/dashboard');
-        } else {
-          this.setState({
-            loginResponse: this.props.userLogin.reqStatus.message
-          });
+          return displayError('You are now logged in');
         }
-        if (this.props.userLogin.reqError) {
-          this.setState({
-            loginResponse: 'Sorry, unexpected error occurred'
-          });
-        }
+        return displayError(this.props.userLogin.reqStatus.message);
       });
   }
 
@@ -97,11 +81,6 @@ class SignIn extends Component {
         <div id="login-page" className="row">
           <div className="col s12 z-depth-4 card-panel">
             <form className="login-form" onSubmit={this.loginHandler}>
-              <div className="row">
-                <div className="input-field col s12 center">
-                  <div>{this.state.loginResponse}</div>
-                </div>
-              </div>
               <div className="row margin">
                 <div className="input-field col s12">
                   <i className="material-icons prefix">account_circle</i>
@@ -113,7 +92,10 @@ class SignIn extends Component {
                     onChange={this.onChange}
                     required
                   />
-                  <label htmlFor="username" className="center-align">Username</label>
+                  <label
+                    htmlFor="username"
+                    className="center-align"
+                  >Username</label>
                 </div>
               </div>
               <div className="row margin">
@@ -150,7 +132,9 @@ class SignIn extends Component {
               </div>
               <div className="row">
                 <div className="input-field col s6 m6 l6">
-                  <p className="margin medium-small"><Link to="/signup">Register Now!</Link></p>
+                  <p
+                    className="margin medium-small"
+                  ><Link to="/signup">Register Now!</Link></p>
                 </div>
                 <div className="input-field col s6 m6 l6">
                   <p className="margin right-align medium-small">

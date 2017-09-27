@@ -1,9 +1,9 @@
 import React from 'react';
 import expect from 'expect';
-import { shallow, mount } from 'enzyme';
+import { mount } from 'enzyme';
 import sinon from 'sinon';
 
-import { Dashboard } from '../../components/dashboard.jsx';
+import { Dashboard } from '../../components/Dashboard.jsx';
 
 import localStorageMock from '../__mocks__/localStorageMock';
 
@@ -41,8 +41,8 @@ describe('Dashboard component', () => {
     global.Materialize = { toast: () => {} };
   });
   it('should render neccessary elements', () => {
-    expect(shallowWrapper.find('div').length).toBe(6);
-    expect(shallowWrapper.find('p').length).toBe(1);
+    expect(shallowWrapper.find('div').length).toBe(3);
+    expect(shallowWrapper.find('p').length).toBe(0);
   });
   it('should call componentDidMount', () => {
     sinon.spy(Dashboard.prototype, 'componentDidMount');
@@ -63,7 +63,30 @@ describe('Dashboard component', () => {
     const mountWrapper = setup(mount);
     expect(mountWrapper.props().group.pageCount).toBe(3);
     expect(mountWrapper.props().group.loading).toBe(false);
-    expect(mountWrapper.props().group.groups[0].description).toBe('some description');
+    expect(mountWrapper.props().group.groups[0].description)
+      .toBe('some description');
   });
+  it('should render groups when state is updated with created groups',
+    () => {
+      const mountWrapper = setup(mount);
+      mountWrapper.setState({
+        groups: [{ id: 1, groupname: 'Fengshui', description: 'for sims' }] });
+      const eleName = mountWrapper.find('.card-title');
+      const eleDesc = mountWrapper.find('.group-desc');
+      expect(eleName.text()).toBe('Fengshui');
+      expect(eleDesc.text()).toBe('for sims');
+    });
+  it('should render loading... when props "loading" is true',
+    () => {
+      const mountWrapper = setup(mount);
+      mountWrapper.setProps({ group: {
+        groups: [],
+        error: false,
+        pageCount: 3,
+        loading: true
+      } });
+      const eleLoading = mountWrapper.find('.loading-groups');
+      expect(eleLoading.text()).toBe('Loading...');
+    });
 });
 

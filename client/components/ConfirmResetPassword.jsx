@@ -4,10 +4,11 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import PropTypes from 'prop-types';
 
-import UsersActions from '../actions/user';
+import UsersActions from '../actions/UserActions';
 
 /**
-  * Description: component that get rendered through the link posted to user's email
+  * Description: component that get rendered
+  * through the link posted to user's email
   *
   * @class ConfirmResetPassword
   */
@@ -29,7 +30,7 @@ export class ConfirmResetPassword extends Component {
   * @return {void} void
   */
   componentWillMount() {
-    this.props.verifyPasswordReset(this.props.params.token);
+    this.props.verifyPassword(this.props.params.token);
   }
 
   /**
@@ -54,7 +55,7 @@ export class ConfirmResetPassword extends Component {
     let status;
     if (this.state.responseMsg === 'success') {
       status =
-      (<p className="text center">
+      (<p className="text center success-message">
         Password successfully changed. You can now click
         <Link to="/signin">here</Link> to login
       </p>);
@@ -71,7 +72,7 @@ export class ConfirmResetPassword extends Component {
 
 ConfirmResetPassword.propTypes = {
   params: PropTypes.shape({ token: PropTypes.string.isRequired }).isRequired,
-  verifyPasswordReset: PropTypes.func.isRequired,
+  verifyPassword: PropTypes.func.isRequired,
   verifyMailUrl: PropTypes.shape({
     error: PropTypes.bool,
     responseMsg: PropTypes.string,
@@ -84,7 +85,8 @@ const mapStateToProps = state => ({
 });
 
 const matchDispatchToProps = dispatch => bindActionCreators({
-  verifyPasswordReset: UsersActions.verifyPasswordReset
+  verifyPassword: UsersActions.verifyPassword
 }, dispatch);
 
-export default connect(mapStateToProps, matchDispatchToProps)(ConfirmResetPassword);
+export default connect(mapStateToProps,
+  matchDispatchToProps)(ConfirmResetPassword);

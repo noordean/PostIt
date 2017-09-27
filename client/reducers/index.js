@@ -1,7 +1,8 @@
 import { combineReducers } from 'redux';
-import GroupReducers from './group';
-import MessageReducers from './message';
-import UserReducers from './user';
+
+import GroupReducers from './GroupReducers';
+import MessageReducers from './MessageReducers';
+import UserReducers from './UserReducers';
 
 export default combineReducers({
   userRegistration: UserReducers.register,
@@ -9,11 +10,11 @@ export default combineReducers({
   group: GroupReducers.groupReducer,
   member: UserReducers.groupMembers,
   messages: MessageReducers.messageReducer,
-  sentMail: UserReducers.sendPasswordResetMail,
-  verifyMailUrl: UserReducers.verifyPasswordReset,
-  userFromGoogle: UserReducers.registerUserFromGoogle,
-  notificationMail: UserReducers.sendMailForNotification,
-  notificationSms: UserReducers.sendSmsForNotification,
+  sentMail: UserReducers.mailPassword,
+  verifyMailUrl: UserReducers.verifyPassword,
+  userFromGoogle: UserReducers.registerGoogleUser,
+  notificationMail: UserReducers.mailNotification,
+  notificationSms: UserReducers.smsNotification,
   archiveMessages: MessageReducers.archiveMessageReducer,
   readMessages: UserReducers.readMessages,
   appNotification: UserReducers.appNotification

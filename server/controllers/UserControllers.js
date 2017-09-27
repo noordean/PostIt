@@ -1,12 +1,13 @@
 import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs';
-import nodemailer from 'nodemailer';
 import jwt from 'jsonwebtoken';
 import Jusibe from 'node-jusibe';
 
 import user from '../services/User';
 import group from '../services/Group';
+import validate from '../helpers/validate';
 import groupUser from '../services/GroupUser';
+import sendMail from '../helpers/mailMessage';
 import authenticate from '../helpers/authenticate';
 import notificationService from '../services/Notification';
 
@@ -18,9 +19,10 @@ const salt = bcrypt.genSaltSync(10);
  * 
  * @class
  */
-export default class User {
+export default class UserControllers {
   /**
- * @description: controls a user's registration through route POST: api/v1/user/signup
+ * @description: controls a user's registration
+ * through route POST: api/v1/user/signup
  * 
  * @param {Object} req request object
  * @param {Object} res response object
@@ -28,32 +30,39 @@ export default class User {
  * @return {Object} response containing the registered user
  */
   static signUp(req, res) {
-    const [username, password, email, phoneNumber] = [req.body.username,
-      req.body.password, req.body.email, req.body.phoneNumber];
+    const { username, password, email, phoneNumber } = req.body;
     const hashedPassword = bcrypt.hashSync(password, salt);
     if (/^[a-zA-Z]{5,12}$/.test(username) === false) {
-      res.status(400).json({
-        message: 'Username should contain only letters and must have between 5-12 characters'
+      res.status(400).json({ message:
+        'Username should contain only letters and must have between 5-12 characters'
       });
+    } else if (/^[0-9]{11,}$/.test(phoneNumber) === false) {
+      res.status(400).json({ message:
+        'Phone number should not contain letters and should be valid' });
     } else {
-      user.saveUser(username, hashedPassword, email, phoneNumber, (users) => {
-        if (users instanceof Object) {
-          if (Array.isArray(users)) {
-            if (users[1] === false) {
-              res.status(409).json({
-                message: 'You already have an existing account. Kindly go and login'
-              });
-            } else {
-              res.status(201).json({
-                message: 'Registration successful',
-                user: { id: users[0].id, username: users[0].username, email: users[0].email }
-              });
-            }
-          } else {
-            res.status(500).json({ message: 'Sorry, an unexpected error occurred' });
-          }
+      user.checkUser(username, (checkedUser) => {
+        if (checkedUser.length !== 0) {
+          res.status(409).json({
+            message: 'You already have an existing account. Kindly go and login'
+          });
         } else {
-          res.status(400).json({ message: users });
+          user.saveUser(
+            username, hashedPassword, email, phoneNumber, (users) => {
+              if (users instanceof Object && users.dataValues !== undefined) {
+                res.status(201).json({
+                  message: 'Registration successful',
+                  user: {
+                    id: users.id,
+                    username: users.username,
+                    email: users.email }
+                });
+              } else if (typeof users === 'string') {
+                res.status(400).json({ message: users });
+              } else {
+                res.status(500).json({ message:
+                  'Sorry, an unexpected error occurred' });
+              }
+            });
         }
       });
     }
@@ -68,7 +77,7 @@ export default class User {
  * @return {Object} response containing the logged-in user
  */
   static signIn(req, res) {
-    const [username, password] = [req.body.username, req.body.password];
+    const { username, password } = req.body;
     user.getUser(username, (users) => {
       if (users.length === 0) {
         res.status(404).json({ message: 'Invalid user!' });
@@ -81,33 +90,39 @@ export default class User {
       } else {
         res.status(401).json({ message: 'Incorrect password' });
       }
-      if (users instanceof Object && !Array.isArray(users)) {
-        res.status(500).json({ message: 'Sorry, unexpected error occurred' });
+      if (validate.hasInternalServerError(users)) {
+        res.status(500).json(validate.sendInternalServerError());
       }
     });
   }
 
   /**
- * @description: retrieves all users through route GET: api/users
+ * @description: retrieves all available users to fill add-user
+ * autocomplete input
  * 
  * @param {Object} req request object
  * @param {Object} res response object
  * 
  * @return {Object} response containing all users
  */
-  static getAllUsers(req, res) {
-    const userrs = req.headers.userrs;
-    if (userrs === undefined) {
+  static getAvailableUsers(req, res) {
+    const currentMembers = req.headers.currentmembers;
+    if (currentMembers === undefined) {
       res.status(400).json({ message: 'users to ignore should be supplied' });
     } else {
-      user.getAllUsers(userrs, (users) => {
-        res.status(200).json({ users });
+      user.getAllUsers(currentMembers, (users) => {
+        if (validate.hasInternalServerError(users)) {
+          res.status(500).json(validate.sendInternalServerError());
+        } else {
+          res.status(200).json({ users });
+        }
       });
     }
   }
 
   /**
- * @description: retrieves all users in a group through route GET: api/group/:groupID/user
+ * @description: retrieves all users in a group through
+ * route GET: api/group/:groupId/user
  * 
  * @param {Object} req request object
  * @param {Object} res response object
@@ -115,7 +130,7 @@ export default class User {
  * @return {Object} response containing all users of a group
  */
   static getGroupUsers(req, res) {
-    const groupId = req.params.groupID;
+    const groupId = req.params.groupId;
     if (groupId === undefined) {
       res.status(400).json({ message: 'groupId must be supplied' });
     } else {
@@ -129,7 +144,11 @@ export default class User {
                 res.status(200).json({ users: usernames });
               });
             } else {
-              res.status(404).json({ message: 'This group does not contain any member' });
+              res.status(404).json({ message:
+                'This group does not contain any member' });
+            }
+            if (validate.hasInternalServerError(users)) {
+              res.status(500).json(validate.sendInternalServerError());
             }
           });
         }
@@ -145,46 +164,40 @@ export default class User {
  * 
  * @return {Object} response
  */
-  static sendMailForPasswordReset(req, res) {
+  static mailPassword(req, res) {
     const { recepient, newPassword } = req.body;
-    const token = authenticate.generateToken({ password: newPassword, email: recepient });
     if (recepient === undefined || newPassword === undefined) {
-      res.status(400).json({ message: 'Both recepient(email) and newPassword must be supplied' });
-    } else if (recepient.trim().length === 0 || newPassword.trim().length === 0) {
-      res.status(400).json({ message: 'Both recepient(email) and newPassword are required' });
+      res.status(400).json({ message:
+        'Both recepient(email) and newPassword must be supplied' });
+    } else if (recepient.trim().length === 0 ||
+    newPassword.trim().length === 0) {
+      res.status(400).json({ message:
+        'Both recepient(email) and newPassword are required' });
     } else {
+      const token = authenticate.generateToken({ password:
+        newPassword,
+      email: recepient });
       user.getUserByEmail((recepient), (users) => {
+        if (validate.hasInternalServerError(users)) {
+          res.status(500).json(validate.sendInternalServerError());
+        }
         if (users.length === 0) {
           res.status(404).json({ message: 'Email not found' });
         } else {
-          const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 465,
-            secure: true,
-            auth: {
-              user: process.env.MAIL_USERNAME,
-              pass: process.env.MAIL_PASSWORD
-            }
-          });
-          const mailOptions = {
-            from: '"PostIt" <noreply@postit.com>',
-            to: recepient,
-            subject: 'Password Reset',
-            text: '',
-            html: `<b>Hello!</b><br>
-              Your new password is: ${newPassword}<br>
-              <p>Kindly follow this link to complete the process of reseting your password: 
-              https://full-postit.herokuapp.com/reset-password/${token}</p>`
-          };
-          transporter.sendMail(mailOptions, (error) => {
-            if (error) {
-              res.status(500).json({ message: 'Sorry, mail could not be sent' });
-            } else {
-              res.status(200).json({
-                message: 'A message has been sent to your mail to continue the process'
-              });
-            }
-          });
+          const message = (`<b>Hello!</b><br>
+               Your new password is: ${newPassword}<br>
+               <p>Kindly follow this link to complete the process
+                of reseting your password: 
+               https://full-postit.herokuapp.com/reset-password/${token}</p>`);
+          if (sendMail(message, recepient, 'Password Reset')) {
+            res.status(200).json({
+              message:
+                'A message has been sent to your mail to continue the process'
+            });
+          } else {
+            res.status(500).json({ message:
+            'Sorry, mail could not be sent' });
+          }
         }
       });
     }
@@ -198,11 +211,12 @@ export default class User {
  * 
  * @return {Object} response
  */
-  static verifyPasswordReset(req, res) {
+  static verifyPassword(req, res) {
     const mailToken = req.headers.mailToken || req.body.mailToken;
     jwt.verify(mailToken, jwtSecret, (err, decode) => {
       if (decode === undefined) {
-        res.status(401).json({ message: 'Access denied!. Invalid url detected' });
+        res.status(401).json({ message:
+          'Access denied!. Invalid url detected' });
       } else {
         const hashedPassword = bcrypt.hashSync(decode.password, salt);
         user.updatePassword(hashedPassword, decode.email, () => {
@@ -213,25 +227,35 @@ export default class User {
   }
 
   /**
- * @description: registers users that logs in with google through api/v1/user/signup/google
+ * @description: registers users that logs in with
+ * google through api/v1/user/signup/google
  * 
  * @param {Object} req request object
  * @param {Object} res response object
  * 
  * @return {Object} response
  */
-  static registerUserFromGoogle(req, res) {
-    const [username, email, phoneNumber, password] = [req.body.username, req.body.email,
-      Math.ceil(Math.random() * 100000000000), null];
+  static registerGoogleUser(req, res) {
+    const [username, email, phoneNumber, password] = [req.body.username,
+      req.body.email, null, null];
     user.saveUserFromGoogle(username, password, email, phoneNumber, (users) => {
       if (users === 'email must be unique') {
         user.getUserByEmail(email, (userrs) => {
-          const token = authenticate.generateToken({ username: userrs[0].username,
-            id: userrs[0].id });
-          res.status(409).json({
-            message: 'Email already existing',
-            user: { id: userrs[0].id, user: userrs[0].username, email: userrs[0].email, token }
-          });
+          if (validate.hasInternalServerError(userrs)) {
+            res.status(500).json(validate.sendInternalServerError());
+          } else {
+            const token = authenticate.generateToken(
+              { username: userrs[0].username,
+                id: userrs[0].id });
+            res.status(409).json({
+              message: 'Email already existing',
+              user: {
+                id: userrs[0].id,
+                user: userrs[0].username,
+                email: userrs[0].email,
+                token }
+            });
+          }
         });
       } else {
         const token = authenticate.generateToken({
@@ -239,7 +263,11 @@ export default class User {
         });
         res.status(201).json({
           message: 'User registered successfully',
-          user: { id: users[0].id, username: users[0].username, email: users[0].email, token }
+          user: {
+            id: users[0].id,
+            username: users[0].username,
+            email: users[0].email,
+            token }
         });
       }
     });
@@ -253,32 +281,15 @@ export default class User {
  * 
  * @return {Object} response
  */
-  static sendMailForNotification(req, res) {
-    const { recepients, grup, message, poster } = req.body;
-    const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 465,
-      secure: true,
-      auth: {
-        user: process.env.MAIL_USERNAME,
-        pass: process.env.MAIL_PASSWORD
-      }
-    });
-    const mailOptions = {
-      from: '"PostIt" <noreply@postit.com>',
-      to: recepients,
-      subject: 'Message Notification',
-      text: '',
-      html: `<b>Hello!</b><br><br> You have a new message in <b>${grup}</b>,
-           from <b>${poster}</b>.<br><br><i>${message}</i></p>`
-    };
-    transporter.sendMail(mailOptions, (error) => {
-      if (error) {
-        res.status(500).json({ message: 'Sorry, mail could not be sent' });
-      } else {
-        res.status(200).json({ message: 'Mail notification sent' });
-      }
-    });
+  static mailNotification(req, res) {
+    const { recepients, theGroup, message, poster } = req.body;
+    const msg = (`<b>Hello!</b><br><br> You have a new message in <b>${theGroup}</b>,
+    from <b>${poster}</b>.<br><br><i>${message}</i></p>`);
+    if (sendMail(msg, recepients, 'Message Notification')) {
+      res.status(200).json({ message: 'Mail notification sent' });
+    } else {
+      res.status(500).json({ message: 'Sorry, mail could not be sent' });
+    }
   }
 
   /**
@@ -289,9 +300,10 @@ export default class User {
  * 
  * @return {Object} response
  */
-  static sendSmsForNotification(req, res) {
+  static smsNotification(req, res) {
     const members = req.body.members;
-    const jusibe = new Jusibe(process.env.JUSIBE_PUBLIC_KEY, process.env.JUSIBE_ACCESS_TOKEN);
+    const jusibe = new Jusibe(
+      process.env.JUSIBE_PUBLIC_KEY, process.env.JUSIBE_ACCESS_TOKEN);
     if (Array.isArray(members)) {
       if (members.length > 0) {
         members.forEach((member) => {
@@ -315,12 +327,14 @@ export default class User {
       req.body.groupName, req.body.message, req.body.postedby];
     if (Array.isArray(userId)) {
       userId.forEach((membersId) => {
-        notificationService.save(membersId.id, groupName, message, postedby, () => {
-        });
+        notificationService.save(
+          membersId.id, groupName, message, postedby, () => {
+          });
       });
       res.status(201).json({ message: 'notification saved' });
     } else {
-      res.status(400).json({ message: 'You need to supply an array for userId' });
+      res.status(400).json({
+        message: 'You need to supply an array for userId' });
     }
   }
 
@@ -335,8 +349,6 @@ export default class User {
   static getNotifications(req, res) {
     const userId = req.params.userId;
     notificationService.getNotification(userId, (notification) => {
-      console.log(notification);
-      console.log('check here')
       res.status(200).json({ notifications: notification });
     });
   }

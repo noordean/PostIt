@@ -1,4 +1,6 @@
-import UserReducers from '../../reducers/user';
+import expect from 'expect';
+
+import UserReducers from '../../reducers/UserReducers';
 
 const initialState = {
   reqStatus: {},
@@ -7,13 +9,18 @@ const initialState = {
 };
 
 const memberInitialState = { members: [], responseMsg: '', reqError: false };
-const passwordResetInitialState = { responseMsg: '', loading: false, error: false };
+const passwordResetInitialState = {
+  responseMsg: '', loading: false, error: false };
 const googleUserInitialState = { response: [], loading: false, error: false };
+const readMessagesInitial = { users: [], loading: false, error: false };
+const notificationInitial = {
+  notification: [], loading: false, error: false, responseMsg: '' };
 
 describe('User Reducer', () => {
   it('should update the state when REGISTRATION_SUCCESSFUL is passed', () => {
     const action = {
-      type: 'REGISTRATION_SUCCESSFUL', payload: { message: 'Registration successful' }
+      type: 'REGISTRATION_SUCCESSFUL',
+      payload: { message: 'Registration successful' }
     };
     const expected = {
       reqStatus: { message: 'Registration successful' },
@@ -37,10 +44,11 @@ describe('User Reducer', () => {
   });
   it('should update the state when REGISTRATION_REJECTED is passed', () => {
     const action = {
-      type: 'REGISTRATION_REJECTED', payload: new Error()
+      type: 'REGISTRATION_REJECTED',
+      payload: { message: 'internal server error' }
     };
     const expected = {
-      reqStatus: {},
+      reqStatus: { message: 'internal server error' },
       reqError: true,
       loading: false
     };
@@ -73,10 +81,10 @@ describe('User Reducer', () => {
   });
   it('should update the state when LOGIN_REJECTED is passed', () => {
     const action = {
-      type: 'LOGIN_REJECTED', payload: new Error()
+      type: 'LOGIN_REJECTED', payload: { message: 'internal server error' }
     };
     const expected = {
-      reqStatus: {},
+      reqStatus: { message: 'internal server error' },
       reqError: true,
       loading: false
     };
@@ -85,19 +93,20 @@ describe('User Reducer', () => {
   });
   it('should update the state when ADD_MEMBERS_REJECTED is passed', () => {
     const action = {
-      type: 'ADD_MEMBERS_REJECTED'
+      type: 'ADD_MEMBERS_REJECTED', payload: 'internal server error'
     };
     const expected = {
       members: [],
       reqError: true,
-      responseMsg: ''
+      responseMsg: 'internal server error'
     };
     const newState = UserReducers.groupMembers(memberInitialState, action);
     expect(newState).toEqual(expected);
   });
   it('should update the state when GOT_MEMBERS is passed', () => {
     const action = {
-      type: 'GOT_MEMBERS', payload: [{ id: 1, username: 'nuru', email: 'ebroyeem@gmail.com' }]
+      type: 'GOT_MEMBERS',
+      payload: [{ id: 1, username: 'nuru', email: 'ebroyeem@gmail.com' }]
     };
     const expected = {
       members: [{ id: 1, username: 'nuru', email: 'ebroyeem@gmail.com' }],
@@ -107,14 +116,38 @@ describe('User Reducer', () => {
     const newState = UserReducers.groupMembers(memberInitialState, action);
     expect(newState).toEqual(expected);
   });
+  it('should update the state when GET_MEMBERS_FAILED is passed', () => {
+    const action = {
+      type: 'GET_MEMBERS_FAILED', payload: 'could not get members'
+    };
+    const expected = {
+      members: [],
+      reqError: false,
+      responseMsg: 'could not get members'
+    };
+    const newState = UserReducers.groupMembers(memberInitialState, action);
+    expect(newState).toEqual(expected);
+  });
+  it('should update the state when ADD_MEMBERS_FAILED is passed', () => {
+    const action = {
+      type: 'ADD_MEMBERS_FAILED', payload: 'could not add members'
+    };
+    const expected = {
+      members: [],
+      reqError: false,
+      responseMsg: 'could not add members'
+    };
+    const newState = UserReducers.groupMembers(memberInitialState, action);
+    expect(newState).toEqual(expected);
+  });
   it('should update the state when GET_MEMBERS_REJECTED is passed', () => {
     const action = {
-      type: 'GET_MEMBERS_REJECTED'
+      type: 'GET_MEMBERS_REJECTED', payload: 'internal server error'
     };
     const expected = {
       members: [],
       reqError: true,
-      responseMsg: ''
+      responseMsg: 'internal server error'
     };
     const newState = UserReducers.groupMembers(memberInitialState, action);
     expect(newState).toEqual(expected);
@@ -123,32 +156,51 @@ describe('User Reducer', () => {
     const action = {
       type: 'RESET_PASSWORD_BEGINS'
     };
-    const expected = { responseMsg: '', loading: true, error: false };
-    const newState = UserReducers.sendPasswordResetMail(passwordResetInitialState, action);
+    const expected = {
+      responseMsg: '', loading: true, error: false, success: false };
+    const newState = UserReducers.mailPassword(
+      passwordResetInitialState, action);
     expect(newState).toEqual(expected);
   });
   it('should update the state when RESET_PASSWORD_SUCCESSFUL is passed', () => {
     const action = {
       type: 'RESET_PASSWORD_SUCCESSFUL', payload: 'Message sent'
     };
-    const expected = { responseMsg: 'Message sent', loading: false, error: false };
-    const newState = UserReducers.sendPasswordResetMail(passwordResetInitialState, action);
-    expect(newState).toEqual(expected);
-  });
-  it('should update the state when RESET_PASSWORD_UNSUCCESSFUL is passed', () => {
-    const action = {
-      type: 'RESET_PASSWORD_UNSUCCESSFUL', payload: 'Could not send message'
+    const expected = {
+      responseMsg: 'Message sent',
+      loading: false,
+      error: false,
+      success: true
     };
-    const expected = { responseMsg: 'Could not send message', loading: false, error: false };
-    const newState = UserReducers.sendPasswordResetMail(passwordResetInitialState, action);
+    const newState = UserReducers.mailPassword(
+      passwordResetInitialState, action);
     expect(newState).toEqual(expected);
   });
+  it('should update the state when RESET_PASSWORD_UNSUCCESSFUL is passed',
+    () => {
+      const action = {
+        type: 'RESET_PASSWORD_UNSUCCESSFUL', payload: 'Could not send message'
+      };
+      const expected = {
+        responseMsg: 'Could not send message',
+        loading: false,
+        error: false,
+        success: false };
+      const newState = UserReducers.mailPassword(
+        passwordResetInitialState, action);
+      expect(newState).toEqual(expected);
+    });
   it('should update the state when RESET_PASSWORD_REJECTED is passed', () => {
     const action = {
-      type: 'RESET_PASSWORD_REJECTED'
+      type: 'RESET_PASSWORD_REJECTED', payload: 'internal server error'
     };
-    const expected = { responseMsg: '', loading: false, error: true };
-    const newState = UserReducers.sendPasswordResetMail(passwordResetInitialState, action);
+    const expected = {
+      responseMsg: 'internal server error',
+      loading: false,
+      error: true,
+      success: false };
+    const newState = UserReducers.mailPassword(
+      passwordResetInitialState, action);
     expect(newState).toEqual(expected);
   });
   it('should update the state when VERIFY_PASSWORD_BEGINS is passed', () => {
@@ -156,119 +208,273 @@ describe('User Reducer', () => {
       type: 'VERIFY_PASSWORD_BEGINS'
     };
     const expected = { responseMsg: '', loading: true, error: false };
-    const newState = UserReducers.verifyPasswordReset(passwordResetInitialState, action);
+    const newState = UserReducers.verifyPassword(
+      passwordResetInitialState, action);
     expect(newState).toEqual(expected);
   });
-  it('should update the state when VERIFY_PASSWORD_SUCCESSFUL is passed', () => {
-    const action = {
-      type: 'VERIFY_PASSWORD_SUCCESSFUL', payload: 'Password verified'
-    };
-    const expected = { responseMsg: 'Password verified', loading: false, error: false };
-    const newState = UserReducers.verifyPasswordReset(passwordResetInitialState, action);
-    expect(newState).toEqual(expected);
-  });
-  it('should update the state when VERIFY_PASSWORD_UNSUCCESSFUL is passed', () => {
-    const action = {
-      type: 'VERIFY_PASSWORD_UNSUCCESSFUL', payload: 'Password could not be verified'
-    };
-    const expected = { responseMsg: 'Password could not be verified', loading: false, error: false };
-    const newState = UserReducers.verifyPasswordReset(passwordResetInitialState, action);
-    expect(newState).toEqual(expected);
-  });
+  it('should update the state when VERIFY_PASSWORD_SUCCESSFUL is passed',
+    () => {
+      const action = {
+        type: 'VERIFY_PASSWORD_SUCCESSFUL', payload: 'Password verified'
+      };
+      const expected = {
+        responseMsg: 'Password verified', loading: false, error: false };
+      const newState = UserReducers.verifyPassword(
+        passwordResetInitialState, action);
+      expect(newState).toEqual(expected);
+    });
+  it('should update the state when VERIFY_PASSWORD_UNSUCCESSFUL is passed',
+    () => {
+      const action = {
+        type: 'VERIFY_PASSWORD_UNSUCCESSFUL',
+        payload: 'Password could not be verified'
+      };
+      const expected = {
+        responseMsg: 'Password could not be verified',
+        loading: false,
+        error: false };
+      const newState = UserReducers.verifyPassword(
+        passwordResetInitialState, action);
+      expect(newState).toEqual(expected);
+    });
   it('should update the state when VERIFY_PASSWORD_REJECTED is passed', () => {
     const action = {
-      type: 'VERIFY_PASSWORD_REJECTED'
+      type: 'VERIFY_PASSWORD_REJECTED', payload: 'internal server error'
     };
-    const expected = { responseMsg: '', loading: false, error: true };
-    const newState = UserReducers.verifyPasswordReset(passwordResetInitialState, action);
+    const expected = {
+      responseMsg: 'internal server error', loading: false, error: true };
+    const newState = UserReducers.verifyPassword(
+      passwordResetInitialState, action);
     expect(newState).toEqual(expected);
   });
-  it('should update the state when SEND_EMAIL_NOTIFICATION_BEGINS is passed', () => {
-    const action = {
-      type: 'SEND_EMAIL_NOTIFICATION_BEGINS'
-    };
-    const expected = { responseMsg: '', loading: true, error: false };
-    const newState = UserReducers.sendMailForNotification(passwordResetInitialState, action);
-    expect(newState).toEqual(expected);
-  });
+  it('should update the state when SEND_EMAIL_NOTIFICATION_BEGINS is passed',
+    () => {
+      const action = {
+        type: 'SEND_EMAIL_NOTIFICATION_BEGINS'
+      };
+      const expected = { responseMsg: '', loading: true, error: false };
+      const newState = UserReducers.mailNotification(
+        passwordResetInitialState, action);
+      expect(newState).toEqual(expected);
+    });
   it('should update the state when SEND_EMAIL_NOTIFICATION_SUCCESSFUL is passed', () => {
     const action = {
       type: 'SEND_EMAIL_NOTIFICATION_SUCCESSFUL', payload: 'Email sent'
     };
-    const expected = { responseMsg: 'Email sent', loading: false, error: false };
-    const newState = UserReducers.sendMailForNotification(passwordResetInitialState, action);
+    const expected = {
+      responseMsg: 'Email sent',
+      loading: false,
+      error: false };
+    const newState = UserReducers.mailNotification(
+      passwordResetInitialState, action);
     expect(newState).toEqual(expected);
   });
   it('should update the state when SEND_EMAIL_NOTIFICATION_UNSUCCESSFUL is passed', () => {
     const action = {
-      type: 'SEND_EMAIL_NOTIFICATION_UNSUCCESSFUL', payload: 'Email could not be sent'
+      type: 'SEND_EMAIL_NOTIFICATION_UNSUCCESSFUL',
+      payload: 'Email could not be sent'
     };
-    const expected = { responseMsg: 'Email could not be sent', loading: false, error: false };
-    const newState = UserReducers.sendMailForNotification(passwordResetInitialState, action);
+    const expected = {
+      responseMsg: 'Email could not be sent', loading: false, error: false };
+    const newState = UserReducers.mailNotification(
+      passwordResetInitialState, action);
     expect(newState).toEqual(expected);
   });
-  it('should update the state when SEND_EMAIL_NOTIFICATION_REJECTED is passed', () => {
-    const action = {
-      type: 'SEND_EMAIL_NOTIFICATION_REJECTED'
-    };
-    const expected = { responseMsg: '', loading: false, error: true };
-    const newState = UserReducers.sendMailForNotification(passwordResetInitialState, action);
-    expect(newState).toEqual(expected);
-  });
-  it('should update the state when SEND_SMS_NOTIFICATION_SUCCESSFUL is passed', () => {
-    const action = {
-      type: 'SEND_SMS_NOTIFICATION_SUCCESSFUL', payload: 'message sent'
-    };
-    const expected = { responseMsg: 'message sent', loading: false, error: false };
-    const newState = UserReducers.sendSmsForNotification(passwordResetInitialState, action);
-    expect(newState).toEqual(expected);
-  });
+  it('should update the state when SEND_EMAIL_NOTIFICATION_REJECTED is passed',
+    () => {
+      const action = {
+        type: 'SEND_EMAIL_NOTIFICATION_REJECTED',
+        payload: 'internal server error'
+      };
+      const expected = {
+        responseMsg: 'internal server error', loading: false, error: true };
+      const newState = UserReducers.mailNotification(
+        passwordResetInitialState, action);
+      expect(newState).toEqual(expected);
+    });
+  it('should update the state when SEND_SMS_NOTIFICATION_SUCCESSFUL is passed',
+    () => {
+      const action = {
+        type: 'SEND_SMS_NOTIFICATION_SUCCESSFUL', payload: 'message sent'
+      };
+      const expected = {
+        responseMsg: 'message sent', loading: false, error: false };
+      const newState = UserReducers.smsNotification(
+        passwordResetInitialState, action);
+      expect(newState).toEqual(expected);
+    });
   it('should update the state when SEND_SMS_NOTIFICATION_UNSUCCESSFUL is passed', () => {
     const action = {
-      type: 'SEND_SMS_NOTIFICATION_UNSUCCESSFUL', payload: 'message could not be sent'
+      type: 'SEND_SMS_NOTIFICATION_UNSUCCESSFUL',
+      payload: 'message could not be sent'
     };
-    const expected = { responseMsg: 'message could not be sent', loading: false, error: false };
-    const newState = UserReducers.sendSmsForNotification(passwordResetInitialState, action);
+    const expected = {
+      responseMsg: 'message could not be sent', loading: false, error: false };
+    const newState = UserReducers.smsNotification(
+      passwordResetInitialState, action);
     expect(newState).toEqual(expected);
   });
-  it('should update the state when SEND_SMS_NOTIFICATION_REJECTED is passed', () => {
+  it('should update the state when SEND_SMS_NOTIFICATION_REJECTED is passed',
+    () => {
+      const action = {
+        type: 'SEND_SMS_NOTIFICATION_REJECTED', payload: 'internal server error'
+      };
+      const expected = {
+        responseMsg: 'internal server error', loading: false, error: true };
+      const newState = UserReducers.smsNotification(
+        passwordResetInitialState, action);
+      expect(newState).toEqual(expected);
+    });
+  it('should update the state when REGISTER_GOOGLE_USER_BEGINS is passed',
+    () => {
+      const action = {
+        type: 'REGISTER_GOOGLE_USER_BEGINS'
+      };
+      const expected = { response: [], loading: true, error: false };
+      const newState = UserReducers.registerGoogleUser(
+        googleUserInitialState, action);
+      expect(newState).toEqual(expected);
+    });
+  it('should update the state when REGISTER_GOOGLE_USER_SUCCESSFUL is passed',
+    () => {
+      const action = {
+        type: 'REGISTER_GOOGLE_USER_SUCCESSFUL',
+        payload: { message: 'Successfully registered' }
+      };
+      const expected = {
+        response: { message: 'Successfully registered' },
+        loading: false,
+        error: false };
+      const newState = UserReducers.registerGoogleUser(
+        googleUserInitialState, action);
+      expect(newState).toEqual(expected);
+    });
+  it('should update the state when REGISTER_GOOGLE_USER_UNSUCCESSFUL is passed',
+    () => {
+      const action = {
+        type: 'REGISTER_GOOGLE_USER_UNSUCCESSFUL',
+        payload: 'Unsuccessful registration'
+      };
+      const expected = {
+        response: 'Unsuccessful registration', loading: false, error: false };
+      const newState = UserReducers.registerGoogleUser(
+        googleUserInitialState, action);
+      expect(newState).toEqual(expected);
+    });
+  it('should update the state when REGISTER_GOOGLE_USER_REJECTED is passed',
+    () => {
+      const action = {
+        type: 'REGISTER_GOOGLE_USER_REJECTED', payload: 'internal server error'
+      };
+      const expected = { response: 'internal server error', loading: false, error: true };
+      const newState = UserReducers.registerGoogleUser(
+        googleUserInitialState, action);
+      expect(newState).toEqual(expected);
+    });
+
+  it('should update the state when GET_READ_USERS_BEGINS is passed', () => {
     const action = {
-      type: 'SEND_SMS_NOTIFICATION_REJECTED'
+      type: 'GET_READ_USERS_BEGINS'
     };
-    const expected = { responseMsg: '', loading: false, error: true };
-    const newState = UserReducers.sendSmsForNotification(passwordResetInitialState, action);
+    const expected = { users: [], loading: true, error: false };
+    const newState = UserReducers.readMessages(readMessagesInitial, action);
     expect(newState).toEqual(expected);
   });
-  it('should update the state when REGISTER_GOOGLE_USER_BEGINS is passed', () => {
+  it('should update the state when GET_READ_USERS_SUCCESSFUL is passed', () => {
     const action = {
-      type: 'REGISTER_GOOGLE_USER_BEGINS'
+      type: 'GET_READ_USERS_SUCCESSFUL',
+      payload: [{ id: 1, username: 'noordean' }]
     };
-    const expected = { response: [], loading: true, error: false };
-    const newState = UserReducers.registerUserFromGoogle(googleUserInitialState, action);
+    const expected = {
+      users: [{ id: 1, username: 'noordean' }], loading: false, error: false };
+    const newState = UserReducers.readMessages(readMessagesInitial, action);
     expect(newState).toEqual(expected);
   });
-  it('should update the state when REGISTER_GOOGLE_USER_SUCCESSFUL is passed', () => {
+  it('should update the state when GET_READ_USERS_UNSUCCESSFUL is passed',
+    () => {
+      const action = {
+        type: 'GET_READ_USERS_UNSUCCESSFUL'
+      };
+      const expected = { users: [], loading: false, error: true };
+      const newState = UserReducers.readMessages(readMessagesInitial, action);
+      expect(newState).toEqual(expected);
+    });
+  it('should update the state when GET_READ_USERS_REJECTED is passed', () => {
     const action = {
-      type: 'REGISTER_GOOGLE_USER_SUCCESSFUL', payload: { message: 'Successfully registered' }
+      type: 'GET_READ_USERS_REJECTED'
     };
-    const expected = { response: { message: 'Successfully registered' }, loading: false, error: false };
-    const newState = UserReducers.registerUserFromGoogle(googleUserInitialState, action);
+    const expected = { users: [], loading: false, error: true };
+    const newState = UserReducers.readMessages(readMessagesInitial, action);
     expect(newState).toEqual(expected);
   });
-  it('should update the state when REGISTER_GOOGLE_USER_UNSUCCESSFUL is passed', () => {
-    const action = {
-      type: 'REGISTER_GOOGLE_USER_UNSUCCESSFUL', payload: 'Unsuccessful registration'
-    };
-    const expected = { response: 'Unsuccessful registration', loading: false, error: false };
-    const newState = UserReducers.registerUserFromGoogle(googleUserInitialState, action);
-    expect(newState).toEqual(expected);
-  });
-  it('should update the state when REGISTER_GOOGLE_USER_REJECTED is passed', () => {
-    const action = {
-      type: 'REGISTER_GOOGLE_USER_REJECTED'
-    };
-    const expected = { response: [], loading: false, error: true };
-    const newState = UserReducers.registerUserFromGoogle(googleUserInitialState, action);
-    expect(newState).toEqual(expected);
-  });
+
+  it('should update the state when SAVE_NOTIFICATION_SUCCESSFUL is passed',
+    () => {
+      const action = {
+        type: 'SAVE_NOTIFICATION_SUCCESSFUL', payload: 'notifications saved'
+      };
+      const expected = {
+        notification: [],
+        loading: false,
+        error: false,
+        responseMsg: 'notifications saved' };
+      const newState = UserReducers.appNotification(
+        notificationInitial, action);
+      expect(newState).toEqual(expected);
+    });
+  it('should update the state when SAVE_NOTIFICATION_UNSUCCESSFUL is passed',
+    () => {
+      const action = {
+        type: 'SAVE_NOTIFICATION_SUCCESSFUL',
+        payload: 'notifications could not be saved'
+      };
+      const expected = {
+        notification: [],
+        loading: false,
+        error: false,
+        responseMsg: 'notifications could not be saved' };
+      const newState = UserReducers.appNotification(
+        notificationInitial, action);
+      expect(newState).toEqual(expected);
+    });
+  it('should update the state when SAVE_NOTIFICATION_REJECTED is passed',
+    () => {
+      const action = {
+        type: 'SAVE_NOTIFICATION_REJECTED'
+      };
+      const expected = {
+        notification: [], loading: false, error: true, responseMsg: '' };
+      const newState = UserReducers.appNotification(
+        notificationInitial, action);
+      expect(newState).toEqual(expected);
+    });
+  it('should update the state when GET_NOTIFICATION_SUCCESSFUL is passed',
+    () => {
+      const action = {
+        type: 'GET_NOTIFICATION_SUCCESSFUL',
+        payload: [{ id: 1, message: 'i am here', postedby: 'kola' }]
+      };
+      const expected = {
+        notification: [{ id: 1, message: 'i am here', postedby: 'kola' }],
+        loading: false,
+        error: false,
+        responseMsg: '' };
+      const newState = UserReducers.appNotification(
+        notificationInitial, action);
+      expect(newState).toEqual(expected);
+    });
+  it('should update the state when DELETE_NOTIFICATION_SUCCESSFUL is passed',
+    () => {
+      const action = {
+        type: 'DELETE_NOTIFICATION_SUCCESSFUL', payload: 'notification deleted'
+      };
+      const expected = {
+        notification: [],
+        loading: false,
+        error: false,
+        responseMsg: 'notification deleted' };
+      const newState = UserReducers.appNotification(
+        notificationInitial, action);
+      expect(newState).toEqual(expected);
+    });
 });

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import Home from '../components/Home.jsx';
-import MessageActions from '../actions/message';
+import MessageActions from '../actions/MessageActions';
 
 /**
   * @class ArchiveMessage
@@ -28,7 +28,8 @@ export class ArchiveMessage extends Component {
   * @return {void} void
   */
   componentDidMount() {
-    this.props.getArchivedMessages(this.props.params.groupId, JSON.parse(localStorage.user).id);
+    this.props.getArchivedMessages(this.props.params.groupId,
+      JSON.parse(localStorage.user).id);
   }
 
   /**
@@ -57,9 +58,19 @@ export class ArchiveMessage extends Component {
 
     let archiveBoard;
     if (this.state.responseMsg !== '') {
-      archiveBoard = <div className="center">{this.state.responseMsg}</div>;
+      archiveBoard = (
+        <div
+          className="center error-message"
+        >
+          {this.state.responseMsg}
+        </div>);
     } else if (this.props.archivedMessages.loading) {
-      archiveBoard = <div className="center">Loading messages...</div>;
+      archiveBoard = (
+        <div
+          className="center loading-messages"
+        >
+          Loading messages...
+        </div>);
     } else if (this.state.messages.length > 0) {
       archiveBoard = this.state.messages.map(message => (
         <div key={message.id}>
@@ -89,7 +100,9 @@ export class ArchiveMessage extends Component {
         </div>
       ));
     } else {
-      archiveBoard = <div className="center">There is no archived message yet</div>;
+      archiveBoard = (<div className="center">
+      There is no archived message yet
+      </div>);
     }
 
     return (

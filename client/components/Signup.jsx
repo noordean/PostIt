@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
+import { browserHistory, Link } from 'react-router';
 import PropTypes from 'prop-types';
 
-import UsersActions from '../actions/user';
+import UsersActions from '../actions/UserActions';
+import displayError from '../utils/errorDisplay';
 
 /**
   * @class SignUp
@@ -51,20 +52,6 @@ export class SignUp extends Component {
   }
 
   /**
-  * description: executes when component is just about to get rendered
-  * @return {void} void
-  */
-  changeStateToInitial() {
-    this.setState({
-      usernameInput: '',
-      emailInput: '',
-      passwordInput: '',
-      phoneInput: '',
-      confirmPasswordInput: ''
-    });
-  }
-
-  /**
   * description: controls inputs state
   * @param {object} event the event object
   * @return {void} void
@@ -77,58 +64,33 @@ export class SignUp extends Component {
     const password = this.state.passwordInput;
     const confirmPassword = this.state.confirmPasswordInput;
     if (password !== confirmPassword) {
-      $('#clientError').text('The two passwords did not match');
-    } else {
-      $('#clientError').text('');
-      this.props.registerUser(username, email, password, phone)
-        .then(() => {
-          if (this.props.userRegistration.reqStatus.message === 'Registration successful') {
-            this.setState({
-              signUpResponse: this.props.userRegistration.reqStatus.message
-            });
-            this.changeStateToInitial();
-          } else {
-            this.setState({
-              signUpResponse: this.props.userRegistration.reqStatus.message
-            });
-          }
-          if (this.props.userRegistration.reqError) {
-            this.setState({
-              signUpResponse: 'Sorry, unexpected error occured'
-            });
-          }
-        });
+      return displayError('The two passwords did not match');
     }
+    this.props.registerUser(username, email, password, phone)
+      .then(() => {
+        if (this.props.userRegistration.reqStatus.message === 'Registration successful') {
+          browserHistory.push('/signin');
+          return displayError('Registration successful. Kindly login here');
+        }
+        return displayError(this.props.userRegistration.reqStatus.message);
+      });
   }
 
   /**
   * description: renders the component
+  *
   * @return {void} void
   */
   render() {
-    let errorMsg = <div>{this.state.signUpResponse}</div>;
-    if (this.state.signUpResponse === 'Registration successful') {
-      errorMsg = (<div
-        className="signup-link"
-      >
-      Registration successful, click
-        <Link
-          to="/signin"
-          className="signin-link"
-        > here
-        </Link> to login</div>);
-    }
     return (
       <div className="container">
         <div id="register-page" className="row">
           <div className="col s12 z-depth-4 card-panel">
-            <form className="register-form" onSubmit={this.registerHandler} id="formElement">
-              <div className="row">
-                <div className="input-field col s12 center">
-                  <div id="clientError" />
-                  {errorMsg}
-                </div>
-              </div>
+            <form
+              className="register-form"
+              onSubmit={this.registerHandler}
+              id="formElement"
+            >
               <div className="row margin">
                 <div className="input-field col s12">
                   <i className="material-icons prefix">account_circle</i>
@@ -140,7 +102,10 @@ export class SignUp extends Component {
                     onChange={this.onChange}
                     required
                   />
-                  <label htmlFor="username" className="center-align">Username</label>
+                  <label
+                    htmlFor="username"
+                    className="center-align"
+                  >Username</label>
                 </div>
               </div>
               <div className="row margin">
@@ -168,7 +133,10 @@ export class SignUp extends Component {
                     onChange={this.onChange}
                     required
                   />
-                  <label htmlFor="email" className="center-align">Phone Number</label>
+                  <label
+                    htmlFor="email"
+                    className="center-align"
+                  >Phone Number</label>
                 </div>
               </div>
               <div className="row margin">
@@ -208,7 +176,7 @@ export class SignUp extends Component {
                 <div className="input-field col s12">
                   <p className="margin center medium-small sign-up">
                     Already have an account?
-                    <a href="page-login.html">Login</a></p>
+                    <Link to="/signin">Login</Link></p>
                 </div>
               </div>
             </form>

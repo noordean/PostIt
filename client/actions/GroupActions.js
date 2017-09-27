@@ -25,13 +25,16 @@ export default class GroupActions {
         description
       })
         .then((response) => {
-          dispatch({ type: 'CREATE_GROUP_SUCCESSFUL', groups: response.data.group });
+          dispatch({ type: 'CREATE_GROUP_SUCCESSFUL',
+            groups: response.data.group });
         })
         .catch((err) => {
-          if (err.response.data.message) {
-            dispatch({ type: 'CREATE_GROUP_UNSUCCESSFUL', errorMessage: err.response.data.message });
+          if (err.response.status === 500) {
+            dispatch({ type: 'CREATE_GROUP_REJECTED',
+              errorMessage: 'Sorry, an unexpected error occurred.' });
           } else {
-            dispatch({ type: 'CREATE_GROUP_REJECTED' });
+            dispatch({ type: 'CREATE_GROUP_UNSUCCESSFUL',
+              errorMessage: err.response.data.message });
           }
         });
     };
@@ -56,13 +59,17 @@ export default class GroupActions {
       dispatch({ type: 'GET_GROUPS_BEGINS' });
       return axios.get(`/api/v1/user/groups?limit=${limit}&offset=${offset}`)
         .then((response) => {
-          dispatch({ type: 'GET_GROUPS_SUCCESSFUL', groups: response.data.groups.rows, pageCount: response.data.groups.count });
+          dispatch({ type: 'GET_GROUPS_SUCCESSFUL',
+            groups: response.data.groups.rows,
+            pageCount: response.data.groups.count });
         })
         .catch((err) => {
-          if (err.response.data.message) {
-            dispatch({ type: 'GET_GROUPS_UNSUCCESSFUL', errorMessage: err.response.data.message });
+          if (err.response.status === 500) {
+            dispatch({ type: 'GET_GROUPS_REJECTED',
+              errorMessage: 'Sorry, an unexpected error occurred.' });
           } else {
-            dispatch({ type: 'GET_GROUPS_REJECTED' });
+            dispatch({ type: 'GET_GROUPS_UNSUCCESSFUL',
+              errorMessage: err.response.data.message });
           }
         });
     };

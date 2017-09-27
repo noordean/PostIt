@@ -1,21 +1,47 @@
 
 import express from 'express';
 
-import group from '../controllers/group';
-import user from '../controllers/user';
-import message from '../controllers/message';
+import GroupControllers from '../controllers/GroupControllers';
+import UserControllers from '../controllers/UserControllers';
+import MessageControllers from '../controllers/MessageControllers';
 import authenticate from '../helpers/authenticate';
 import validate from '../helpers/validate';
 
-const groupRouter = express.Router();
+const group = express.Router();
 
-groupRouter.post('/api/v1/group', authenticate.verifyToken, validate.checkGroupName, group.createGroup);
-groupRouter.post('/api/v1/group/:groupID/user', authenticate.verifyToken, validate.checkGroupUserId, group.addUserToGroup);
-groupRouter.post('/api/v1/group/:groupID/message', authenticate.verifyToken, validate.checkMessage, message.postMessageToGroup);
-groupRouter.post('/api/v1/group/:groupId/message/archive', message.archiveReadMessage);
-groupRouter.get('/api/v1/group/:groupId/message/archive', message.getArchivedMessages);
-groupRouter.get('/api/v1/group/:groupID/messages', authenticate.verifyToken, validate.checkGroupId, group.getGroupMessages);
-groupRouter.get('/api/v1/group/:groupID/users', authenticate.verifyToken, user.getGroupUsers);
-groupRouter.delete('/api/v1/group/:groupID', authenticate.verifyToken, validate.checkGroupId, group.deleteGroup);
+group.post('/api/v1/group',
+  authenticate.verifyToken,
+  validate.checkGroupName,
+  GroupControllers.createGroup
+);
+group.post('/api/v1/group/:groupId/user',
+  authenticate.verifyToken,
+  validate.checkIds,
+  GroupControllers.addUserToGroup
+);
+group.post('/api/v1/group/:groupId/message',
+  authenticate.verifyToken,
+  validate.checkMessage,
+  MessageControllers.postMessage
+);
+group.post('/api/v1/group/:groupId/message/archive',
+  MessageControllers.archiveMessage
+);
+group.get('/api/v1/group/:groupId/message/archive',
+  MessageControllers.getArchivedMessages
+);
+group.get('/api/v1/group/:groupId/messages',
+  authenticate.verifyToken, validate.checkGroupId,
+  GroupControllers.getGroupMessages
+);
+group.get('/api/v1/group/:groupId/users',
+  authenticate.verifyToken,
+  UserControllers.getGroupUsers
+);
+group.delete('/api/v1/group/:groupId',
+  authenticate.verifyToken,
+  validate.checkGroupId,
+  GroupControllers.deleteGroup
+);
 
-export default groupRouter;
+export default group;

@@ -3,10 +3,11 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import UserActions from '../actions/user';
-import MessageActions from '../actions/message';
+import UserActions from '../actions/UserActions';
+import MessageActions from '../actions/MessageActions';
 import SideNav from './Sidenav.jsx';
 import Home from './Home.jsx';
+import displayError from '../utils/errorDisplay';
 
 /**
   * @class MessageBoard
@@ -75,20 +76,11 @@ export class MessageBoard extends Component {
   * @return {void} void
   */
   getMessagesHandler() {
-    this.props.getMessages(this.props.params.groupID, JSON.parse(localStorage.user).id)
+    this.props.getMessages(this.props.params.groupId,
+      JSON.parse(localStorage.user).id)
       .then(() => {
-        if (this.props.groupMessages.messages.length > 0) {
-          this.setState({
-            messages: this.props.groupMessages.messages,
-          });
-        } else if (this.props.groupMessages.error) {
-          this.setState({
-            responseMsg: 'Sorry, messages could not be fetched'
-          });
-        } else if (this.props.groupMessages.responseMsg !== '') {
-          this.setState({
-            responseMsg: this.props.groupMessages.responseMsg
-          });
+        if (this.props.groupMessages.responseMsg.length > 0) {
+          return displayError(this.props.groupMessages.responseMsg);
         }
         this.archiveMessageHandler();
       });
@@ -116,11 +108,22 @@ export class MessageBoard extends Component {
   archiveMessageHandler() {
     if (this.state.messages.length > 0) {
       const readMessageIds = this.state.messages.map(msgId => msgId.id);
-      this.props.archiveReadMessages(this.props.params.groupID,
+      this.props.archiveReadMessages(this.props.params.groupId,
         JSON.parse(localStorage.user).id, readMessageIds);
     }
   }
 
+  /**
+  * description: clears the createGroup state inputs
+  *
+  * @return {void} void
+  */
+  clearPostMessageState() {
+    this.setState({
+      messageInput: '',
+      msgStatus: 'Normal'
+    });
+  }
 
   /**
   * description: posts message to a group
@@ -133,43 +136,41 @@ export class MessageBoard extends Component {
     event.preventDefault();
     const msg = encodeURI(this.state.messageInput);
     if (msg.length !== 0) {
-      this.props.postGroupMessage(this.props.params.groupID, msg, this.state.msgStatus)
+      this.props.postMessage(this.props.params.groupId,
+        msg, this.state.msgStatus)
         .then(() => {
-          this.setState({
-            messageInput: ''
-          });
-          if (this.props.groupMessages.responseMsg !== '') {
-            this.setState({
-              responseMsg: this.props.groupMessages.responseMsg
+          if (this.props.groupMessages.responseMsg.length > 0) {
+            return displayError(this.props.groupMessages.responseMsg);
+          }
+          this.clearPostMessageState();
+          const postedMessage = this.props.groupMessages.messages[
+            this.props.groupMessages.messages.length - 1];
+          if (postedMessage.priority === 'Normal') {
+            const recepients = this.props.member.members.filter(
+              member => (
+                member.username !== JSON.parse(localStorage.user).username));
+            if (recepients.length > 0) {
+              this.props.saveInAppNotification(recepients,
+                this.props.params.groupName,
+                postedMessage.message,
+                postedMessage.postedby);
+            }
+          }
+          if (postedMessage.priority !== 'Normal') {
+            this.sendMailNotification(this.props.member.members,
+              decodeURI(msg));
+          }
+          if (postedMessage.priority === 'Critical') {
+            const members = this.props.member.members.map((member) => {
+              const membersObj = {};
+              membersObj.to = member.phoneNumber;
+              membersObj.from = 'PostIt App';
+              membersObj.message = `Hi! ${postedMessage.postedby} 
+              just posted a message in ${this.props.params.groupName}: 
+              ${decodeURI(postedMessage.message)}`;
+              return membersObj;
             });
-          } else if (this.props.groupMessages.error) {
-            this.setState({
-              responseMsg: 'Sorry, message could not be posted'
-            });
-          } else {
-            const postedMessage = this.props.groupMessages.messages[
-              this.props.groupMessages.messages.length - 1];
-            if (postedMessage.priority === 'Normal') {
-              const recepients = this.props.member.members.filter(
-                member => (member.username !== JSON.parse(localStorage.user).username));
-              if (recepients.length > 0) {
-                this.props.saveInAppNotification(recepients,
-                  this.props.params.groupName, postedMessage.message, postedMessage.postedby);
-              }
-            }
-            if (postedMessage.priority !== 'Normal') {
-              this.sendMailNotification(this.props.member.members, decodeURI(msg));
-            }
-            if (postedMessage.priority === 'Critical') {
-              const members = this.props.member.members.map((member) => {
-                const membersObj = {};
-                membersObj.to = member.phoneNumber;
-                membersObj.from = 'PostIt App';
-                membersObj.message = `Hi! ${postedMessage.postedby} just posted a message in ${this.props.params.groupName}: ${decodeURI(postedMessage.message)}`;
-                return membersObj;
-              });
-              this.props.sendSmsForNotification(members);
-            }
+            this.props.smsNotification(members);
           }
         });
     }
@@ -185,12 +186,14 @@ export class MessageBoard extends Component {
   */
   sendMailNotification(members, message) {
     const allMembers = members.map(member => member.email);
-    const recepients = allMembers.filter(member => member !== JSON.parse(localStorage.user).email);
+    const recepients = allMembers.filter(
+      member => member !== JSON.parse(localStorage.user).email);
     const recepientsInStr = recepients.join(', ');
     const groupName = this.props.params.groupName;
     const poster = JSON.parse(localStorage.user).username;
     if (allMembers.length > 1) {
-      this.props.sendMailForNotification(recepientsInStr, groupName, message, poster);
+      this.props.mailNotification(
+        recepientsInStr, groupName, message, poster);
     }
   }
 
@@ -204,7 +207,7 @@ export class MessageBoard extends Component {
   */
   openSeenMsgModal(messageId, event) {
     event.preventDefault();
-    this.props.getReadMessageUsers(messageId, this.props.params.groupID)
+    this.props.getReadMessageUsers(messageId, this.props.params.groupId)
       .then(() => {
         this.setState({
           readMessageUsers: this.props.readMessages.users
@@ -224,10 +227,8 @@ export class MessageBoard extends Component {
     }
 
     let messageBoard;
-    if (this.state.responseMsg !== '') {
-      messageBoard = <div className="center">{this.state.responseMsg}</div>;
-    } else if (this.props.groupMessages.loading) {
-      messageBoard = <div className="center">Loading messages...</div>;
+    if (this.props.groupMessages.loading) {
+      messageBoard = <div className="center loading-messages">Loading messages...</div>;
     } else if (this.state.messages.length > 0) {
       messageBoard = this.state.messages.map(message => (
         <div key={message.id}>
@@ -263,7 +264,9 @@ export class MessageBoard extends Component {
         </div>
       ));
     } else {
-      messageBoard = <div className="center">There is no recent message in this group</div>;
+      messageBoard = (<div
+        className="center"
+      >There is no recent message in this group</div>);
     }
 
     let readMessageUsers = ['none'];
@@ -278,7 +281,10 @@ export class MessageBoard extends Component {
           </div>
         </div>
         <div>
-          <SideNav groupName={this.props.params.groupName} groupID={this.props.params.groupID} />
+          <SideNav
+            groupName={this.props.params.groupName}
+            groupId={this.props.params.groupId}
+          />
           <div className="row group-cards">
             <div className="col s3" />
             <div className="col s9">
@@ -349,15 +355,15 @@ export class MessageBoard extends Component {
 
 MessageBoard.propTypes = {
   params: PropTypes.shape({
-    groupID: PropTypes.string.isRequired,
+    groupId: PropTypes.string.isRequired,
     groupName: PropTypes.string.isRequired
   }).isRequired,
   getMessages: PropTypes.func.isRequired,
-  postGroupMessage: PropTypes.func.isRequired,
+  postMessage: PropTypes.func.isRequired,
   saveInAppNotification: PropTypes.func.isRequired,
   archiveReadMessages: PropTypes.func.isRequired,
-  sendSmsForNotification: PropTypes.func.isRequired,
-  sendMailForNotification: PropTypes.func.isRequired,
+  smsNotification: PropTypes.func.isRequired,
+  mailNotification: PropTypes.func.isRequired,
   getReadMessageUsers: PropTypes.func.isRequired,
   groupMessages: PropTypes.shape({
     responseMsg: PropTypes.string,
@@ -387,9 +393,9 @@ const mapStateToProps = state => ({
 
 const matchDispatchToProps = dispatch => bindActionCreators({
   getMessages: MessageActions.getMessages,
-  sendMailForNotification: UserActions.sendMailForNotification,
-  sendSmsForNotification: UserActions.sendSmsForNotification,
-  postGroupMessage: MessageActions.postGroupMessage,
+  mailNotification: UserActions.mailNotification,
+  smsNotification: UserActions.smsNotification,
+  postMessage: MessageActions.postMessage,
   archiveReadMessages: MessageActions.archiveReadMessages,
   getReadMessageUsers: UserActions.getReadMessageUsers,
   saveInAppNotification: UserActions.saveInAppNotification }, dispatch);

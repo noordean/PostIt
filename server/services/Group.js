@@ -45,6 +45,8 @@ export default class Group {
   static getGroupById(groupId, done) {
     Groups.findAll({ where: { id: groupId } }).then((group) => {
       done(group);
+    }).catch((err) => {
+      done({ err });
     });
   }
 

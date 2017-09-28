@@ -11,7 +11,7 @@
     "clean-db-prod": "NODE_ENV=production sequelize db:migrate:undo:all && NODE_ENV=production sequelize db:migrate",
     "setup-test": "NODE_ENV=test npm run clean-db && NODE_ENV=test sequelize db:seed:all",
     "server:test": "npm run setup-test && npm run server-pre-test",
-    "start": "NODE_ENV=production webpack -p --config webpack.config.prod.js && babel-node -- server/server.js",
+    "start": "NODE_ENV=production ./node_modules/.bin/webpack -p --config webpack.config.prod.js && babel-node -- server/server.js",
     "start:dev": "NODE_ENV=development nodemon --exec babel-node -- server/server.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "e2e-setup": "selenium-standalone install",

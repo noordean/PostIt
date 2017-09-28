@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import GuestHeader from './GuestHeader.jsx';
-import GroupActions from '../actions/GroupActions';
-import displayError from '../utils/errorDisplay';
+import CreateGroupModal from '../presentation/CreateGroupModal.jsx';
+import GroupActions from '../../actions/GroupActions';
 
 /**
   * @class GuestHeader
@@ -55,12 +55,10 @@ export class Header extends Component {
     event.preventDefault();
     this.props.createGroup(this.state.groupName, this.state.groupDescription)
       .then(() => {
-        if (this.props.group.responseMsg.length > 0) {
-          return displayError(this.props.group.responseMsg);
+        if (this.props.group.responseMsg.length === 0) {
+          this.props.getGroups(this.state.groupLimit, 0);
+          $('#createGroup').modal('close');
         }
-        this.props.getGroups(this.state.groupLimit, 0);
-        $('#createGroup').modal('close');
-        return displayError('Group created successfully');
       });
   }
 
@@ -115,52 +113,13 @@ export class Header extends Component {
     $('.dropdown-button').dropdown();
     const userHeader =
       (<div>
-        <div id="createGroup" className="modal">
-          <div className="modal-content">
-            <form className="group-form" id="createForm">
-              <div className="row">
-                <div className="input-field col s12">
-                  <input
-                    type="text"
-                    name="groupName"
-                    onChange={this.onChange}
-                    value={this.state.groupName}
-                  />
-                  <label htmlFor="password">Group Name</label>
-                </div>
-              </div>
-              <div className="row">
-                <div className="input-field col s12">
-                  <textarea
-                    id="textarea1"
-                    name="groupDescription"
-                    className="materialize-textarea white"
-                    onChange={this.onChange}
-                    value={this.state.groupDescription}
-                  />
-                  <label htmlFor="password">Description</label>
-                </div>
-              </div>
-              <div className="row">
-                <div className="input-field col s12">
-                  <a
-                    href="##"
-                    className="btn waves-effect waves-light col s12 red darken-4"
-                    onClick={this.createGroup}
-                  >Create</a>
-                </div>
-              </div>
-            </form>
-          </div>
-          <div className="modal-footer">
-            <a
-              href="#!"
-              className="modal-action modal-close waves-effect waves-green btn-flat"
-            >Cancel</a>
-          </div>
-        </div>
+        <CreateGroupModal
+          onChange={this.onChange}
+          createGroup={this.createGroup}
+          groupName={this.state.groupName}
+          groupDescription={this.state.groupDescription}
+        />
         <ul id="dropdown1" className="dropdown-content">
-          <li><a href="#!">Profile</a></li>
           <li><a href="" onClick={this.logoutHandler}>Log out</a></li>
         </ul>
         <nav>

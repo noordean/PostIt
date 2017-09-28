@@ -8,7 +8,7 @@ const jwtSecret = process.env.jwtSecret;
  * 
  * @class Authenticate
  */
-export default class Authenticate {
+export default class Auth {
 /**
  * @description: generate a login token
  * 
@@ -18,7 +18,7 @@ export default class Authenticate {
  */
   static generateToken(payload) {
     const token = jwt.sign(payload, jwtSecret, {
-      expiresIn: '720h'
+      expiresIn: '24h'
     });
     return token;
   }

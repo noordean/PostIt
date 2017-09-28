@@ -3,11 +3,12 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import UserActions from '../actions/UserActions';
-import MessageActions from '../actions/MessageActions';
+import UserActions from '../../actions/UserActions';
+import MessageActions from '../../actions/MessageActions';
 import SideNav from './Sidenav.jsx';
-import Home from './Home.jsx';
-import displayError from '../utils/errorDisplay';
+import Home from '../presentation/Home.jsx';
+import MessageList from '../presentation/MessageList.jsx';
+import PostMessageForm from '../presentation/PostMessageForm.jsx';
 
 /**
   * @class MessageBoard
@@ -29,6 +30,7 @@ export class MessageBoard extends Component {
     this.getMsgStatus = this.getMsgStatus.bind(this);
     this.postMessageHandler = this.postMessageHandler.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.openSeenMsgModal = this.openSeenMsgModal.bind(this);
   }
 
   /**
@@ -79,9 +81,6 @@ export class MessageBoard extends Component {
     this.props.getMessages(this.props.params.groupId,
       JSON.parse(localStorage.user).id)
       .then(() => {
-        if (this.props.groupMessages.responseMsg.length > 0) {
-          return displayError(this.props.groupMessages.responseMsg);
-        }
         this.archiveMessageHandler();
       });
   }
@@ -139,9 +138,6 @@ export class MessageBoard extends Component {
       this.props.postMessage(this.props.params.groupId,
         msg, this.state.msgStatus)
         .then(() => {
-          if (this.props.groupMessages.responseMsg.length > 0) {
-            return displayError(this.props.groupMessages.responseMsg);
-          }
           this.clearPostMessageState();
           const postedMessage = this.props.groupMessages.messages[
             this.props.groupMessages.messages.length - 1];
@@ -228,41 +224,15 @@ export class MessageBoard extends Component {
 
     let messageBoard;
     if (this.props.groupMessages.loading) {
-      messageBoard = <div className="center loading-messages">Loading messages...</div>;
+      messageBoard = (
+        <div className="center loading-messages">Loading messages...</div>);
     } else if (this.state.messages.length > 0) {
-      messageBoard = this.state.messages.map(message => (
-        <div key={message.id}>
-          <div className="row">
-            <div className="col s10">
-              <h6 className="media-heading">{message.postedby}</h6>
-              <p className="col-lg-10 msgTxt">{decodeURI(message.message)}</p>
-            </div>
-            <div className="col s2">
-              <div>
-                <div>
-                  <small className="pull-right time">
-                    <i className="fa fa-clock-o" />
-                    {new Date(message.createdAt).toLocaleString()}
-                  </small>
-                </div>
-                <div>
-                  <small className="pull-right time red-text">
-                    <i className="fa fa-clock-o" />
-                    {message.priority}
-                  </small>
-                  <small className="seen">
-                    <a
-                      href="##"
-                      onClick={this.openSeenMsgModal.bind(this, message.id)}
-                    >seen by:</a>
-                  </small>
-                </div>
-              </div>
-            </div>
-          </div>
-          <hr />
-        </div>
-      ));
+      messageBoard = (
+        <MessageList
+          messages={this.state.messages}
+          openSeenMsgModal={this.openSeenMsgModal}
+        />
+      );
     } else {
       messageBoard = (<div
         className="center"
@@ -291,60 +261,12 @@ export class MessageBoard extends Component {
               <div id="msgarea">
                 {messageBoard}
               </div>
-              <div className="row" id="postArea">
-                <form className="col s12" id="textareaForm">
-                  <div className="row">
-                    <div className="input-field col s8">
-                      <textarea
-                        id="textarea1"
-                        value={this.state.messageInput}
-                        name="messageInput"
-                        onChange={this.onChange}
-                      />
-                      <label htmlFor="textarea1">Message</label>
-                    </div>
-                    <div className="col s2">
-                      <p>
-                        <input
-                          name="group1"
-                          type="radio"
-                          id="test1"
-                          value="Normal"
-                          onClick={this.getMsgStatus}
-                        />
-                        <label htmlFor="test1">Normal</label>
-                      </p>
-                      <p>
-                        <input
-                          name="group1"
-                          type="radio"
-                          id="test2"
-                          value="Urgent"
-                          onClick={this.getMsgStatus}
-                        />
-                        <label htmlFor="test2">Urgent</label>
-                      </p>
-                      <p>
-                        <input
-                          name="group1"
-                          type="radio"
-                          id="test3"
-                          value="Critical"
-                          onClick={this.getMsgStatus}
-                        />
-                        <label htmlFor="test3">Critical</label>
-                      </p>
-                    </div>
-                    <div className="input-field col s2">
-                      <a
-                        href="##"
-                        className="btn waves-effect waves-light col s12 red darken-4"
-                        onClick={this.postMessageHandler}
-                      >Post</a>
-                    </div>
-                  </div>
-                </form>
-              </div>
+              <PostMessageForm
+                onChange={this.onChange}
+                messageInput={this.state.messageInput}
+                getMsgStatus={this.getMsgStatus}
+                postMessageHandler={this.postMessageHandler}
+              />
             </div>
           </div>
         </div>

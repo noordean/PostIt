@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { browserHistory, Link } from 'react-router';
+import { Link } from 'react-router';
 import PropTypes from 'prop-types';
 
-import UsersActions from '../actions/UserActions';
-import displayError from '../utils/errorDisplay';
+import UsersActions from '../../actions/UserActions';
+import displayError from '../../utils/errorDisplay';
 
 /**
   * @class SignUp
@@ -66,14 +66,7 @@ export class SignUp extends Component {
     if (password !== confirmPassword) {
       return displayError('The two passwords did not match');
     }
-    this.props.registerUser(username, email, password, phone)
-      .then(() => {
-        if (this.props.userRegistration.reqStatus.message === 'Registration successful') {
-          browserHistory.push('/signin');
-          return displayError('Registration successful. Kindly login here');
-        }
-        return displayError(this.props.userRegistration.reqStatus.message);
-      });
+    this.props.registerUser(username, email, password, phone);
   }
 
   /**

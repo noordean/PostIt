@@ -3,7 +3,7 @@ import expect from 'expect';
 import $ from 'jquery';
 import { shallow } from 'enzyme';
 
-import { SignIn } from '../../components/Signin.jsx';
+import { SignIn } from '../../components/container/Signin.jsx';
 import localStorageMock from '../__mocks__/localStorageMock';
 
 window.localStorage = localStorageMock;
@@ -26,7 +26,7 @@ describe('<SignIn />', () => {
     global.Materialize = { toast: () => {} };
   });
   it('should display the necessary elements', () => {
-    expect(wrapper.find('div').length).toBe(15);
+    expect(wrapper.find('div').length).toBe(13);
     expect(wrapper.find('div').exists()).toBe(true);
   });
   it('should call onChange', () => {
@@ -41,5 +41,7 @@ describe('<SignIn />', () => {
   });
   it('should reset state when loginHandler is called', () => {
     wrapper.instance().loginHandler({ preventDefault() {} });
+    expect(wrapper.state().usernameInput).toEqual('');
+    expect(wrapper.state().passwordInput).toEqual('');
   });
 });

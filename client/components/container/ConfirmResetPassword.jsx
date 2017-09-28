@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import PropTypes from 'prop-types';
 
-import UsersActions from '../actions/UserActions';
+import UsersActions from '../../actions/UserActions';
 
 /**
   * Description: component that get rendered

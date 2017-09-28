@@ -3,20 +3,19 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 
-require('./src/public/js/style.js');
-
 import store from './store';
-import Inndex from './components/Index.jsx';
-import Home from './components/Home.jsx';
-import Signup from './components/Signup.jsx';
-import Signin from './components/Signin.jsx';
-import Dashboard from './components/Dashboard.jsx';
-import MessageBoard from './components/MessageBoard.jsx';
-import ConfirmResetPassword from './components/ConfirmResetPassword.jsx';
-import ArchiveMessage from './components/ArchiveMessage.jsx';
-import PageNotFound from './components/PageNotFound.jsx';
+import Inndex from './components/presentation/Index.jsx';
+import Home from './components/presentation/Home.jsx';
+import Signup from './components/container/Signup.jsx';
+import Signin from './components/container/Signin.jsx';
+import Dashboard from './components/container/Dashboard.jsx';
+import MessageBoard from './components/container/MessageBoard.jsx';
+import ConfirmResetPassword from './components/container/ConfirmResetPassword.jsx';
+import ArchiveMessage from './components/container/ArchiveMessage.jsx';
+import PageNotFound from './components/presentation/PageNotFound.jsx';
 import authorization from './utils/authorization';
 
+require('./src/public/js/style.js');
 
 if (localStorage.user) {
   authorization(JSON.parse(localStorage.user).token);

@@ -4,7 +4,6 @@ import chai from 'chai';
 import authorization from '../../utils/authorization';
 
 const should = chai.should();
-
 describe('Authorization', () => {
   it('should set token in the headers', (done) => {
     const token = 'my token';

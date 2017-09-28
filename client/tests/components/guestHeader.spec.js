@@ -3,7 +3,7 @@ import expect from 'expect';
 import { mount } from 'enzyme';
 import sinon from 'sinon';
 
-import { GuestHeader } from '../../components/GuestHeader.jsx';
+import { GuestHeader } from '../../components/container/GuestHeader.jsx';
 import localStorageMock from '../__mocks__/localStorageMock';
 
 window.localStorage = localStorageMock;

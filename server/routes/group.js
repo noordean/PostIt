@@ -4,8 +4,8 @@ import express from 'express';
 import GroupControllers from '../controllers/GroupControllers';
 import UserControllers from '../controllers/UserControllers';
 import MessageControllers from '../controllers/MessageControllers';
-import authenticate from '../helpers/authenticate';
-import validate from '../helpers/validate';
+import authenticate from '../helpers/Auth';
+import validate from '../helpers/Validation';
 
 const group = express.Router();
 

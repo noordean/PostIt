@@ -2,8 +2,11 @@ import React from 'react';
 import ReactPaginate from 'react-paginate';
 import PropTypes from 'prop-types';
 
-const Paginate = props => (
-  <ReactPaginate
+const Paginate = (props) => {
+  if (props.count < 7) {
+    return <div />;
+  }
+  return (<ReactPaginate
     previousLabel={'Prev'}
     nextLabel={'Next'}
     breakLabel={'...'}
@@ -15,8 +18,8 @@ const Paginate = props => (
     containerClassName={'pagination'}
     subContainerClassName={'pages pagination'}
     activeClassName={'active'}
-  />
-);
+  />);
+};
 
 Paginate.propTypes = {
   count: PropTypes.number.isRequired,

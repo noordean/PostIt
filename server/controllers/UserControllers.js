@@ -5,10 +5,10 @@ import Jusibe from 'node-jusibe';
 
 import user from '../services/User';
 import group from '../services/Group';
-import validate from '../helpers/validate';
+import validate from '../helpers/Validation';
 import groupUser from '../services/GroupUser';
 import sendMail from '../helpers/mailMessage';
-import authenticate from '../helpers/authenticate';
+import authenticate from '../helpers/Auth';
 import notificationService from '../services/Notification';
 
 dotenv.config();
@@ -78,14 +78,22 @@ export default class UserControllers {
  */
   static signIn(req, res) {
     const { username, password } = req.body;
-    user.getUser(username, (users) => {
+    user.checkUser(username, (users) => {
       if (users.length === 0) {
         res.status(404).json({ message: 'Invalid user!' });
       } else if (bcrypt.compareSync(password, users[0].password)) {
-        const token = authenticate.generateToken({ username, id: users[0].id });
+        const token = authenticate.generateToken({
+          username: users[0].username,
+          id: users[0].id
+        });
         res.status(200).json({
           message: 'You are now logged in',
-          user: { id: users[0].id, username, email: users[0].email, token }
+          user: {
+            id: users[0].id,
+            username: users[0].username,
+            email: users[0].email,
+            token
+          }
         });
       } else {
         res.status(401).json({ message: 'Incorrect password' });

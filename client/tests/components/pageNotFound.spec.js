@@ -3,7 +3,7 @@ import expect from 'expect';
 import $ from 'jquery';
 import { shallow } from 'enzyme';
 
-import NotFound from '../../components/PageNotFound.jsx';
+import NotFound from '../../components/presentation/PageNotFound.jsx';
 import localStorageMock from '../__mocks__/localStorageMock';
 
 window.localStorage = localStorageMock;

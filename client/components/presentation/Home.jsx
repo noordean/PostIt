@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Dashboard from './Dashboard.jsx';
+import Dashboard from '../container/Dashboard.jsx';
 
 const Home = () => {
   if (localStorage.user) {

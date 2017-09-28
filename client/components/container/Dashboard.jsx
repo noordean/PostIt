@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
 import PropTypes from 'prop-types';
 
-import GroupActions from '../actions/GroupActions';
-import UserActions from '../actions/UserActions';
-import Home from './Home.jsx';
-import Paginate from './Paginate.jsx';
+import GroupActions from '../../actions/GroupActions';
+import UserActions from '../../actions/UserActions';
+import Home from '../presentation/Home.jsx';
+import Paginate from '../presentation/Paginate.jsx';
+import GroupList from '../presentation/GroupList.jsx';
 
 /**
   * @class Dashboard
@@ -76,12 +76,12 @@ export class Dashboard extends Component {
   /**
   * description: controls pagination
   *
-  * @param {object} data The pagination object
+  * @param {object} groupPages The pagination object
   *
   * @return {void} void
   */
-  handlePageClick(data) {
-    const selected = data.selected;
+  handlePageClick(groupPages) {
+    const selected = groupPages.selected;
     const offset = Math.ceil(selected * this.state.groupLimit);
     this.props.getGroups(this.state.groupLimit, offset);
   }
@@ -98,25 +98,7 @@ export class Dashboard extends Component {
     } else if (this.props.group.loading) {
       dashboard = <div className="text center loading-groups">Loading...</div>;
     } else if (this.state.groups.length > 0) {
-      dashboard = this.state.groups.map(group => (<div
-        className="col s12 m6"
-        key={group.id}
-      >
-        <div className="card">
-          <div className="card-content grey lighten-4 text">
-            <span className="card-title">{group.groupname}</span>
-            <p className="group-desc">{group.description}</p>
-          </div>
-          <div className="card-action grey lighten-4">
-            <Link
-              to={`message-board/${group.id}/${group.groupname}`}
-              className="red-text text-accent-1"
-            >
-              View Message Board
-            </Link>
-          </div>
-        </div>
-      </div>));
+      dashboard = <GroupList groups={this.state.groups} />;
     } else {
       dashboard = <div className="center">{this.props.group.responseMsg}</div>;
     }

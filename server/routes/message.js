@@ -1,8 +1,8 @@
 import express from 'express';
 
 import MessageControllers from '../controllers/MessageControllers';
-import authenticate from '../helpers/authenticate';
-import validate from '../helpers/validate';
+import authenticate from '../helpers/Auth';
+import validate from '../helpers/Validation';
 
 const message = express.Router();
 

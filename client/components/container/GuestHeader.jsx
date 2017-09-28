@@ -4,9 +4,9 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import ResetPassword from './ResetPasswod.jsx';
-import UserActions from '../actions/UserActions';
-import displayError from '../utils/errorDisplay';
+import ResetPassword from '../presentation/ResetPasswod.jsx';
+import UserActions from '../../actions/UserActions';
+import displayError from '../../utils/errorDisplay';
 
 /**
   * @class GuestHeader
@@ -57,13 +57,8 @@ export class GuestHeader extends Component {
     }
     this.props.mailPassword(this.state.email, this.state.password)
       .then(() => {
-        if (!this.props.sentMail.success &&
-          this.props.sentMail.responseMsg.length > 0) {
-          return displayError(this.props.sentMail.responseMsg);
-        }
         if (this.props.sentMail.success) {
           $('#resetPassword').modal('close');
-          return displayError(this.props.sentMail.responseMsg);
         }
       });
   }

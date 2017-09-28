@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import GoogleLogin from 'react-google-login';
 import PropTypes from 'prop-types';
 
-import UserActions from '../actions/UserActions';
-import authorization from '../utils/authorization';
+import UserActions from '../../actions/UserActions';
+import authorization from '../../utils/authorization';
 
 /**
   * @class LoginWithGoogle

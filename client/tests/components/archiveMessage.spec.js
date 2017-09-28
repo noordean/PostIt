@@ -3,7 +3,7 @@ import expect from 'expect';
 import { mount } from 'enzyme';
 import sinon from 'sinon';
 
-import { ArchiveMessage } from '../../components/ArchiveMessage.jsx';
+import { ArchiveMessage } from '../../components/container/ArchiveMessage.jsx';
 import localStorageMock from '../__mocks__/localStorageMock';
 
 window.localStorage = localStorageMock;

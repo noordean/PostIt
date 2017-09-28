@@ -3,7 +3,7 @@ import expect from 'expect';
 import { mount } from 'enzyme';
 import sinon from 'sinon';
 
-import { SideNav } from '../../components/Sidenav.jsx';
+import { SideNav } from '../../components/container/Sidenav.jsx';
 import localStorageMock from '../__mocks__/localStorageMock';
 
 window.localStorage = localStorageMock;

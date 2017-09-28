@@ -3,8 +3,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import Home from '../components/Home.jsx';
-import MessageActions from '../actions/MessageActions';
+import Home from '../presentation/Home.jsx';
+import MessageActions from '../../actions/MessageActions';
 
 /**
   * @class ArchiveMessage

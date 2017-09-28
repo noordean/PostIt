@@ -4,8 +4,8 @@ import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import UserActions from '../actions/UserActions';
-import displayError from '../utils/errorDisplay';
+import UserActions from '../../actions/UserActions';
+import displayError from '../../utils/errorDisplay';
 
 /**
   * @class SideNav
@@ -99,12 +99,8 @@ export class SideNav extends Component {
     this.props.addGroupMembers(this.props.groupId, selectedMembers,
       JSON.parse(localStorage.user).token)
       .then(() => {
-        if (this.props.member.responseMsg.length > 0) {
-          return displayError(this.props.member.responseMsg);
-        }
         this.getMembersHandler();
         $('#addMembersModal').modal('close');
-        return displayError('Users added');
       });
   }
 

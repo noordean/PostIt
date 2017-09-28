@@ -1,6 +1,9 @@
 import axios from 'axios';
+import { browserHistory } from 'react-router';
+
 import authorization from '../utils/authorization';
 import * as actionTypes from './actionTypes';
+import displayError from '../utils/errorDisplay';
 /**
  * @class UserActions
  */
@@ -31,6 +34,8 @@ export default class UserActions {
         .then((response) => {
           dispatch({ type: actionTypes.REGISTRATION_SUCCESSFUL,
             payload: response.data });
+          browserHistory.push('/signin');
+          return displayError('Registration successful. Kindly login here');
         })
         .catch((err) => {
           if (err.response.status === 500) {
@@ -40,6 +45,7 @@ export default class UserActions {
             dispatch({ type: actionTypes.REGISTRATION_UNSUCCESSFUL,
               payload: err.response.data });
           }
+          return displayError(err.response.data.message);
         });
     };
   }
@@ -66,6 +72,10 @@ export default class UserActions {
         .then((response) => {
           dispatch({ type: 'LOGIN_SUCCESSFUL', payload: response.data });
           authorization(response.data.user.token);
+          localStorage.setItem('user',
+            JSON.stringify(response.data.user));
+          browserHistory.push('/dashboard');
+          return displayError('You are now logged in');
         })
         .catch((err) => {
           if (err.response.status === 500) {
@@ -75,6 +85,7 @@ export default class UserActions {
             dispatch({ type: 'LOGIN_UNSUCCESSFUL',
               payload: err.response.data });
           }
+          return displayError(err.response.data.message);
         });
     };
   }
@@ -127,6 +138,7 @@ export default class UserActions {
     })
       .then((response) => {
         dispatch({ type: 'MEMBERS_ADDED', payload: response.data.message });
+        return displayError('Users added');
       })
       .catch((err) => {
         if (err.response.status === 500) {
@@ -136,6 +148,7 @@ export default class UserActions {
           dispatch({ type: 'ADD_MEMBERS_FAILED',
             payload: err.response.data.message });
         }
+        return displayError(err.response.data.message);
       });
   }
 
@@ -161,6 +174,7 @@ export default class UserActions {
         .then((response) => {
           dispatch({ type: 'RESET_PASSWORD_SUCCESSFUL',
             payload: response.data.message });
+          return displayError(response.data.message);
         })
         .catch((err) => {
           if (err.response.status === 500) {
@@ -170,6 +184,7 @@ export default class UserActions {
             dispatch({ type: 'RESET_PASSWORD_UNSUCCESSFUL',
               payload: err.response.data.message });
           }
+          return displayError(err.response.data.message);
         });
     };
   }

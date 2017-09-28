@@ -6,7 +6,7 @@ import message from '../services/Message';
 import groupUser from '../services/GroupUser';
 import userService from '../services/User';
 import readMessageService from '../services/ReadMessage';
-import validate from '../helpers/validate';
+import validate from '../helpers/Validation';
 
 dotenv.config();
 const jwtSecret = process.env.jwtSecret;
@@ -115,7 +115,7 @@ export default class MessageControllers {
     const userId = req.query.userId;
     readMessageService.getMessages(groupId, userId, (msgs) => {
       const dueMessages = msgs.filter(msg => ((
-        Date.now() - new Date(msg.createdAt).getTime() > 180000)));
+        Date.now() - new Date(msg.createdAt).getTime() > 1440000)));
       const dueMessagesIds = dueMessages.map(dueMsgs => dueMsgs.messageId);
       group.getGroupMessages(groupId, (groupMessages) => {
         if (validate.hasInternalServerError(groupMessages)) {

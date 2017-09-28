@@ -8,7 +8,7 @@ const should = chai.should();
 let sentToken = '';
 describe('PostIt Endpoints', () => {
   describe('POST api/v1/user/signup', () => {
-    it('should respond with error message if invalid email is supplied',
+    it('should respond with an error message if invalid email is supplied',
       (done) => {
         chai.request(app)
           .post('/api/v1/user/signup')
@@ -27,7 +27,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with error message if incorrect password combination is supplied',
+    it('should respond with an error message if incorrect password combination is supplied',
       (done) => {
         chai.request(app)
           .post('/api/v1/user/signup')
@@ -46,7 +46,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with error message if incorrect username combination is supplied',
+    it('should respond with an error message if incorrect username combination is supplied',
       (done) => {
         chai.request(app)
           .post('/api/v1/user/signup')
@@ -65,7 +65,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with error message if the supplied password is too short',
+    it('should respond with an error message if the supplied password is too short',
       (done) => {
         chai.request(app)
           .post('/api/v1/user/signup')
@@ -84,7 +84,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with error message if the supplied username is too short',
+    it('should respond with an error message if the supplied username is too short',
       (done) => {
         chai.request(app)
           .post('/api/v1/user/signup')
@@ -103,7 +103,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with error message if password is undefined', (done) => {
+    it('should respond with an error message if password is undefined', (done) => {
       chai.request(app)
         .post('/api/v1/user/signup')
         .send({
@@ -119,7 +119,7 @@ describe('PostIt Endpoints', () => {
           done();
         });
     });
-    it('should respond with error message if user is already registered',
+    it('should respond with an error message if user is already registered',
       (done) => {
         chai.request(app)
           .post('/api/v1/user/signup')
@@ -138,7 +138,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with error message if phoneNumber is invalid',
+    it('should respond with an error message if phoneNumber is invalid',
       (done) => {
         chai.request(app)
           .post('/api/v1/user/signup')
@@ -157,7 +157,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with success message if correct user details are supplied',
+    it('should respond with a success message if correct user details are supplied',
       (done) => {
         chai.request(app)
           .post('/api/v1/user/signup')
@@ -179,7 +179,7 @@ describe('PostIt Endpoints', () => {
   });
 
   describe('POST api/v1/user/signin', () => {
-    it('should respond with error message if username is undefined', (done) => {
+    it('should respond with an error message if username is undefined', (done) => {
       chai.request(app)
         .post('/api/v1/user/signin')
         .send({
@@ -193,7 +193,7 @@ describe('PostIt Endpoints', () => {
           done();
         });
     });
-    it('should respond with error message if password is undefined', (done) => {
+    it('should respond with an error message if password is undefined', (done) => {
       chai.request(app)
         .post('/api/v1/user/signin')
         .send({
@@ -207,7 +207,7 @@ describe('PostIt Endpoints', () => {
           done();
         });
     });
-    it('should respond with error message if invalid username is supplied',
+    it('should respond with an error message if invalid username is supplied',
       (done) => {
         chai.request(app)
           .post('/api/v1/user/signin')
@@ -223,7 +223,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with error message if incorrect password is supplied',
+    it('should respond with an error message if incorrect password is supplied',
       (done) => {
         chai.request(app)
           .post('/api/v1/user/signin')
@@ -239,7 +239,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with success message if correct username and password are supplied',
+    it('should respond with a success message if correct username and password are supplied',
       (done) => {
         chai.request(app)
           .post('/api/v1/user/signin')
@@ -277,7 +277,7 @@ describe('PostIt Endpoints', () => {
           done();
         });
     });
-    it('should respond with error message if the login token is undefined',
+    it('should respond with an error message if the login token is undefined',
       (done) => {
         chai.request(app)
           .get('/api/v1/users')
@@ -290,7 +290,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with error message if the login token is invalid',
+    it('should respond with an error message if the login token is invalid',
       (done) => {
         chai.request(app)
           .get('/api/v1/users')
@@ -307,7 +307,7 @@ describe('PostIt Endpoints', () => {
   });
 
   describe('POST api/v1/group/:groupId/user', () => {
-    it('should respond with success message if correct details are supplied',
+    it('should respond with a success message if correct details are supplied',
       (done) => {
         chai.request(app)
           .post('/api/v1/group/1/user')
@@ -326,7 +326,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with error message if incorrect group id is used',
+    it('should respond with an error message if incorrect group id is used',
       (done) => {
         chai.request(app)
           .post('/api/v1/group/1464878/user')
@@ -342,7 +342,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with error message if invalid group id is used',
+    it('should respond with an error message if invalid group id is used',
       (done) => {
         chai.request(app)
           .post('/api/v1/group/14hjgjdkskb/user')
@@ -359,7 +359,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with error message if userId is not defined', (done) => {
+    it('should respond with an error message if userId is not defined', (done) => {
       chai.request(app)
         .post('/api/v1/group/1/user')
         .send({
@@ -373,7 +373,7 @@ describe('PostIt Endpoints', () => {
           done();
         });
     });
-    it('should respond with error message if token is not defined', (done) => {
+    it('should respond with an error message if token is not defined', (done) => {
       chai.request(app)
         .post('/api/v1/group/1/user')
         .send({
@@ -387,7 +387,7 @@ describe('PostIt Endpoints', () => {
           done();
         });
     });
-    it('should respond with error message if invalid token is supplied',
+    it('should respond with an error message if invalid token is supplied',
       (done) => {
         chai.request(app)
           .post('/api/v1/group/1/user')
@@ -403,7 +403,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with error message if userId is empty', (done) => {
+    it('should respond with an error message if userId is empty', (done) => {
       chai.request(app)
         .post('/api/v1/group/1/user')
         .send({
@@ -418,7 +418,7 @@ describe('PostIt Endpoints', () => {
           done();
         });
     });
-    it('should respond with error message if groupId is empty', (done) => {
+    it('should respond with an error message if groupId is empty', (done) => {
       chai.request(app)
         .post('/api/v1/group/ /user')
         .send({
@@ -433,7 +433,7 @@ describe('PostIt Endpoints', () => {
           done();
         });
     });
-    it('should respond with error message if user is already in the group',
+    it('should respond with an error message if user is already in the group',
       (done) => {
         chai.request(app)
           .post('/api/v1/group/1/user')
@@ -452,7 +452,7 @@ describe('PostIt Endpoints', () => {
   });
 
   describe('GET api/group/:groupId/user', () => {
-    it('should respond with success message if correct details are supplied',
+    it('should respond with a success message if correct details are supplied',
       (done) => {
         chai.request(app)
           .get('/api/v1/group/1/users')
@@ -466,7 +466,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with error message if incorrect groupId is supplied',
+    it('should respond with an error message if incorrect groupId is supplied',
       (done) => {
         chai.request(app)
           .get('/api/v1/group/1537625/users')
@@ -479,7 +479,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with error message if login token is not defined',
+    it('should respond with an error message if login token is not defined',
       (done) => {
         chai.request(app)
           .get('/api/v1/group/1/users')
@@ -491,7 +491,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with error message if incorrect login token is supplied',
+    it('should respond with an error message if incorrect login token is supplied',
       (done) => {
         chai.request(app)
           .get('/api/v1/group/1/users')
@@ -507,7 +507,7 @@ describe('PostIt Endpoints', () => {
   });
 
   describe('POST api/v1/user/email/verify', () => {
-    it('should respond with error message if invalid token is supplied',
+    it('should respond with an error message if invalid token is supplied',
       (done) => {
         chai.request(app)
           .post('/api/v1/user/email/verify')
@@ -524,7 +524,7 @@ describe('PostIt Endpoints', () => {
   });
 
   describe('GET api/v1/users', () => {
-    it('should respond with error message if invalid token is provided',
+    it('should respond with an error message if invalid token is provided',
       (done) => {
         chai.request(app)
           .get('/api/v1/users')
@@ -537,7 +537,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with error message if userrs is not provided',
+    it('should respond with an error message if userrs is not provided',
       (done) => {
         chai.request(app)
           .get('/api/v1/users')
@@ -554,7 +554,7 @@ describe('PostIt Endpoints', () => {
   });
 
   describe('POST api/v1/user/reset-password', () => {
-    it('should respond with error message if recepient is not supplied',
+    it('should respond with an error message if recepient is not supplied',
       (done) => {
         chai.request(app)
           .post('/api/v1/user/reset-password')
@@ -570,7 +570,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with error message if new password is not supplied',
+    it('should respond with an error message if new password is not supplied',
       (done) => {
         chai.request(app)
           .post('/api/v1/user/reset-password')
@@ -586,7 +586,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with error message if recepient is empty', (done) => {
+    it('should respond with an error message if recepient is empty', (done) => {
       chai.request(app)
         .post('/api/v1/user/reset-password')
         .send({
@@ -602,7 +602,7 @@ describe('PostIt Endpoints', () => {
           done();
         });
     });
-    it('should respond with error message if password is empty', (done) => {
+    it('should respond with an error message if password is empty', (done) => {
       chai.request(app)
         .post('/api/v1/user/reset-password')
         .send({
@@ -618,7 +618,7 @@ describe('PostIt Endpoints', () => {
           done();
         });
     });
-    it('should respond with error message if recepient is not found',
+    it('should respond with an error message if recepient is not found',
       (done) => {
         chai.request(app)
           .post('/api/v1/user/reset-password')

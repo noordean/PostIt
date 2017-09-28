@@ -20,22 +20,23 @@ describe('PostIt Endpoints', () => {
       });
   });
   describe('POST api/v1/group/:groupId/message', () => {
-    it('should respond with error message if token is not defined', (done) => {
-      chai.request(app)
-        .post('/api/v1/group/1/message')
-        .send({
-          message: 'Hi guyz',
-          priority: 'Critical'
-        })
-        .end((err, res) => {
-          res.should.have.status(401);
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.message.should.be.eql('Your login token must be provided');
-          done();
-        });
-    });
-    it('should respond with error message if message is not defined',
+    it('should respond with an error message if token is not defined',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/group/1/message')
+          .send({
+            message: 'Hi guyz',
+            priority: 'Critical'
+          })
+          .end((err, res) => {
+            res.should.have.status(401);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('Your login token must be provided');
+            done();
+          });
+      });
+    it('should respond with an error message if message is not defined',
       (done) => {
         chai.request(app)
           .post('/api/v1/group/1/message')
@@ -51,7 +52,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with error message if groupId is empty', (done) => {
+    it('should respond with an error message if groupId is empty', (done) => {
       chai.request(app)
         .post('/api/v1/group/ /message')
         .send({
@@ -67,7 +68,7 @@ describe('PostIt Endpoints', () => {
           done();
         });
     });
-    it('should respond with error message if token is incorrect', (done) => {
+    it('should respond with an error message if token is incorrect', (done) => {
       chai.request(app)
         .post('/api/v1/group/1/message')
         .send({
@@ -83,23 +84,24 @@ describe('PostIt Endpoints', () => {
           done();
         });
     });
-    it('should respond with error message if id is invalid', (done) => {
-      chai.request(app)
-        .post('/api/v1/group/17539649/message')
-        .send({
-          message: 'Hi guyz',
-          token: sentToken,
-          priority: 'Normal'
-        })
-        .end((err, res) => {
-          res.should.have.status(404);
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.message.should.be.eql('Group does not exist');
-          done();
-        });
-    });
-    it('should respond with error message if non-integer is supplied as groupId',
+    it('should respond with an error message if the groupId does not exist',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/group/17539649/message')
+          .send({
+            message: 'Hi guyz',
+            token: sentToken,
+            priority: 'Normal'
+          })
+          .end((err, res) => {
+            res.should.have.status(404);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('Group does not exist');
+            done();
+          });
+      });
+    it('should respond with an error message if non-integer is supplied as groupId',
       (done) => {
         chai.request(app)
           .post('/api/v1/group/afggheg/message')
@@ -117,7 +119,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with error message if message is empty', (done) => {
+    it('should respond with an error message if message is empty', (done) => {
       chai.request(app)
         .post('/api/v1/group/1/message')
         .send({
@@ -133,7 +135,7 @@ describe('PostIt Endpoints', () => {
           done();
         });
     });
-    it('should respond with error message if wrong priority is specified',
+    it('should respond with an error message if wrong priority is specified',
       (done) => {
         chai.request(app)
           .post('/api/v1/group/1/message')
@@ -151,7 +153,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with success message if correct details are supplied',
+    it('should respond with a success message if correct details are supplied',
       (done) => {
         chai.request(app)
           .post('/api/v1/group/6/message')
@@ -230,7 +232,7 @@ describe('PostIt Endpoints', () => {
   });
 
   describe('DELETE api/v1/user/:userId/notification', () => {
-    it('should return notifications if correct details are supplied',
+    it('should return a success message if correct details are supplied',
       (done) => {
         chai.request(app)
           .delete('/api/v1/user/1/notification')
@@ -260,7 +262,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should return error message if the is supplied is not found',
+    it('should return an error message if the is supplied is not found',
       (done) => {
         chai.request(app)
           .delete('/api/v1/message/54678')

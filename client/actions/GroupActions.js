@@ -1,5 +1,8 @@
 import axios from 'axios';
 
+import handleTokenVerification from '../utils/tokenVerification';
+import displayError from '../utils/errorDisplay';
+
 /**
  * @class GroupActions
  */
@@ -27,15 +30,19 @@ export default class GroupActions {
         .then((response) => {
           dispatch({ type: 'CREATE_GROUP_SUCCESSFUL',
             groups: response.data.group });
+          return displayError('Group created successfully');
         })
         .catch((err) => {
-          if (err.response.status === 500) {
+          if (err.response.status === 401) {
+            handleTokenVerification();
+          } else if (err.response.status === 500) {
             dispatch({ type: 'CREATE_GROUP_REJECTED',
               errorMessage: 'Sorry, an unexpected error occurred.' });
           } else {
             dispatch({ type: 'CREATE_GROUP_UNSUCCESSFUL',
               errorMessage: err.response.data.message });
           }
+          return displayError(err.response.data.message);
         });
     };
   }
@@ -64,7 +71,9 @@ export default class GroupActions {
             pageCount: response.data.groups.count });
         })
         .catch((err) => {
-          if (err.response.status === 500) {
+          if (err.response.status === 401) {
+            handleTokenVerification();
+          } else if (err.response.status === 500) {
             dispatch({ type: 'GET_GROUPS_REJECTED',
               errorMessage: 'Sorry, an unexpected error occurred.' });
           } else {

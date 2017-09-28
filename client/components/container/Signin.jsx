@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Link, browserHistory } from 'react-router';
+import { Link } from 'react-router';
 import PropTypes from 'prop-types';
 
-import UsersActions from '../actions/UserActions';
+import UsersActions from '../../actions/UserActions';
 import GoogleLogin from './GoogleLogin.jsx';
-import displayError from '../utils/errorDisplay';
 
 /**
   * @class Dashboard
@@ -47,16 +46,7 @@ export class SignIn extends Component {
     event.preventDefault();
     const username = this.state.usernameInput;
     const password = this.state.passwordInput;
-    this.props.loginUser(username, password)
-      .then(() => {
-        if (this.props.userLogin.reqStatus.message === 'You are now logged in') {
-          localStorage.setItem('user',
-            JSON.stringify(this.props.userLogin.reqStatus.user));
-          browserHistory.push('/dashboard');
-          return displayError('You are now logged in');
-        }
-        return displayError(this.props.userLogin.reqStatus.message);
-      });
+    this.props.loginUser(username, password);
   }
 
   /**
@@ -110,12 +100,6 @@ export class SignIn extends Component {
                     required
                   />
                   <label htmlFor="password">Password</label>
-                </div>
-              </div>
-              <div className="row">
-                <div className="input-field col s12 m12 l12  login-text">
-                  <input type="checkbox" id="remember-me" />
-                  <label htmlFor="remember-me">Remember me</label>
                 </div>
               </div>
               <div className="row">

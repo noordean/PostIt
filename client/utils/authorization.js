@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-const controlToken = (token) => {
+const setToken = (token) => {
   if (token) {
     axios.defaults.headers.common.token = token;
   }
 };
 
-export default controlToken;
+export default setToken;

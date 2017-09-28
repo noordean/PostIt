@@ -20,7 +20,7 @@ describe('PostIt Endpoints', () => {
       });
   });
   describe('POST api/v1/group', () => {
-    it('should respond with error message if empty groupname is supplied',
+    it('should respond with an error message if empty groupname is supplied',
       (done) => {
         chai.request(app)
           .post('/api/v1/group')
@@ -37,7 +37,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with error message if groupname is not supplied',
+    it('should respond with an error message if groupname is not supplied',
       (done) => {
         chai.request(app)
           .post('/api/v1/group')
@@ -53,37 +53,39 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with error message if token is not supplied', (done) => {
-      chai.request(app)
-        .post('/api/v1/group')
-        .send({
-          description: 'for test'
-        })
-        .end((err, res) => {
-          res.should.have.status(401);
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.message.should.be.eql('Your login token must be provided');
-          done();
-        });
-    });
-    it('should respond with error message if user is not logged in', (done) => {
-      chai.request(app)
-        .post('/api/v1/group')
-        .send({
-          token: 'invalidToken',
-          groupName: 'Invalid Group',
-          description: 'for test'
-        })
-        .end((err, res) => {
-          res.should.have.status(401);
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.message.should.be.eql('Access denied!. Kindly login');
-          done();
-        });
-    });
-    it('should respond with error message if the groupName is already existing',
+    it('should respond with an error message if token is not supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/group')
+          .send({
+            description: 'for test'
+          })
+          .end((err, res) => {
+            res.should.have.status(401);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('Your login token must be provided');
+            done();
+          });
+      });
+    it('should respond with an error message if user is not logged in',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/group')
+          .send({
+            token: 'invalidToken',
+            groupName: 'Invalid Group',
+            description: 'for test'
+          })
+          .end((err, res) => {
+            res.should.have.status(401);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('Access denied!. Kindly login');
+            done();
+          });
+      });
+    it('should respond with an error message if the groupName is already existing',
       (done) => {
         chai.request(app)
           .post('/api/v1/group')
@@ -102,7 +104,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with success message if correct details are supplied',
+    it('should respond with a success message if correct details are supplied',
       (done) => {
         chai.request(app)
           .post('/api/v1/group')
@@ -124,46 +126,49 @@ describe('PostIt Endpoints', () => {
   });
 
   describe('DELETE /api/v1/group/:groupId', () => {
-    it('should respond with error message if token is not defined', (done) => {
-      chai.request(app)
-        .delete('/api/v1/group/3')
-        .end((err, res) => {
-          res.should.have.status(401);
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.message.should.be.eql('Your login token must be provided');
-          done();
-        });
-    });
-    it('should respond with error message if the supplied groupId is not an integer', (done) => {
-      chai.request(app)
-        .delete('/api/v1/group/ghf')
-        .send({
-          token: sentToken
-        })
-        .end((err, res) => {
-          res.should.have.status(400);
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.message.should.be.eql('The supplied id must be integer');
-          done();
-        });
-    });
-    it('should respond with error message if the supplied groupId does not exist', (done) => {
-      chai.request(app)
-        .delete('/api/v1/group/12776283')
-        .send({
-          token: sentToken
-        })
-        .end((err, res) => {
-          res.should.have.status(404);
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.message.should.be.eql('Group does not exist');
-          done();
-        });
-    });
-    it('should respond with error message if invalid token is supplied',
+    it('should respond with an error message if token is not defined',
+      (done) => {
+        chai.request(app)
+          .delete('/api/v1/group/3')
+          .end((err, res) => {
+            res.should.have.status(401);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('Your login token must be provided');
+            done();
+          });
+      });
+    it('should respond with an error message if the supplied groupId is not an integer',
+      (done) => {
+        chai.request(app)
+          .delete('/api/v1/group/ghf')
+          .send({
+            token: sentToken
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('The supplied id must be integer');
+            done();
+          });
+      });
+    it('should respond with an error message if the supplied groupId does not exist',
+      (done) => {
+        chai.request(app)
+          .delete('/api/v1/group/12776283')
+          .send({
+            token: sentToken
+          })
+          .end((err, res) => {
+            res.should.have.status(404);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('Group does not exist');
+            done();
+          });
+      });
+    it('should respond with an error message if invalid token is supplied',
       (done) => {
         chai.request(app)
           .delete('/api/v1/group/3')
@@ -181,7 +186,7 @@ describe('PostIt Endpoints', () => {
   });
 
   describe('GET api/v1/user/groups', () => {
-    it('should respond with error message if invalid token is supplied',
+    it('should respond with an error message if invalid token is supplied',
       (done) => {
         chai.request(app)
           .get('/api/v1/user/groups?limit=6&offset=0')
@@ -194,7 +199,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with success message if correct detail is supplied',
+    it('should respond with a success message if correct detail is supplied',
       (done) => {
         chai.request(app)
           .get('/api/v1/user/groups?limit=6&offset=0')
@@ -213,7 +218,7 @@ describe('PostIt Endpoints', () => {
   });
 
   describe('GET api/group/:groupId/messages', () => {
-    it('should respond with error message if groupId does not exist',
+    it('should respond with an error message if groupId does not exist',
       (done) => {
         chai.request(app)
           .get('/api/v1/group/100/messages')
@@ -226,7 +231,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with success message if correct groupId is supplied',
+    it('should respond with a success message if correct groupId is supplied',
       (done) => {
         chai.request(app)
           .get('/api/v1/group/3/messages')

@@ -2,7 +2,7 @@
 import React from 'react';
 import expect from 'expect';
 import { shallow } from 'enzyme';
-import Footer from '../../components/Footer.jsx';
+import Footer from '../../components/presentation/Footer.jsx';
 
 import localStorageMock from '../__mocks__/localStorageMock';
 

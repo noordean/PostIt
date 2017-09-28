@@ -2,8 +2,8 @@ import express from 'express';
 
 import UserControllers from '../controllers/UserControllers';
 import GroupControllers from '../controllers/GroupControllers';
-import authenticate from '../helpers/authenticate';
-import validate from '../helpers/validate';
+import authenticate from '../helpers/Auth';
+import validate from '../helpers/Validation';
 
 const user = express.Router();
 

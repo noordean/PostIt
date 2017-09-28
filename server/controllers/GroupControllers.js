@@ -5,7 +5,7 @@ import group from '../services/Group';
 import groupUser from '../services/GroupUser';
 import user from '../services/User';
 import readMessageService from '../services/ReadMessage';
-import validate from '../helpers/validate';
+import validate from '../helpers/Validation';
 
 dotenv.config();
 const jwtSecret = process.env.jwtSecret;

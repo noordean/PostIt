@@ -2,7 +2,7 @@ import React from 'react';
 import expect from 'expect';
 import { mount } from 'enzyme';
 import sinon from 'sinon';
-import { ConfirmResetPassword } from '../../components/ConfirmResetPassword.jsx';
+import { ConfirmResetPassword } from '../../components/container/ConfirmResetPassword.jsx';
 
 import localStorageMock from '../__mocks__/localStorageMock';
 

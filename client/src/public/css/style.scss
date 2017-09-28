@@ -76,9 +76,6 @@ body                  {
                         background-color: white;
                         margin: 2px 5px 2px 5px;
                       }
-.media-heading        { 
-                        font-weight: bold;
-                      }
 #textarea1            {
                         border-radius: 5px;
                       }
@@ -114,6 +111,7 @@ blockquote:before     {
                       }
 .msgTxt               { 
                         text-align: justify;
+                        font-weight: bold;
                       }
 #postArea             { 
                         border: 1px groove #7a7a7a;

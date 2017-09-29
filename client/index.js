@@ -15,8 +15,6 @@ import ArchiveMessage from './components/container/ArchiveMessage.jsx';
 import PageNotFound from './components/presentation/PageNotFound.jsx';
 import authorization from './utils/authorization';
 
-require('./src/public/js/style.js');
-
 if (localStorage.user) {
   authorization(JSON.parse(localStorage.user).token);
 }

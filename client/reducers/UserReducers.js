@@ -298,4 +298,29 @@ export default class UserReducers {
         return state;
     }
   }
+
+  /**
+  * Reducer for sending sms for notification
+  *
+  * @static
+  *
+  * @param {Object} state The initial state
+  * @param {Object} action The dispatched action
+  *
+  * @returns {Object} current state
+  *
+  * @memberof UserReducers
+  */
+  static searchedUsers(state = {
+    users: [], error: false }, action) {
+    switch (action.type) {
+      case 'GET_SEARCHED_USERS_SUCCESSFUL':
+        return { ...state, users: action.payload };
+      case 'GET_SEARCHED_USERS_UNSUCCESSFUL':
+      case 'GET_SEARCHED_USERS_REJECTED':
+        return { ...state, error: true, users: [] };
+      default:
+        return state;
+    }
+  }
 }

@@ -17,5 +17,6 @@ export default combineReducers({
   notificationSms: UserReducers.smsNotification,
   archiveMessages: MessageReducers.archiveMessageReducer,
   readMessages: UserReducers.readMessages,
-  appNotification: UserReducers.appNotification
+  appNotification: UserReducers.appNotification,
+  searchedUser: UserReducers.searchedUsers
 });

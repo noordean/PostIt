@@ -58,7 +58,6 @@ export class MessageBoard extends Component {
       });
     }
   }
-
   /**
   * description: controls inputs state
   *

@@ -453,5 +453,38 @@ export default class UserActions {
         });
     };
   }
+
+
+  /**
+  * Request to the API to get messages of a group
+  *
+  * @static
+  *
+  * @param {Array} currentMembers The id of the user to delete notification
+  *
+  * @returns {Object} dispatch object
+  *
+  * @memberof MessageActions
+  */
+  static getSearchedUsers(currentMembers) {
+    return (dispatch) => {
+      return axios.get('/api/v1/users', {
+        headers: {
+          currentmembers: currentMembers
+        }
+      })
+        .then((response) => {
+          dispatch({ type: 'GET_SEARCHED_USERS_SUCCESSFUL',
+            payload: response.data.users });
+        })
+        .catch((err) => {
+          if (err.response.status === 500) {
+            dispatch({ type: 'GET_SEARCHED_USERS_REJECTED' });
+          } else {
+            dispatch({ type: 'GET_SEARCHED_USERS_UNSUCCESSFUL' });
+          }
+        });
+    };
+  }
 }
 

@@ -52,12 +52,50 @@ export class SideNav extends Component {
   }
 
   /**
+  * description: get users ready for search into
+  * autocomplete input
+  *
+  * @return {void} void
+  */
+  getAllSearchedUsers() {
+    const users = {};
+    this.props.getSearchedUsers(this.state.groupMembers.join('-'))
+      .then(() => {
+        const autoCompleteValues = {};
+        this.props.searchedUsers.users.forEach((user) => {
+          autoCompleteValues[user.username] = null;
+          users[user.username] = user.id;
+        });
+        $('.chips-autocomplete').material_chip({
+          placeholder: 'Add more members',
+          secondaryPlaceholder: 'Enter a username',
+          autocompleteOptions: {
+            data: autoCompleteValues,
+            limit: Infinity,
+            minLength: 1,
+          }
+        });
+      });
+    const selectedUsers = [];
+    $('.chips').on('chip.add', (e, chip) => {
+      selectedUsers.push(users[chip.tag]);
+      $('#getChips').val(selectedUsers.join(' '));
+    });
+    $('.chips').on('chip.delete', (e, chip) => {
+      selectedUsers.splice(selectedUsers.indexOf(users[chip.tag]), 1);
+      $('#getChips').val(selectedUsers.join(' '));
+    });
+  }
+  /**
   * description: get members of the current group
   *
   * @return {void} void
   */
   getMembersHandler() {
-    this.props.getGroupMembers(this.props.groupId);
+    this.props.getGroupMembers(this.props.groupId)
+      .then(() => {
+        this.getAllSearchedUsers();
+      });
   }
 
   /**
@@ -67,7 +105,7 @@ export class SideNav extends Component {
   */
   //eslint-disable-next-line
   clearAddMembersState() {
-    $('#getChips').val('');
+    $('input[placeholder="Enter a username"]').val('');
   }
   /**
   * description: It opens the addMembers modal dynamically
@@ -212,19 +250,25 @@ SideNav.propTypes = {
   groupName: PropTypes.string.isRequired,
   addGroupMembers: PropTypes.func.isRequired,
   getGroupMembers: PropTypes.func.isRequired,
+  getSearchedUsers: PropTypes.func.isRequired,
   member: PropTypes.shape({
     reqError: PropTypes.bool,
     responseMsg: PropTypes.string,
     members: PropTypes.arrayOf(PropTypes.object.isRequired)
+  }).isRequired,
+  searchedUsers: PropTypes.shape({
+    users: PropTypes.arrayOf(PropTypes.object.isRequired)
   }).isRequired
 };
 
 const mapStateToProps = state => ({
-  member: state.member
+  member: state.member,
+  searchedUsers: state.searchedUser
 });
 
 const matchDispatchToProps = dispatch => bindActionCreators({
   addGroupMembers: UserActions.addGroupMembers,
-  getGroupMembers: UserActions.getGroupMembers }, dispatch);
+  getGroupMembers: UserActions.getGroupMembers,
+  getSearchedUsers: UserActions.getSearchedUsers }, dispatch);
 
 export default connect(mapStateToProps, matchDispatchToProps)(SideNav);

@@ -22,8 +22,10 @@ const setup = (shallowOrMount) => {
   const props = {
     groupId: '',
     groupName: '',
-    addGroupMembers: () => {},
-    getGroupMembers: () => {},
+    addGroupMembers: () => Promise.resolve(),
+    getGroupMembers: () => Promise.resolve(),
+    getSearchedUsers: () => Promise.resolve(),
+    searchedUsers: {},
     member: {}
   };
   return shallowOrMount(<SideNav {...props} />);

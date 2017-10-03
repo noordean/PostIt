@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-import handleTokenVerification from '../utils/tokenVerification';
-import displayError from '../utils/errorDisplay';
+import Auth from '../utils/Auth';
+import toastMessage from '../utils/toastMessage';
 
 /**
  * @class GroupActions
@@ -30,11 +30,11 @@ export default class GroupActions {
         .then((response) => {
           dispatch({ type: 'CREATE_GROUP_SUCCESSFUL',
             groups: response.data.group });
-          return displayError('Group created successfully');
+          return toastMessage('Group created successfully');
         })
         .catch((err) => {
           if (err.response.status === 401) {
-            handleTokenVerification();
+            Auth.removeToken();
           } else if (err.response.status === 500) {
             dispatch({ type: 'CREATE_GROUP_REJECTED',
               errorMessage: 'Sorry, an unexpected error occurred.' });
@@ -42,7 +42,7 @@ export default class GroupActions {
             dispatch({ type: 'CREATE_GROUP_UNSUCCESSFUL',
               errorMessage: err.response.data.message });
           }
-          return displayError(err.response.data.message);
+          return toastMessage(err.response.data.message);
         });
     };
   }
@@ -53,8 +53,8 @@ export default class GroupActions {
   *
   * @static
 
-  * @param {Integer} limit The number of records to get from the group table
-  * @param {Integer} offset The number of records to offset from the group table
+  * @param {Number} limit The number of records to get from the group table
+  * @param {Number} offset The number of records to offset from the group table
   * @param {String} token The string 
 
   * @returns {Object} dispatch object
@@ -72,7 +72,7 @@ export default class GroupActions {
         })
         .catch((err) => {
           if (err.response.status === 401) {
-            handleTokenVerification();
+            Auth.removeToken();
           } else if (err.response.status === 500) {
             dispatch({ type: 'GET_GROUPS_REJECTED',
               errorMessage: 'Sorry, an unexpected error occurred.' });

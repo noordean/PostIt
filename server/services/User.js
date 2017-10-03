@@ -30,7 +30,9 @@ export default class User {
       done(user);
     }).catch((err) => {
       if (err instanceof validationError) {
-        if (err.errors[0].message === '') {
+        if (err.errors[0].message === 'email must be unique') {
+          done('email already existing');
+        } else if (err.errors[0].message === '') {
           done(`${err.errors[0].path} must be supplied`);
         } else {
           done(err.errors[0].message);
@@ -96,7 +98,7 @@ export default class User {
   /**
  * @description: retrieves users using userId
  * 
- * @param {Integer} userId id of the user
+ * @param {Number} userId id of the user
  * @param {Function} done callback function
  * 
  * @return {Object} retrievedData
@@ -110,7 +112,7 @@ export default class User {
   /**
  * @description: retrieves users using email
  * 
- * @param {Integer} email email of the user
+ * @param {Number} email email of the user
  * @param {Function} done callback function
  * 
  * @return {Object} retrievedData

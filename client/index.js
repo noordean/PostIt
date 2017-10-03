@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 
 import store from './store';
-import Inndex from './components/presentation/Index.jsx';
+import Index from './components/presentation/Index.jsx';
 import Home from './components/presentation/Home.jsx';
 import Signup from './components/container/Signup.jsx';
 import Signin from './components/container/Signin.jsx';
@@ -13,15 +13,15 @@ import MessageBoard from './components/container/MessageBoard.jsx';
 import ConfirmResetPassword from './components/container/ConfirmResetPassword.jsx';
 import ArchiveMessage from './components/container/ArchiveMessage.jsx';
 import PageNotFound from './components/presentation/PageNotFound.jsx';
-import authorization from './utils/authorization';
+import Auth from './utils/Auth';
 
 if (localStorage.user) {
-  authorization(JSON.parse(localStorage.user).token);
+  Auth.setToken(JSON.parse(localStorage.user).token);
 }
 
 ReactDOM.render(<Provider store={store}>
   <Router history={browserHistory}>
-    <Route path="/" component={Inndex}>
+    <Route path="/" component={Index}>
       <IndexRoute component={Home} />
       <Route path="signup" component={Signup} />
       <Route path="signin" component={Signin} />

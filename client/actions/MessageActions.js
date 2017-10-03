@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-import handleTokenVerification from '../utils/tokenVerification';
-import displayError from '../utils/errorDisplay';
+import Auth from '../utils/Auth';
+import toastMessage from '../utils/toastMessage';
 /**
  * @class MessageActions
  */
@@ -11,8 +11,8 @@ export default class MessageActions {
   *
   * @static
 
-  * @param {Integer} groupId The id of the group to post message to
-  * @param {String} message The content of the message to be posted
+  * @param {Number} groupId The id of the group to post message to
+  * @param {String} content The content of the message to be posted
   * @param {String} priority The content of the message to be posted
   * @param {String} token JWToken to access the endpoint
   *
@@ -20,12 +20,12 @@ export default class MessageActions {
   *
   * @memberof MessageActions
   */
-  static postMessage(groupId, message, priority) {
+  static postMessage(groupId, content, priority) {
     return (dispatch) => {
       dispatch({ type: 'POST_MESSAGE_BEGINS' });
       return axios.post(`/api/v1/group/${groupId}/message`, {
         groupId,
-        message,
+        content,
         priority
       })
         .then((response) => {
@@ -34,7 +34,7 @@ export default class MessageActions {
         })
         .catch((err) => {
           if (err.response.status === 401) {
-            handleTokenVerification();
+            Auth.removeToken();
           } else if (err.response.status === 500) {
             dispatch({ type: 'POST_MESSAGE_REJECTED',
               payload: 'Sorry, an unexpected error occurred' });
@@ -42,7 +42,7 @@ export default class MessageActions {
             dispatch({ type: 'POST_MESSAGE_UNSUCCESSFUL',
               payload: err.response.data.message });
           }
-          return displayError(err.response.data.message);
+          return toastMessage(err.response.data.message);
         });
     };
   }
@@ -52,8 +52,8 @@ export default class MessageActions {
   *
   * @static
   *
-  * @param {Integer} groupId The id of the group to get message from
-  * @param {Integer} userId The id of the user to get message for
+  * @param {Number} groupId The id of the group to get message from
+  * @param {Number} userId The id of the user to get message for
   * @param {String} token The login token
   *
   * @returns {Object} dispatch object
@@ -70,7 +70,7 @@ export default class MessageActions {
         })
         .catch((err) => {
           if (err.response.status === 401) {
-            handleTokenVerification();
+            Auth.removeToken();
           } else if (err.response.status === 500) {
             dispatch({ type: 'GET_MESSAGES_REJECTED',
               payload: 'Sorry, an unexpected error occurred' });
@@ -78,7 +78,7 @@ export default class MessageActions {
             dispatch({ type: 'GET_MESSAGES_UNSUCCESSFUL',
               payload: err.response.data.message });
           }
-          return displayError(err.response.data.message);
+          return toastMessage(err.response.data.message);
         });
     };
   }
@@ -88,8 +88,8 @@ export default class MessageActions {
   *
   * @static
   *
-  * @param {Integer}  groupId id of the group to get message from
-  * @param {Integer}  userId id of the user that read the messages
+  * @param {Number}  groupId id of the group to get message from
+  * @param {Number}  userId id of the user that read the messages
   * @param {String} messageIds An array of messages read
   *
   * @returns {Object} dispatch object
@@ -124,8 +124,8 @@ export default class MessageActions {
   *
   * @static
   *
-  * @param {Integer} groupID The id of the group to get message from
-  * @param {Integer} userId The id of the user to get message for
+  * @param {Number} groupID The id of the group to get message from
+  * @param {Number} userId The id of the user to get message for
   * @param {String} token The login token
   *
   * @returns {Object} dispatch object
@@ -143,7 +143,7 @@ export default class MessageActions {
         })
         .catch((err) => {
           if (err.response.status === 401) {
-            handleTokenVerification();
+            Auth.removeToken();
           } else if (err.response.status === 500) {
             dispatch({ type: 'GET_ARCHIVE_MESSAGES_REJECTED',
               payload: 'Sorry, an unexpected error occurred.' });

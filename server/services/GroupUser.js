@@ -9,8 +9,8 @@ export default class UserGroup {
   /**
  * @description: add user to group
  * 
- * @param {Integer} groupId the id of group to add to
- * @param {Integer} userId the id of user to add
+ * @param {Number} groupId the id of group to add to
+ * @param {Number} userId the id of user to add
  * @param {Function} done callback
  * 
  * @return {Object} insertedData
@@ -31,7 +31,7 @@ export default class UserGroup {
   /**
  * @description: add user to group
  * 
- * @param {Integer} groupId the id of group to get users from
+ * @param {Number} groupId the id of group to get users from
  * @param {Function} done callback
  * 
  * @return {Object} retrievedData
@@ -51,7 +51,7 @@ export default class UserGroup {
   /**
  * @description: add user to group
  * 
- * @param {Integer} userId id of the user to get 
+ * @param {Number} userId id of the user to get 
  * @param {Function} done callback
  * 
  * @return {Object} retrievedData
@@ -71,8 +71,8 @@ export default class UserGroup {
   /**
  * @description: add user to group
  * 
- * @param {Integer} userId id of the user to get
- * @param {Integer} groupId the id of group to get user from
+ * @param {Number} userId id of the user to get
+ * @param {Number} groupId the id of group to get user from
  * @param {Function} done callback
  * 
  * @return {Object} retrievedData

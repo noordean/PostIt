@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 import PropTypes from 'prop-types';
 
 import UsersActions from '../../actions/UserActions';
-import displayError from '../../utils/errorDisplay';
+import toastMessage from '../../utils/toastMessage';
 
 /**
   * @class SignUp
@@ -64,7 +64,7 @@ export class SignUp extends Component {
     const password = this.state.passwordInput;
     const confirmPassword = this.state.confirmPasswordInput;
     if (password !== confirmPassword) {
-      return displayError('The two passwords did not match');
+      return toastMessage('The two passwords did not match');
     }
     this.props.registerUser(username, email, password, phone);
   }

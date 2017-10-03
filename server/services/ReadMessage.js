@@ -9,10 +9,10 @@ export default class ReadMessages {
   /**
  * @description: adds user to group
  * 
- * @param {Integer} groupId the id of the group the message was read
+ * @param {Number} groupId the id of the group the message was read
  * 
- * @param {Integer} userId the id of the user that read the message
- * @param {Integer} messageId the id of the message read
+ * @param {Number} userId the id of the user that read the message
+ * @param {Number} messageId the id of the message read
  * 
  * @param {Function} done callback
  * 
@@ -35,9 +35,9 @@ export default class ReadMessages {
   /**
  * @description: add user to group
  * 
- * @param {integer} groupId id of the group to get messages from
+ * @param {Number} groupId id of the group to get messages from
  * 
- * @param {integer} userId id of the user to get messages for
+ * @param {Number} userId id of the user to get messages for
  * @param {Function} done callback
  * 
  * @return {Object} retrieved Data
@@ -58,8 +58,8 @@ export default class ReadMessages {
   /**
  * @description: add user to group
  * 
- * @param {integer} messageId id of the message to get users for
- * @param {integer} groupId id of the group the message belongs
+ * @param {Number} messageId id of the message to get users for
+ * @param {Number} groupId id of the group the message belongs
  * @param {Function} done callback
  * 
  * @return {Object} retrieved Data

@@ -15,8 +15,7 @@ export default class Validate {
  * @return {Object} response containing the validation status
  */
   static checkGroupName(req, res, next) {
-    const groupName = req.body.groupName;
-    const description = req.body.description;
+    const { groupName, description } = req.body;
     const parameters = { groupName, description };
     const validationErrors = [];
     const reqBodyKeys = Object.keys(req.body);
@@ -117,10 +116,11 @@ export default class Validate {
  * @return {Object} response containing the validation status
  */
   static checkMessage(req, res, next) {
-    const [groupId, message, priority, expectedPriority] = [req.params.groupId,
-      req.body.message, req.body.priority, ['Normal', 'Urgent', 'Critical']];
+    const { content, priority } = req.body;
+    const [groupId, expectedPriority] = [req.params.groupId,
+      ['Normal', 'Urgent', 'Critical']];
 
-    const parameters = { message, priority };
+    const parameters = { content, priority };
     const validationErrors = [];
     const reqBodyKeys = Object.keys(req.body);
     Object.keys(parameters).forEach((params) => {
@@ -136,7 +136,7 @@ export default class Validate {
         { message: 'Priority can either be Normal, Urgent or Critical' });
     } else if (groupId.trim().length === 0) {
       return res.status(400).json({ message: 'groupId cannot be empty' });
-    } else if (message.trim().length === 0) {
+    } else if (content.trim().length === 0) {
       return res.status(400).json({ message: 'message cannot be empty' });
     } else if (isNaN(groupId)) {
       return res.status(400).json(
@@ -199,7 +199,7 @@ export default class Validate {
  * @return {Object} response containing the validation status
  */
   static checkUser(req, res, next) {
-    const [username, password] = [req.body.username, req.body.password];
+    const { username, password } = req.body;
     const parameters = { username, password };
     const validationErrors = [];
     const reqBodyKeys = Object.keys(req.body);

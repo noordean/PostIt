@@ -537,4 +537,27 @@ describe('PostIt Endpoints', () => {
           });
       });
   });
+
+  describe('POST api/v1/user/signup/google', () => {
+    it('should return a success message if correct details are supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/signup/google')
+          .send({
+            token: sentToken,
+            username: 'googleUser',
+            password: null,
+            email: 'googleUser@gmail.com',
+            phoneNumber: null
+          })
+          .end((err, res) => {
+            res.should.have.status(201);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.should.have.property('user');
+            res.body.message.should.be.eql('User registered successfully');
+            done();
+          });
+      });
+  });
 });

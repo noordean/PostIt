@@ -291,10 +291,11 @@ export default class UserControllers {
  * @return {Object} response
  */
   static mailNotification(req, res) {
-    const { recepients, theGroup, message, poster } = req.body;
+    const { recepients, groupName, message } = req.body;
+    const decode = jwt.verify(req.headers.token, jwtSecret);
     const msg = (
-      `<b>Hello!</b><br><br> You have a new message in <b>${theGroup}</b>,
-    from <b>${poster}</b>.<br><br><i>${message}</i></p>`);
+      `<b>Hello!</b><br><br> You have a new message in <b>${groupName}</b>,
+    from <b>${decode.username}</b>.<br><br><i>${message}</i></p>`);
     if (sendMail(msg, recepients, 'Message Notification')) {
       res.status(200).json({ message: 'Mail notification sent' });
     } else {
@@ -311,18 +312,18 @@ export default class UserControllers {
  * @return {Object} response
  */
   static smsNotification(req, res) {
-    const members = req.body.members;
+    const phoneNumbers = req.body.phoneNumbers;
     const jusibe = new Jusibe(
       process.env.JUSIBE_PUBLIC_KEY, process.env.JUSIBE_ACCESS_TOKEN);
-    if (Array.isArray(members)) {
-      if (members.length > 0) {
-        members.forEach((member) => {
-          jusibe.sendMessage(member);
+    if (Array.isArray(phoneNumbers)) {
+      if (phoneNumbers.length > 0) {
+        phoneNumbers.forEach((phoneNumber) => {
+          jusibe.sendMessage(phoneNumber);
         });
         res.status(200).json({ message: 'SMS sent!' });
       }
     } else {
-      res.status(400).json({ message: 'Members must be an array' });
+      res.status(400).json({ message: 'phoneNumbers must be an array' });
     }
   }
 
@@ -336,24 +337,23 @@ export default class UserControllers {
  */
   static saveNotification(req, res) {
     const { userId, groupName, message, postedby } = req.body;
-    if (Array.isArray(userId)) {
-      const unsentNotification = [];
-      userId.forEach((membersId) => {
-        Notification.save(
-          membersId.id, groupName, message, postedby, (notification) => {
-            if (Validate.hasInternalServerError(notification)) {
-              unsentNotification.push(notification.userDd);
-            }
-          });
-      });
-      if (unsentNotification.length > 0) {
-        return res.status(500).json({ message: 'Could not send SMS' });
-      }
-      res.status(201).json({ message: 'notification saved' });
-    } else {
-      res.status(400).json({
-        message: 'You need to supply an array for userId' });
+    const unsavedNotification = [];
+    userId.forEach((membersId) => {
+      Notification.save(
+        membersId.id, groupName, message, postedby, (notification) => {
+          if (Validate.hasInternalServerError(notification)) {
+            unsavedNotification.push(notification.userId);
+          }
+        });
+    });
+    if (unsavedNotification.length > 0) {
+      return res.status(500).json(
+        {
+          message: `Notification could not be saved for
+                    userId(s) ${unsavedNotification.join(',')}`
+        });
     }
+    res.status(201).json({ message: 'notification saved' });
   }
 
   /**

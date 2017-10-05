@@ -266,7 +266,7 @@ export default class UserActions {
   * @static
   *
   * @param {String} recepients The emails of the users to send to
-  * @param {String} theGroup The group name
+  * @param {String} groupName The group name
   * @param {String} message The message posted 
   * @param {String} poster username of the poster
   *
@@ -274,14 +274,13 @@ export default class UserActions {
   *
   * @memberof UserActions
   */
-  static mailNotification(recepients, theGroup, message, poster) {
+  static mailNotification(recepients, groupName, message) {
     return (dispatch) => {
       dispatch({ type: 'SEND_EMAIL_NOTIFICATION_BEGINS' });
       return axios.post('/api/v1/user/email', {
         recepients,
-        theGroup,
-        message,
-        poster
+        groupName,
+        message
       })
         .then((response) => {
           dispatch({ type: 'SEND_EMAIL_NOTIFICATION_SUCCESSFUL',
@@ -305,18 +304,18 @@ export default class UserActions {
   *
   * @static
   *
-  * @param {String} members users to send message to
+  * @param {Array} phoneNumbers users' phoneNumbers to send message to
   * @param {String} poster username of the poster 
   *
   * @returns {string} dispatched object
   *
   * @memberof UserActions
   */
-  static smsNotification(members) {
+  static smsNotification(phoneNumbers) {
     return (dispatch) => {
       dispatch({ type: 'SEND_SMS_NOTIFICATION_BEGINS' });
       return axios.post('/api/v1/user/sms', {
-        members
+        phoneNumbers
       })
         .then((response) => {
           dispatch({ type: 'SEND_SMS_NOTIFICATION_SUCCESSFUL',

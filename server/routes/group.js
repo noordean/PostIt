@@ -23,11 +23,11 @@ group.post('/api/v1/group/:groupId/message',
   GroupControllers.postMessage
 );
 group.post('/api/v1/group/:groupId/message/archive',
-  Auth.verifyToken,
+  Auth.verifyToken, Validate.checkArchiveMessage,
   GroupControllers.archiveMessage
 );
 group.get('/api/v1/group/:groupId/message/archive',
-  Auth.verifyToken,
+  Auth.verifyToken, Validate.checkGetArchiveMessage,
   GroupControllers.getArchivedMessages
 );
 group.get('/api/v1/group/:groupId/messages',

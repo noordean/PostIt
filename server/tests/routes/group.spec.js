@@ -374,11 +374,9 @@ describe('PostIt Endpoints', () => {
     it('should return an error message if messageIds is not an array',
       (done) => {
         chai.request(app)
-          .post('/api/v1/group/:groupId/message/archive')
+          .post('/api/v1/group/5/message/archive')
           .send({
-            groupId: 5,
             messageIds: 4,
-            userId: 1,
             token: sentToken
           })
           .end((err, res) => {
@@ -386,24 +384,41 @@ describe('PostIt Endpoints', () => {
             res.body.should.be.a('object');
             res.body.should.have.property('message');
             res.body.message.should.be.eql(
-              'Please supply an array for messageIds');
+              'messageIds must be an array');
             done();
           });
       });
-    it('should return an error message if messageIds is not an array',
+    it('should return an error message if an invalid messageId is supplied',
       (done) => {
         chai.request(app)
-          .post('/api/v1/group/2/message/archive')
+          .post('/api/v1/group/5/message/archive')
           .send({
-            messageIds: [4],
-            userId: 1,
+            messageIds: [4, 'ade'],
             token: sentToken
           })
           .end((err, res) => {
-            res.should.have.status(201);
+            res.should.have.status(400);
             res.body.should.be.a('object');
             res.body.should.have.property('message');
-            res.body.message.should.be.eql('read messages added');
+            res.body.message.should.be.eql(
+              'invalid messageId detected');
+            done();
+          });
+      });
+  });
+
+  describe('POST api/v1/group/:groupId/message/archive', () => {
+    it('should return an error message if groupId is invalid',
+      (done) => {
+        chai.request(app)
+          .get('/api/v1/group/5btu/message/archive')
+          .set('token', sentToken)
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql(
+              'groupId must be an integer');
             done();
           });
       });

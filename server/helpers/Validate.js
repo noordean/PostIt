@@ -307,7 +307,7 @@ export default class Validate {
       return res.status(400).json({ message: 'userId must be an array' });
     }
     const invalidIds = userId.filter(id => isNaN(id) === true);
-    if (invalidIds.length.length > 0) {
+    if (invalidIds.length > 0) {
       return res.status(400).json({ message: 'invalid userId detected' });
     }
     return next();
@@ -336,6 +336,56 @@ export default class Validate {
       /^\w+[\w-.]*@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/.test(email) === false) {
       return res.status(400).json({
         message: 'a valid email is required' });
+    }
+    return next();
+  }
+
+  /**
+ * @description: validates request body for archiving user's messages
+ * 
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * @param {Function} next callback function
+ * 
+ * @return {Object} response containing the validation status
+ */
+  static checkArchiveMessage(req, res, next) {
+    const messageIds = req.body.messageIds;
+    const groupId = req.params.groupId;
+    if (messageIds === undefined) {
+      return res.status(400).json({ message: 'messageIds must be supplied' });
+    } else if (groupId === undefined) {
+      return res.status(400).json({ message: 'groupId must be supplied' });
+    } else if (isNaN(groupId)) {
+      return res.status(400).json({ message: 'groupId must be an integer' });
+    }
+    if (!Array.isArray(messageIds)) {
+      return res.status(400).json({ message: 'messageIds must be an array' });
+    }
+    const invalidMessageIds = messageIds.filter((messageId) => {
+      return (isNaN(messageId));
+    });
+    if (invalidMessageIds.length > 0) {
+      return res.status(400).json({ message: 'invalid messageId detected' });
+    }
+    return next();
+  }
+
+  /**
+ * @description: validates request body for getting user's archived messages
+ * 
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * @param {Function} next callback function
+ * 
+ * @return {Object} response containing the validation status
+ */
+  static checkGetArchiveMessage(req, res, next) {
+    const groupId = req.params.groupId;
+    if (groupId === undefined) {
+      return res.status(400).json({ message: 'groupId must be supplied' });
+    } else if (isNaN(groupId)) {
+      return res.status(400).json({ message: 'groupId must be an integer' });
     }
     return next();
   }

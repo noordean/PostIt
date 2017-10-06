@@ -222,7 +222,7 @@ describe('PostIt Endpoints', () => {
             res.should.have.status(404);
             res.body.should.be.a('object');
             res.body.should.have.property('message');
-            res.body.message.should.be.eql('Invalid user!');
+            res.body.message.should.be.eql('User not found');
             done();
           });
       });
@@ -539,6 +539,42 @@ describe('PostIt Endpoints', () => {
   });
 
   describe('POST api/v1/user/signup/google', () => {
+    it('should return a success message if email is not supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/signup/google')
+          .send({
+            token: sentToken,
+            username: 'googleUser',
+            password: null,
+            phoneNumber: null
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('email must be supplied');
+            done();
+          });
+      });
+    it('should return a success message if an invalid email is supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/signup/google')
+          .send({
+            token: sentToken,
+            password: null,
+            email: 'googleUser@.com',
+            phoneNumber: null
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('username must be supplied');
+            done();
+          });
+      });
     it('should return a success message if correct details are supplied',
       (done) => {
         chai.request(app)
@@ -556,6 +592,45 @@ describe('PostIt Endpoints', () => {
             res.body.should.have.property('message');
             res.body.should.have.property('user');
             res.body.message.should.be.eql('User registered successfully');
+            done();
+          });
+      });
+    it('should return a success message if an invalid email is supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/signup/google')
+          .send({
+            token: sentToken,
+            username: 'googleUser',
+            password: null,
+            email: 'googleUser@.com',
+            phoneNumber: null
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('a valid email is required');
+            done();
+          });
+      });
+    it('should return a success message if an invalid username is supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/signup/google')
+          .send({
+            token: sentToken,
+            username: 'googleUser123',
+            password: null,
+            email: 'googleUser@gmail.com',
+            phoneNumber: null
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql(
+              'username must contain only letters');
             done();
           });
       });

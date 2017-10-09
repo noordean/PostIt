@@ -131,9 +131,12 @@ export default class UserReducers {
   * Reducer for sending mail for password reset
   *
   * @static
+  *
   * @param {Object} state The initial state
   * @param {Object} action The dispatched action
+  *
   * @returns {Object} current state
+  *
   * @memberof UserReducers
   */
   static verifyPassword(state = {
@@ -156,9 +159,12 @@ export default class UserReducers {
   * Reducer for regsitering users that sign in with google
   *
   * @static
+  *
   * @param {Object} state The initial state
   * @param {Object} action The dispatched action
+  *
   * @returns {Object} current state
+  *
   * @memberof UserReducers
   */
   static registerGoogleUser(state = {
@@ -181,9 +187,12 @@ export default class UserReducers {
   * Reducer for sending mail for notification
   *
   * @static
+  *
   * @param {Object} state The initial state
   * @param {Object} action The dispatched action
+  *
   * @returns {Object} current state
+  *
   * @memberof UserReducers
   */
   static mailNotification(state = {
@@ -203,12 +212,15 @@ export default class UserReducers {
   }
 
   /**
-  * Reducer for sending mail for notification
+  * Reducer for sending sms for notification
   *
   * @static
+  *
   * @param {Object} state The initial state
   * @param {Object} action The dispatched action
+  *
   * @returns {Object} current state
+  *
   * @memberof UserReducers
   */
   static smsNotification(state = {
@@ -228,12 +240,15 @@ export default class UserReducers {
   }
 
   /**
-  * Reducer for sending mail for notification
+  * Reducer for read messages
   *
   * @static
+  *
   * @param {Object} state The initial state
   * @param {Object} action The dispatched action
+  *
   * @returns {Object} current state
+  *
   * @memberof UserReducers
   */
   static readMessages(state = {
@@ -256,9 +271,12 @@ export default class UserReducers {
   * Reducer for saving app notification
   *
   * @static
+  *
   * @param {Object} state The initial state
   * @param {Object} action The dispatched action
+  *
   * @returns {Object} current state
+  *
   * @memberof UserReducers
   */
   static appNotification(state = {
@@ -276,6 +294,31 @@ export default class UserReducers {
       case 'DELETE_NOTIFICATION_UNSUCCESSFUL':
       case 'DELETE_NOTIFICATION_REJECTED':
         return { ...state, error: true };
+      default:
+        return state;
+    }
+  }
+
+  /**
+  * Reducer for sending sms for notification
+  *
+  * @static
+  *
+  * @param {Object} state The initial state
+  * @param {Object} action The dispatched action
+  *
+  * @returns {Object} current state
+  *
+  * @memberof UserReducers
+  */
+  static searchedUsers(state = {
+    users: [], error: false }, action) {
+    switch (action.type) {
+      case 'GET_SEARCHED_USERS_SUCCESSFUL':
+        return { ...state, users: action.payload };
+      case 'GET_SEARCHED_USERS_UNSUCCESSFUL':
+      case 'GET_SEARCHED_USERS_REJECTED':
+        return { ...state, error: true, users: [] };
       default:
         return state;
     }

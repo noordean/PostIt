@@ -2,45 +2,45 @@
 import express from 'express';
 
 import GroupControllers from '../controllers/GroupControllers';
-import UserControllers from '../controllers/UserControllers';
-import MessageControllers from '../controllers/MessageControllers';
-import authenticate from '../helpers/authenticate';
-import validate from '../helpers/validate';
+import Auth from '../helpers/Auth';
+import Validate from '../helpers/Validate';
 
 const group = express.Router();
 
 group.post('/api/v1/group',
-  authenticate.verifyToken,
-  validate.checkGroupName,
+  Auth.verifyToken,
+  Validate.checkGroupName,
   GroupControllers.createGroup
 );
 group.post('/api/v1/group/:groupId/user',
-  authenticate.verifyToken,
-  validate.checkIds,
+  Auth.verifyToken,
+  Validate.checkIds,
   GroupControllers.addUserToGroup
 );
 group.post('/api/v1/group/:groupId/message',
-  authenticate.verifyToken,
-  validate.checkMessage,
-  MessageControllers.postMessage
+  Auth.verifyToken,
+  Validate.checkMessage,
+  GroupControllers.postMessage
 );
 group.post('/api/v1/group/:groupId/message/archive',
-  MessageControllers.archiveMessage
+  Auth.verifyToken, Validate.checkArchiveMessage,
+  GroupControllers.archiveMessage
 );
 group.get('/api/v1/group/:groupId/message/archive',
-  MessageControllers.getArchivedMessages
+  Auth.verifyToken, Validate.checkGetArchiveMessage,
+  GroupControllers.getArchivedMessages
 );
 group.get('/api/v1/group/:groupId/messages',
-  authenticate.verifyToken, validate.checkGroupId,
+  Auth.verifyToken, Validate.checkGroupId,
   GroupControllers.getGroupMessages
 );
 group.get('/api/v1/group/:groupId/users',
-  authenticate.verifyToken,
-  UserControllers.getGroupUsers
+  Auth.verifyToken,
+  GroupControllers.getGroupUsers
 );
 group.delete('/api/v1/group/:groupId',
-  authenticate.verifyToken,
-  validate.checkGroupId,
+  Auth.verifyToken,
+  Validate.checkGroupId,
   GroupControllers.deleteGroup
 );
 

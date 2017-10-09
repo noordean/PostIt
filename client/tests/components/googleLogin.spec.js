@@ -4,7 +4,7 @@ import $ from 'jquery';
 import { shallow, mount } from 'enzyme';
 import sinon from 'sinon';
 
-import { LoginWithGoogle } from '../../components/GoogleLogin.jsx';
+import { LoginWithGoogle } from '../../components/container/GoogleLogin.jsx';
 import localStorageMock from '../__mocks__/localStorageMock';
 
 window.localStorage = localStorageMock;

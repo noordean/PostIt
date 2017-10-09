@@ -9,7 +9,7 @@ const Messages = database.Message;
  */
 export default class Group {
   /**
- * @description: save group to database
+ * @description: saves group to database
  * 
  * @param {String} groupname the name of the group
  * @param {String} createdby the group creator

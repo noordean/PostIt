@@ -3,7 +3,7 @@ import expect from 'expect';
 import { mount } from 'enzyme';
 import sinon from 'sinon';
 
-import { Dashboard } from '../../components/Dashboard.jsx';
+import { Dashboard } from '../../components/container/Dashboard.jsx';
 
 import localStorageMock from '../__mocks__/localStorageMock';
 
@@ -41,7 +41,7 @@ describe('Dashboard component', () => {
     global.Materialize = { toast: () => {} };
   });
   it('should render neccessary elements', () => {
-    expect(shallowWrapper.find('div').length).toBe(3);
+    expect(shallowWrapper.find('div').length).toBe(4);
     expect(shallowWrapper.find('p').length).toBe(0);
   });
   it('should call componentDidMount', () => {

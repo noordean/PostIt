@@ -3,7 +3,7 @@ import expect from 'expect';
 import $ from 'jquery';
 import { shallow } from 'enzyme';
 
-import { MessageBoard } from '../../components/MessageBoard.jsx';
+import { MessageBoard } from '../../components/container/MessageBoard.jsx';
 import localStorageMock from '../__mocks__/localStorageMock';
 
 window.localStorage = localStorageMock;
@@ -38,7 +38,7 @@ describe('<MessageBoard />', () => {
     global.Materialize = { toast: () => {} };
   });
   it('should display the necessary elements', () => {
-    expect(wrapper.find('div').length).toBe(14);
+    expect(wrapper.find('div').length).toBe(9);
     expect(wrapper.find('div').exists()).toBe(true);
   });
   it('should update state when componentDidMount is called', () => {

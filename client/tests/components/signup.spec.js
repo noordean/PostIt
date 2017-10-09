@@ -3,7 +3,7 @@ import expect from 'expect';
 import $ from 'jquery';
 import { mount } from 'enzyme';
 
-import { SignUp } from '../../components/Signup.jsx';
+import { SignUp } from '../../components/container/Signup.jsx';
 import localStorageMock from '../__mocks__/localStorageMock';
 
 window.localStorage = localStorageMock;

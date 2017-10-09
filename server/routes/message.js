@@ -1,17 +1,18 @@
 import express from 'express';
 
 import MessageControllers from '../controllers/MessageControllers';
-import authenticate from '../helpers/authenticate';
-import validate from '../helpers/validate';
+import Auth from '../helpers/Auth';
+import Validate from '../helpers/Validate';
 
 const message = express.Router();
 
 message.delete('/api/v1/message/:messageId',
-  authenticate.verifyToken,
-  validate.checkMessageId,
+  Auth.verifyToken,
+  Validate.checkMessageId,
   MessageControllers.deleteMessage
 );
 message.get('/api/v1/message/:messageId/user',
+  Auth.verifyToken,
   MessageControllers.getUser
 );
 

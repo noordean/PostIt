@@ -1,6 +1,9 @@
 import axios from 'axios';
-import authorization from '../utils/authorization';
+import { browserHistory } from 'react-router';
+
+import Auth from '../utils/Auth';
 import * as actionTypes from './actionTypes';
+import toastMessage from '../utils/toastMessage';
 /**
  * @class UserActions
  */
@@ -31,6 +34,8 @@ export default class UserActions {
         .then((response) => {
           dispatch({ type: actionTypes.REGISTRATION_SUCCESSFUL,
             payload: response.data });
+          browserHistory.push('/signin');
+          return toastMessage('Registration successful. Kindly login here');
         })
         .catch((err) => {
           if (err.response.status === 500) {
@@ -40,6 +45,7 @@ export default class UserActions {
             dispatch({ type: actionTypes.REGISTRATION_UNSUCCESSFUL,
               payload: err.response.data });
           }
+          return toastMessage(err.response.data.message);
         });
     };
   }
@@ -65,7 +71,11 @@ export default class UserActions {
       })
         .then((response) => {
           dispatch({ type: 'LOGIN_SUCCESSFUL', payload: response.data });
-          authorization(response.data.user.token);
+          Auth.setToken(response.data.user.token);
+          localStorage.setItem('user',
+            JSON.stringify(response.data.user));
+          browserHistory.push('/dashboard');
+          return toastMessage('You are now logged in');
         })
         .catch((err) => {
           if (err.response.status === 500) {
@@ -75,6 +85,7 @@ export default class UserActions {
             dispatch({ type: 'LOGIN_UNSUCCESSFUL',
               payload: err.response.data });
           }
+          return toastMessage(err.response.data.message);
         });
     };
   }
@@ -84,7 +95,7 @@ export default class UserActions {
   *
   * @static
   *
-  * @param {Integer} groupId The id of the group to get members for
+  * @param {Number} groupId The id of the group to get members for
   * @param {String} token the login token
   *
   * @returns {Object} dispatch object
@@ -99,11 +110,12 @@ export default class UserActions {
       .catch((err) => {
         if (err.response.status === 500) {
           dispatch({ type: 'GET_MEMBERS_REJECTED',
-            payload: 'Sorry, an unexpected error occurred.' });
+            payload: err.response.data.message });
         } else {
           dispatch({ type: 'GET_MEMBERS_FAILED',
             payload: err.response.data.message });
         }
+        return toastMessage(err.response.data.message);
       });
   }
 
@@ -112,7 +124,7 @@ export default class UserActions {
   *
   * @static
   *
-  * @param {Integer} groupId The id of the group to add members to
+  * @param {Number} groupId The id of the group to add members to
   * @param {String} userId The id's of the users to add
   * @param {String} token The JWToken to access the endpoint
   *
@@ -127,15 +139,17 @@ export default class UserActions {
     })
       .then((response) => {
         dispatch({ type: 'MEMBERS_ADDED', payload: response.data.message });
+        return toastMessage('Users added');
       })
       .catch((err) => {
         if (err.response.status === 500) {
           dispatch({ type: 'ADD_MEMBERS_REJECTED',
-            payload: 'Sorry, an unexpected error occurred.' });
+            payload: err.response.data.message });
         } else {
           dispatch({ type: 'ADD_MEMBERS_FAILED',
             payload: err.response.data.message });
         }
+        return toastMessage(err.response.data.message);
       });
   }
 
@@ -161,6 +175,7 @@ export default class UserActions {
         .then((response) => {
           dispatch({ type: 'RESET_PASSWORD_SUCCESSFUL',
             payload: response.data.message });
+          return toastMessage(response.data.message);
         })
         .catch((err) => {
           if (err.response.status === 500) {
@@ -170,6 +185,7 @@ export default class UserActions {
             dispatch({ type: 'RESET_PASSWORD_UNSUCCESSFUL',
               payload: err.response.data.message });
           }
+          return toastMessage(err.response.data.message);
         });
     };
   }
@@ -198,11 +214,12 @@ export default class UserActions {
         .catch((err) => {
           if (err.response.status === 500) {
             dispatch({ type: 'VERIFY_PASSWORD_REJECTED',
-              payload: 'Sorry, an unexpected error occurred.' });
+              payload: err.response.data.message });
           } else {
             dispatch({ type: 'VERIFY_PASSWORD_UNSUCCESSFUL',
               payload: err.response.data.message });
           }
+          return toastMessage(err.response.data.message);
         });
     };
   }
@@ -238,6 +255,7 @@ export default class UserActions {
             dispatch({ type: 'REGISTER_GOOGLE_USER_UNSUCCESSFUL',
               payload: err.response.data });
           }
+          return toastMessage(err.response.data.message);
         });
     };
   }
@@ -248,7 +266,7 @@ export default class UserActions {
   * @static
   *
   * @param {String} recepients The emails of the users to send to
-  * @param {String} theGroup The group name
+  * @param {String} groupName The group name
   * @param {String} message The message posted 
   * @param {String} poster username of the poster
   *
@@ -256,14 +274,13 @@ export default class UserActions {
   *
   * @memberof UserActions
   */
-  static mailNotification(recepients, theGroup, message, poster) {
+  static mailNotification(recepients, groupName, message) {
     return (dispatch) => {
       dispatch({ type: 'SEND_EMAIL_NOTIFICATION_BEGINS' });
       return axios.post('/api/v1/user/email', {
         recepients,
-        theGroup,
-        message,
-        poster
+        groupName,
+        message
       })
         .then((response) => {
           dispatch({ type: 'SEND_EMAIL_NOTIFICATION_SUCCESSFUL',
@@ -277,6 +294,7 @@ export default class UserActions {
             dispatch({ type: 'SEND_EMAIL_NOTIFICATION_UNSUCCESSFUL',
               payload: err.response.data.message });
           }
+          return toastMessage(err.response.data.message);
         });
     };
   }
@@ -286,18 +304,18 @@ export default class UserActions {
   *
   * @static
   *
-  * @param {String} members users to send message to
+  * @param {Array} phoneNumbers users' phoneNumbers to send message to
   * @param {String} poster username of the poster 
   *
   * @returns {string} dispatched object
   *
   * @memberof UserActions
   */
-  static smsNotification(members) {
+  static smsNotification(phoneNumbers) {
     return (dispatch) => {
       dispatch({ type: 'SEND_SMS_NOTIFICATION_BEGINS' });
       return axios.post('/api/v1/user/sms', {
-        members
+        phoneNumbers
       })
         .then((response) => {
           dispatch({ type: 'SEND_SMS_NOTIFICATION_SUCCESSFUL',
@@ -306,11 +324,12 @@ export default class UserActions {
         .catch((err) => {
           if (err.response.status === 500) {
             dispatch({ type: 'SEND_SMS_NOTIFICATION_REJECTED',
-              payload: 'Sorry, an unexpected error occurred.' });
+              payload: err.response.data.message });
           } else {
             dispatch({ type: 'SEND_SMS_NOTIFICATION_UNSUCCESSFUL',
               payload: err.response.data.message });
           }
+          return toastMessage(err.response.data.message);
         });
     };
   }
@@ -320,8 +339,8 @@ export default class UserActions {
   *
   * @static
   *
-  * @param {Integer} messageId The id of the message to get readers for
-  * @param {Integer} groupId The id of the group the message belongs
+  * @param {Number} messageId The id of the message to get readers for
+  * @param {Number} groupId The id of the group the message belongs
   *
   * @returns {Object} dispatch object
   *
@@ -350,7 +369,7 @@ export default class UserActions {
   *
   * @static
   *
-  * @param {integer} userId id of the user that owns the notification
+  * @param {Number} userId id of the user that owns the notification
   * @param {String} groupName name of the group  
   * @param {String} message message posted
   * @param {String} postedby the poster
@@ -388,7 +407,7 @@ export default class UserActions {
   *
   * @static
   *
-  * @param {Integer} userId The id of the user to get notification for
+  * @param {Number} userId The id of the user to get notification for
   *
   * @returns {Object} dispatch object
   *
@@ -407,6 +426,7 @@ export default class UserActions {
           } else {
             dispatch({ type: 'GET_NOTIFICATION_UNSUCCESSFUL' });
           }
+          return toastMessage(err.response.data.message);
         });
     };
   }
@@ -416,7 +436,7 @@ export default class UserActions {
   *
   * @static
   *
-  * @param {Integer} userId The id of the user to delete notification
+  * @param {Number} userId The id of the user to delete notification
   *
   * @returns {Object} dispatch object
   *
@@ -435,6 +455,39 @@ export default class UserActions {
           } else {
             dispatch({ type: 'DELETE_NOTIFICATION_UNSUCCESSFUL' });
           }
+          return toastMessage(err.response.data.message);
+        });
+    };
+  }
+
+
+  /**
+  * Request to the API to get messages of a group
+  *
+  * @static
+  *
+  * @param {Array} currentMembers The current members of the group
+  *
+  * @returns {Object} dispatch object
+  *
+  * @memberof MessageActions
+  */
+  static getSearchedUsers(currentMembers) {
+    return (dispatch) => {
+      return axios.post('/api/v1/users', {
+        currentMembers
+      })
+        .then((response) => {
+          dispatch({ type: 'GET_SEARCHED_USERS_SUCCESSFUL',
+            payload: response.data.users });
+        })
+        .catch((err) => {
+          if (err.response.status === 500) {
+            dispatch({ type: 'GET_SEARCHED_USERS_REJECTED' });
+          } else {
+            dispatch({ type: 'GET_SEARCHED_USERS_UNSUCCESSFUL' });
+          }
+          return toastMessage(err.response.data.message);
         });
     };
   }

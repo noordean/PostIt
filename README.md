@@ -92,6 +92,7 @@ Note: Login token must be supplied in the headers before accessing all the route
 - Create your feature branch on your local machine with ```git checkout -b your-feature-branch```
 - Push your changes to your remote branch with ```git push origin your-feature-branch```
 - Open a pull request to the master branch, and describe how your feature works
+- Refer to this wiki for proper <a href="https://github.com/noordean/PostIt/wiki">GIT CONVENTION</a>
 
 Ensure your codes follow <a href="https://github.com/airbnb/javascript">AirBnB Javascript Styles Guide</a>
 

@@ -1,11 +1,12 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 
-import group from '../services/Group';
-import groupUser from '../services/GroupUser';
-import user from '../services/User';
-import readMessageService from '../services/ReadMessage';
-import validate from '../helpers/validate';
+import Group from '../services/Group';
+import GroupUser from '../services/GroupUser';
+import User from '../services/User';
+import Message from '../services/Message';
+import ReadMessage from '../services/ReadMessage';
+import Validate from '../helpers/Validate';
 
 dotenv.config();
 const jwtSecret = process.env.jwtSecret;
@@ -24,19 +25,18 @@ export default class GroupControllers {
  * @return {Object} response containing the created group
  */
   static createGroup(req, res) {
-    const [groupName, description, decode] = [req.body.groupName,
-      req.body.description, jwt.verify(req.headers.token ||
-      req.body.token, jwtSecret)];
-    group.saveGroup(groupName, decode.username, description, (groups) => {
+    const { groupName, description } = req.body;
+    const decode = jwt.verify(req.headers.token || req.body.token, jwtSecret);
+    Group.saveGroup(groupName, decode.username, description, (groups) => {
       if (groups[1] === false) {
         res.status(409).json({ message:
           'There is already an existing group with this name' });
       } else {
-        user.getUser(decode.username, (users) => {
+        User.getUser(decode.username, (users) => {
           if (users.length === 0) {
             res.status(409).json({ message: 'Invalid user detected' });
           } else {
-            groupUser.addUser(groups[0].id, users[0].id, () => {
+            GroupUser.addUser(groups[0].id, users[0].id, () => {
               res.status(201).json({
                 message: 'Group successfully created',
                 group: {
@@ -50,8 +50,8 @@ export default class GroupControllers {
           }
         });
       }
-      if (validate.hasInternalServerError(groups)) {
-        res.status(500).json(validate.sendInternalServerError());
+      if (Validate.hasInternalServerError(groups)) {
+        res.status(500).json(Validate.sendInternalServerError());
       }
     });
   }
@@ -68,14 +68,14 @@ export default class GroupControllers {
   static addUserToGroup(req, res) {
     const [groupId, userId, decode] = [req.params.groupId, req.body.userId,
       jwt.verify(req.headers.token || req.body.token, jwtSecret)];
-    group.getGroupById(groupId, (groups) => {
+    Group.getGroupById(groupId, (groups) => {
       if (groups.length === 0) {
         res.status(404).json({ message: 'Invalid group id supplied' });
       } else if (decode.username !== groups[0].createdby) {
         res.status(401).json({ message:
           'Only the creator of groups can add members' });
       } else if (userId.length === 1) {
-        groupUser.addUser(groupId, userId[0], (useR) => {
+        GroupUser.addUser(groupId, userId[0], (useR) => {
           if (useR[1] === true) {
             res.status(201).json({ message:
               'User successfully added',
@@ -83,13 +83,13 @@ export default class GroupControllers {
           } else {
             res.status(409).json({ message: 'User already in the group' });
           }
-          if (validate.hasInternalServerError(useR)) {
-            res.status(500).json(validate.sendInternalServerError());
+          if (Validate.hasInternalServerError(useR)) {
+            res.status(500).json(Validate.sendInternalServerError());
           }
         });
       } else {
         userId.forEach((id) => {
-          groupUser.addUser(groupId, id, () => {
+          GroupUser.addUser(groupId, id, () => {
           });
         });
         res.status(201).json({ message: 'Users successfully added' });
@@ -108,14 +108,14 @@ export default class GroupControllers {
  */
   static getGroupMessages(req, res) {
     const groupId = req.params.groupId;
-    group.getGroupById(groupId, (groups) => {
+    Group.getGroupById(groupId, (groups) => {
       if (groups.length === 0) {
         res.status(404).json({ message: 'Group does not exist' });
       } else {
-        group.getGroupMessages(groupId, (groupMessages) => {
+        Group.getGroupMessages(groupId, (groupMessages) => {
           if (req.query.userId !== undefined) {
             const userId = req.query.userId;
-            readMessageService.getMessages(groupId, userId, (messages) => {
+            ReadMessage.getMessages(groupId, userId, (messages) => {
               if (Array.isArray(messages) && messages.length >= 0) {
                 const dueMessages = messages.filter(msgs => ((
                   Date.now() - new Date(msgs.createdAt).getTime() > 180000)));
@@ -130,8 +130,8 @@ export default class GroupControllers {
           } else {
             res.status(200).json({ messages: groupMessages.messages });
           }
-          if (validate.hasInternalServerError(groupMessages)) {
-            res.status(500).json(validate.sendInternalServerError());
+          if (Validate.hasInternalServerError(groupMessages)) {
+            res.status(500).json(Validate.sendInternalServerError());
           }
         });
       }
@@ -149,14 +149,14 @@ export default class GroupControllers {
   static deleteGroup(req, res) {
     const groupId = req.params.groupId;
     const decode = jwt.verify(req.headers.token || req.body.token, jwtSecret);
-    group.getGroupById(groupId, (groups) => {
+    Group.getGroupById(groupId, (groups) => {
       if (groups.length === 0) {
         res.status(404).json({ message: 'Group does not exist' });
       } else if (groups[0].createdby !== decode.username) {
         res.status(403).json({ message:
           'Only the creator of this group can delete it' });
       } else {
-        group.deleteGroup(groupId, () => {
+        Group.deleteGroup(groupId, () => {
           res.status(200).json({ message: 'Group deleted' });
         });
       }
@@ -164,36 +164,123 @@ export default class GroupControllers {
   }
 
   /**
- * @description: retieves all groups a user belongs
- * to through route GET: api/user/groups
+ * @description: retrieves all users in a group through
+ * route GET: api/group/:groupId/user
  * 
  * @param {Object} req request object
  * @param {Object} res response object
  * 
- * @return {Object} response containing user groups
+ * @return {Object} response containing all users of a group
  */
-  static getUserGroups(req, res) {
-    const [limit, offset, decode] = [req.query.limit || 6,
-      req.query.offset || 0, jwt.verify(req.headers.token
-      || req.body.token, jwtSecret)];
-    user.getUserById(decode.id, (users) => {
-      if (users.length === 0) {
-        res.status(404).json({ message: 'Invalid user id' });
+  static getGroupUsers(req, res) {
+    const groupId = req.params.groupId;
+    if (groupId === undefined) {
+      res.status(400).json({ message: 'groupId must be supplied' });
+    } else {
+      Group.getGroupById(groupId, (groups) => {
+        if (groups.length === 0) {
+          res.status(404).json({ message: 'The specified group does not exist' });
+        } else {
+          GroupUser.getGroupUsersId(groupId, (users) => {
+            if (users.length > 0) {
+              User.getGroupUsers(users, (usernames) => {
+                res.status(200).json({ users: usernames });
+              });
+            } else {
+              res.status(404).json({ message:
+                'This group does not contain any member' });
+            }
+            if (Validate.hasInternalServerError(users)) {
+              res.status(500).json(Validate.sendInternalServerError());
+            }
+          });
+        }
+      });
+    }
+  }
+
+  /**
+ * @description: posts a message to a group through
+ * route POST: api/group/:groupId/message
+ * 
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * 
+ * @return {Object} response containing the posted message
+ */
+  static postMessage(req, res) {
+    const { content, priority } = req.body;
+    const [groupId, decode] = [req.params.groupId,
+      jwt.verify(req.headers.token || req.body.token, jwtSecret)];
+    Group.getGroupById(groupId, (groups) => {
+      if (groups.length === 0) {
+        res.status(404).json({ message: 'Group does not exist' });
       } else {
-        groupUser.getUserGroupsId(decode.id, (groups) => {
-          if (groups.length > 0) {
-            group.getUserGroups(groups, limit, offset, (userGroups) => {
-              res.status(200).json({ groups: userGroups });
-            });
+        GroupUser.getUser(decode.id, groupId, (member) => {
+          if (member.length > 0) {
+            Message.postMessage(groupId,
+              decode.username, content, priority, (msg) => {
+                res.status(201).json({ message:
+                  'Message posted successfully',
+                Message: msg });
+              });
           } else {
-            res.status(404).json({ message:
-              'This user does not have any group yet' });
-          }
-          if (validate.hasInternalServerError(groups)) {
-            res.status(500).json(validate.sendInternalServerError());
+            res.status(401).json({ message:
+              'You do not belong to this group' });
           }
         });
       }
+    });
+  }
+
+  /**
+ * @description: adds a read message through
+ * api/v1/group/:groupId/message/archive
+ * 
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * 
+ * @return {Object} response containing the number of deleted messages
+ */
+  static archiveMessage(req, res) {
+    const messageIds = req.body.messageIds;
+    const groupId = req.params.groupId;
+    const decode = jwt.verify(req.headers.token, jwtSecret);
+    messageIds.forEach((msgId) => {
+      ReadMessage.addMessage(groupId, decode.id, msgId, () => {
+      });
+    });
+    res.status(201).json({ message: 'read messages added' });
+  }
+
+  /**
+ * @description: adds a read message through
+ * route api/v1/group/:groupId/message/archive
+ * 
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * 
+ * @return {Object} response containing the number of deleted messages
+ */
+  static getArchivedMessages(req, res) {
+    const groupId = req.params.groupId;
+    const decode = jwt.verify(req.headers.token, jwtSecret);
+    ReadMessage.getMessages(groupId, decode.id, (msgs) => {
+      if (msgs.length === 0) {
+        return res.status(404).json({ message: 'No messages found' });
+      }
+      const dueMessages = msgs.filter(msg => ((
+        Date.now() - new Date(msg.createdAt).getTime() > 1440000)));
+      const dueMessagesIds = dueMessages.map(dueMsgs => dueMsgs.messageId);
+      Group.getGroupMessages(groupId, (groupMessages) => {
+        if (Validate.hasInternalServerError(groupMessages)) {
+          res.status(500).json(Validate.sendInternalServerError());
+        } else {
+          const archivedMsgs = groupMessages.messages.filter(archMsgs => (
+            dueMessagesIds.indexOf(archMsgs.id) !== -1));
+          res.status(200).json({ messages: archivedMsgs });
+        }
+      });
     });
   }
 }

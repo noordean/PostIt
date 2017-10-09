@@ -4,11 +4,7 @@ dotenv.config();
 
 module.exports = {
   development: {
-    username: 'postgres',
-    password: 'ibrahim5327',
-    database: 'postit',
-    host: 'localhost',
-    port: 5433,
+    use_env_variable: 'DEV_DATABASE_URL',
     dialect: 'postgres'
   },
   test: {

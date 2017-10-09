@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import Auth from '../utils/Auth';
+import toastMessage from '../utils/toastMessage';
 /**
  * @class MessageActions
  */
@@ -9,8 +11,8 @@ export default class MessageActions {
   *
   * @static
 
-  * @param {Integer} groupID The id of the group to post message to
-  * @param {String} message The content of the message to be posted
+  * @param {Number} groupId The id of the group to post message to
+  * @param {String} content The content of the message to be posted
   * @param {String} priority The content of the message to be posted
   * @param {String} token JWToken to access the endpoint
   *
@@ -18,12 +20,12 @@ export default class MessageActions {
   *
   * @memberof MessageActions
   */
-  static postMessage(groupID, message, priority) {
+  static postMessage(groupId, content, priority) {
     return (dispatch) => {
       dispatch({ type: 'POST_MESSAGE_BEGINS' });
-      return axios.post(`/api/v1/group/${groupID}/message`, {
-        groupID,
-        message,
+      return axios.post(`/api/v1/group/${groupId}/message`, {
+        groupId,
+        content,
         priority
       })
         .then((response) => {
@@ -31,13 +33,16 @@ export default class MessageActions {
             payload: response.data.Message });
         })
         .catch((err) => {
-          if (err.response.status === 500) {
+          if (err.response.status === 401) {
+            Auth.removeToken();
+          } else if (err.response.status === 500) {
             dispatch({ type: 'POST_MESSAGE_REJECTED',
               payload: 'Sorry, an unexpected error occurred' });
           } else {
             dispatch({ type: 'POST_MESSAGE_UNSUCCESSFUL',
               payload: err.response.data.message });
           }
+          return toastMessage(err.response.data.message);
         });
     };
   }
@@ -47,30 +52,33 @@ export default class MessageActions {
   *
   * @static
   *
-  * @param {Integer} groupID The id of the group to get message from
-  * @param {Integer} userId The id of the user to get message for
+  * @param {Number} groupId The id of the group to get message from
+  * @param {Number} userId The id of the user to get message for
   * @param {String} token The login token
   *
   * @returns {Object} dispatch object
   *
   * @memberof MessageActions
   */
-  static getMessages(groupID, userId) {
+  static getMessages(groupId, userId) {
     return (dispatch) => {
       dispatch({ type: 'GET_MESSAGES_BEGINS' });
-      return axios.get(`/api/v1/group/${groupID}/messages?userId=${userId}`)
+      return axios.get(`/api/v1/group/${groupId}/messages?userId=${userId}`)
         .then((response) => {
           dispatch({ type: 'GET_MESSAGES_SUCCESSFUL',
             payload: response.data.messages });
         })
         .catch((err) => {
-          if (err.response.status === 500) {
+          if (err.response.status === 401) {
+            Auth.removeToken();
+          } else if (err.response.status === 500) {
             dispatch({ type: 'GET_MESSAGES_REJECTED',
               payload: 'Sorry, an unexpected error occurred' });
           } else {
             dispatch({ type: 'GET_MESSAGES_UNSUCCESSFUL',
               payload: err.response.data.message });
           }
+          return toastMessage(err.response.data.message);
         });
     };
   }
@@ -80,8 +88,8 @@ export default class MessageActions {
   *
   * @static
   *
-  * @param {Integer}  groupId id of the group to get message from
-  * @param {Integer}  userId id of the user that read the messages
+  * @param {Number}  groupId id of the group to get message from
+  * @param {Number}  userId id of the user that read the messages
   * @param {String} messageIds An array of messages read
   *
   * @returns {Object} dispatch object
@@ -116,8 +124,8 @@ export default class MessageActions {
   *
   * @static
   *
-  * @param {Integer} groupID The id of the group to get message from
-  * @param {Integer} userId The id of the user to get message for
+  * @param {Number} groupID The id of the group to get message from
+  * @param {Number} userId The id of the user to get message for
   * @param {String} token The login token
   *
   * @returns {Object} dispatch object
@@ -134,7 +142,9 @@ export default class MessageActions {
             payload: response.data.messages });
         })
         .catch((err) => {
-          if (err.response.status === 500) {
+          if (err.response.status === 401) {
+            Auth.removeToken();
+          } else if (err.response.status === 500) {
             dispatch({ type: 'GET_ARCHIVE_MESSAGES_REJECTED',
               payload: 'Sorry, an unexpected error occurred.' });
           } else {

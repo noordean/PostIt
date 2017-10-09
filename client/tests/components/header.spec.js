@@ -4,7 +4,7 @@ import $ from 'jquery';
 import { mount } from 'enzyme';
 import sinon from 'sinon';
 
-import { Header } from '../../components/Header.jsx';
+import { Header } from '../../components/container/Header.jsx';
 import localStorageMock from '../__mocks__/localStorageMock';
 
 window.localStorage = localStorageMock;

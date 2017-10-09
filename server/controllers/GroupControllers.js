@@ -243,18 +243,14 @@ export default class GroupControllers {
  * @return {Object} response containing the number of deleted messages
  */
   static archiveMessage(req, res) {
-    const { messageIds, userId } = req.body;
+    const messageIds = req.body.messageIds;
     const groupId = req.params.groupId;
-    if (Array.isArray(messageIds)) {
-      messageIds.forEach((msgId) => {
-        ReadMessage.addMessage(groupId, userId, msgId, () => {
-        });
+    const decode = jwt.verify(req.headers.token, jwtSecret);
+    messageIds.forEach((msgId) => {
+      ReadMessage.addMessage(groupId, decode.id, msgId, () => {
       });
-      res.status(201).json({ message: 'read messages added' });
-    } else {
-      res.status(400).json({ message:
-        'Please supply an array for messageIds' });
-    }
+    });
+    res.status(201).json({ message: 'read messages added' });
   }
 
   /**
@@ -268,8 +264,11 @@ export default class GroupControllers {
  */
   static getArchivedMessages(req, res) {
     const groupId = req.params.groupId;
-    const userId = req.query.userId;
-    ReadMessage.getMessages(groupId, userId, (msgs) => {
+    const decode = jwt.verify(req.headers.token, jwtSecret);
+    ReadMessage.getMessages(groupId, decode.id, (msgs) => {
+      if (msgs.length === 0) {
+        return res.status(404).json({ message: 'No messages found' });
+      }
       const dueMessages = msgs.filter(msg => ((
         Date.now() - new Date(msg.createdAt).getTime() > 1440000)));
       const dueMessagesIds = dueMessages.map(dueMsgs => dueMsgs.messageId);

@@ -35,7 +35,7 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should return an error message if the is supplied is not found',
+    it('should return an error message if the id supplied is not found',
       (done) => {
         chai.request(app)
           .delete('/api/v1/message/54678')
@@ -46,7 +46,7 @@ describe('PostIt Endpoints', () => {
             res.should.have.status(404);
             res.body.should.be.a('object');
             res.body.should.have.property('message');
-            res.body.message.should.be.eql('Invalid message id');
+            res.body.message.should.be.eql('No messages found');
             done();
           });
       });
@@ -66,7 +66,7 @@ describe('PostIt Endpoints', () => {
   });
 
   describe('GET api/v1/message/:messageId/user', () => {
-    it('should return an error message if messageIds is not an array',
+    it('should return a success message if correct details are supplied',
       (done) => {
         chai.request(app)
           .get('/api/v1/message/4/user?groupId=6')
@@ -76,6 +76,18 @@ describe('PostIt Endpoints', () => {
             res.body.should.be.a('object');
             res.body.should.have.property('users');
             res.body.users[0].username.should.be.eql('existing');
+            done();
+          });
+      });
+    it('should return an error message if the supplied messageId does not exist',
+      (done) => {
+        chai.request(app)
+          .get('/api/v1/message/4009/user?groupId=6')
+          .set('token', sentToken)
+          .end((err, res) => {
+            res.should.have.status(404);
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('No users found');
             done();
           });
       });

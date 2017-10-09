@@ -28,7 +28,7 @@ export default class MessageControllers {
     const decode = jwt.verify(req.headers.token || req.body.token, jwtSecret);
     Message.getMessageById(messageId, (msg) => {
       if (msg.length === 0) {
-        res.status(404).json({ message: 'Invalid message id' });
+        res.status(404).json({ message: 'No messages found' });
       } else if (msg[0].postedby !== decode.username) {
         res.status(403).json({ message:
           'Only the poster of the message can delete it' });
@@ -47,20 +47,23 @@ export default class MessageControllers {
  * @param {Object} req request object
  * @param {Object} res response object
  * 
- * @return {Object} response containing the number of deleted messages
+ * @return {Object} response containing the users that have read a message
  */
   static getUser(req, res) {
     const messageId = req.params.messageId;
     const groupId = req.query.groupId;
     ReadMessage.getUsers(messageId, groupId, (users) => {
+      if (users.length === 0) {
+        return res.status(404).json({ message: 'No users found' });
+      }
       const readUsers = users.map(user => user.userId);
       User.getTotalUsers((user) => {
         if (Validate.hasInternalServerError(user)) {
           res.status(500).json(Validate.sendInternalServerError());
         } else {
-          const displayUser = user.filter(userData => (
+          const totalUser = user.filter(userData => (
             readUsers.indexOf(userData.id) !== -1));
-          res.status(200).json({ users: displayUser });
+          res.status(200).json({ users: totalUser });
         }
       });
     });

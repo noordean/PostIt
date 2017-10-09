@@ -21,14 +21,15 @@ user.post('/api/v1/user/email/verify',
   UserControllers.verifyPassword
 );
 user.post('/api/v1/user/email',
-  Auth.verifyToken,
+  Auth.verifyToken, Validate.checkMailRequest,
   UserControllers.mailNotification
 );
 user.post('/api/v1/user/sms',
-  Auth.verifyToken,
+  Auth.verifyToken, Validate.checkSmsRequest,
   UserControllers.smsNotification
 );
 user.post('/api/v1/user/signup/google',
+  Validate.checkGoogleUser,
   UserControllers.registerGoogleUser
 );
 user.post('/api/v1/users',
@@ -36,7 +37,7 @@ user.post('/api/v1/users',
   UserControllers.getAvailableUsers
 );
 user.post('/api/v1/user/notification',
-  Auth.verifyToken,
+  Auth.verifyToken, Validate.checkAppNotification,
   UserControllers.saveNotification
 );
 user.get('/api/v1/user/:userId/notification',

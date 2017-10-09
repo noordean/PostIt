@@ -222,7 +222,7 @@ describe('PostIt Endpoints', () => {
             res.should.have.status(404);
             res.body.should.be.a('object');
             res.body.should.have.property('message');
-            res.body.message.should.be.eql('Invalid user!');
+            res.body.message.should.be.eql('User not found');
             done();
           });
       });
@@ -480,7 +480,7 @@ describe('PostIt Endpoints', () => {
             res.body.should.be.a('object');
             res.body.should.have.property('message');
             res.body.message.should.be.eql(
-              'You need to supply an array for userId');
+              'userId must be an array');
             done();
           });
       });
@@ -539,6 +539,42 @@ describe('PostIt Endpoints', () => {
   });
 
   describe('POST api/v1/user/signup/google', () => {
+    it('should return a success message if email is not supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/signup/google')
+          .send({
+            token: sentToken,
+            username: 'googleUser',
+            password: null,
+            phoneNumber: null
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('email must be supplied');
+            done();
+          });
+      });
+    it('should return a success message if an invalid email is supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/signup/google')
+          .send({
+            token: sentToken,
+            password: null,
+            email: 'googleUser@.com',
+            phoneNumber: null
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('username must be supplied');
+            done();
+          });
+      });
     it('should return a success message if correct details are supplied',
       (done) => {
         chai.request(app)
@@ -556,6 +592,169 @@ describe('PostIt Endpoints', () => {
             res.body.should.have.property('message');
             res.body.should.have.property('user');
             res.body.message.should.be.eql('User registered successfully');
+            done();
+          });
+      });
+    it('should return a success message if an invalid email is supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/signup/google')
+          .send({
+            token: sentToken,
+            username: 'googleUser',
+            password: null,
+            email: 'googleUser@.com',
+            phoneNumber: null
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('a valid email is required');
+            done();
+          });
+      });
+    it('should return a success message if an invalid username is supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/signup/google')
+          .send({
+            token: sentToken,
+            username: 'googleUser123',
+            password: null,
+            email: 'googleUser@gmail.com',
+            phoneNumber: null
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql(
+              'username must contain only letters');
+            done();
+          });
+      });
+  });
+
+  describe('POST api/v1/user/email', () => {
+    it('should return an error message if recepients is not supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/email')
+          .send({
+            token: sentToken,
+            groupName: 'fakeGroup',
+            message: 'fakeMessage'
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('recepients must be supplied');
+            done();
+          });
+      });
+    it('should return an error message if groupName is not supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/email')
+          .send({
+            token: sentToken,
+            recepients: 'fakeMessage@gmail.com, anodaFake@gmail.com',
+            message: 'fakeMessage'
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('groupName must be supplied');
+            done();
+          });
+      });
+    it('should return an error message if an invalid email is supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/email')
+          .send({
+            token: sentToken,
+            groupName: 'fakeGroup',
+            recepients: 'fakeMessage@gmail.com, invalidEmail@.com',
+            message: 'fakeMessage'
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql(`invalid email detected. Kindly check the supplied emails.
+                    Multiple emails must be separated with ", "`);
+            done();
+          });
+      });
+    it('should return an error message if an invalid token is supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/email')
+          .send({
+            token: 'invalidToken',
+            groupName: 'fakeGroup',
+            recepients: 'fakeMessage@gmail.com, invalidEmail@.com',
+            message: 'fakeMessage'
+          })
+          .end((err, res) => {
+            res.should.have.status(401);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('Access denied!. Kindly login');
+            done();
+          });
+      });
+  });
+
+  describe('POST /api/v1/user/sms', () => {
+    it('should return an error message if phoneNumbers are not supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/sms')
+          .send({
+            token: sentToken
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('phoneNumbers must be supplied');
+            done();
+          });
+      });
+    it('should return an error message if the supplied phoneNumbers is not an array',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/sms')
+          .send({
+            token: sentToken,
+            phoneNumbers: '07065765431'
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('phoneNumbers must be an array');
+            done();
+          });
+      });
+    it('should return an error message if the an invalid phoneNumber is supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/sms')
+          .send({
+            token: sentToken,
+            phoneNumbers: ['07065rfhfahd', '08097654323']
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('Invalid phone-number detected');
             done();
           });
       });

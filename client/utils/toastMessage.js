@@ -1,4 +1,3 @@
-
 const toastMessage = (message) => {
   Materialize.toast(
     message, 2000,

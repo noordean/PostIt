@@ -80,7 +80,7 @@ export default class UserControllers {
     const { username, password } = req.body;
     User.checkUser(username, (users) => {
       if (users.length === 0) {
-        res.status(404).json({ message: 'Invalid user!' });
+        res.status(404).json({ message: 'User not found' });
       } else if (bcrypt.compareSync(password, users[0].password)) {
         const token = Auth.generateToken({
           username: users[0].username,
@@ -119,7 +119,7 @@ export default class UserControllers {
       || req.body.token, jwtSecret)];
     User.getUserById(decode.id, (users) => {
       if (users.length === 0) {
-        res.status(404).json({ message: 'Invalid user id' });
+        res.status(404).json({ message: 'User not found' });
       } else {
         GroupUser.getUserGroupsId(decode.id, (groups) => {
           if (groups.length > 0) {
@@ -153,7 +153,9 @@ export default class UserControllers {
       res.status(400).json({ message: 'Current members should be supplied' });
     } else {
       User.getAllUsers(currentMembers, (users) => {
-        if (Validate.hasInternalServerError(users)) {
+        if (users.length === 0) {
+          res.status(404).json({ message: 'Users not found' });
+        } else if (Validate.hasInternalServerError(users)) {
           res.status(500).json(Validate.sendInternalServerError());
         } else {
           res.status(200).json({ users });
@@ -249,19 +251,19 @@ export default class UserControllers {
     const [phoneNumber, password] = [null, null];
     User.saveUserFromGoogle(username, password, email, phoneNumber, (users) => {
       if (users === 'email must be unique') {
-        User.getUserByEmail(email, (userrs) => {
-          if (Validate.hasInternalServerError(userrs)) {
+        User.getUserByEmail(email, (userData) => {
+          if (Validate.hasInternalServerError(userData)) {
             res.status(500).json(Validate.sendInternalServerError());
           } else {
             const token = Auth.generateToken(
-              { username: userrs[0].username,
-                id: userrs[0].id });
+              { username: userData[0].username,
+                id: userData[0].id });
             res.status(409).json({
               message: 'Email already existing',
               user: {
-                id: userrs[0].id,
-                username: userrs[0].username,
-                email: userrs[0].email,
+                id: userData[0].id,
+                username: userData[0].username,
+                email: userData[0].email,
                 token }
             });
           }
@@ -291,10 +293,11 @@ export default class UserControllers {
  * @return {Object} response
  */
   static mailNotification(req, res) {
-    const { recepients, theGroup, message, poster } = req.body;
+    const { recepients, groupName, message } = req.body;
+    const decode = jwt.verify(req.headers.token, jwtSecret);
     const msg = (
-      `<b>Hello!</b><br><br> You have a new message in <b>${theGroup}</b>,
-    from <b>${poster}</b>.<br><br><i>${message}</i></p>`);
+      `<b>Hello!</b><br><br> You have a new message in <b>${groupName}</b>,
+    from <b>${decode.username}</b>.<br><br><i>${message}</i></p>`);
     if (sendMail(msg, recepients, 'Message Notification')) {
       res.status(200).json({ message: 'Mail notification sent' });
     } else {
@@ -311,18 +314,18 @@ export default class UserControllers {
  * @return {Object} response
  */
   static smsNotification(req, res) {
-    const members = req.body.members;
+    const phoneNumbers = req.body.phoneNumbers;
     const jusibe = new Jusibe(
       process.env.JUSIBE_PUBLIC_KEY, process.env.JUSIBE_ACCESS_TOKEN);
-    if (Array.isArray(members)) {
-      if (members.length > 0) {
-        members.forEach((member) => {
-          jusibe.sendMessage(member);
+    if (Array.isArray(phoneNumbers)) {
+      if (phoneNumbers.length > 0) {
+        phoneNumbers.forEach((phoneNumber) => {
+          jusibe.sendMessage(phoneNumber);
         });
         res.status(200).json({ message: 'SMS sent!' });
       }
     } else {
-      res.status(400).json({ message: 'Members must be an array' });
+      res.status(400).json({ message: 'phoneNumbers must be an array' });
     }
   }
 
@@ -336,24 +339,23 @@ export default class UserControllers {
  */
   static saveNotification(req, res) {
     const { userId, groupName, message, postedby } = req.body;
-    if (Array.isArray(userId)) {
-      const unsentNotification = [];
-      userId.forEach((membersId) => {
-        Notification.save(
-          membersId.id, groupName, message, postedby, (notification) => {
-            if (Validate.hasInternalServerError(notification)) {
-              unsentNotification.push(notification.userDd);
-            }
-          });
-      });
-      if (unsentNotification.length > 0) {
-        return res.status(500).json({ message: 'Could not send SMS' });
-      }
-      res.status(201).json({ message: 'notification saved' });
-    } else {
-      res.status(400).json({
-        message: 'You need to supply an array for userId' });
+    const unsavedNotification = [];
+    userId.forEach((membersId) => {
+      Notification.save(
+        membersId.id, groupName, message, postedby, (notification) => {
+          if (Validate.hasInternalServerError(notification)) {
+            unsavedNotification.push(notification.userId);
+          }
+        });
+    });
+    if (unsavedNotification.length > 0) {
+      return res.status(500).json(
+        {
+          message: `Notification could not be saved for
+                    userId(s) ${unsavedNotification.join(',')}`
+        });
     }
+    res.status(201).json({ message: 'notification saved' });
   }
 
   /**
@@ -367,7 +369,9 @@ export default class UserControllers {
   static getNotifications(req, res) {
     const decode = jwt.verify(req.headers.token || req.body.token, jwtSecret);
     Notification.getNotification(decode.id, (notification) => {
-      if (Validate.hasInternalServerError(notification)) {
+      if (notification.length === 0) {
+        return res.status(404).json('No notification found');
+      } else if (Validate.hasInternalServerError(notification)) {
         return res.status(500).json(Validate.sendInternalServerError());
       }
       res.status(200).json({ notifications: notification });
@@ -385,11 +389,12 @@ export default class UserControllers {
   static deleteNotification(req, res) {
     const decode = jwt.verify(req.headers.token || req.body.token, jwtSecret);
     Notification.deleteNotification(decode.id, (notification) => {
-      if (Validate.hasInternalServerError(notification)) {
+      if (notification === 0) {
+        return res.status(404).json('No notification found');
+      } else if (Validate.hasInternalServerError(notification)) {
         return res.status(500).json(Validate.sendInternalServerError());
       }
       res.status(200).json({ message: 'Deleted successfully' });
     });
   }
 }
-

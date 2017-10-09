@@ -10,7 +10,6 @@ export default class MessageActions {
   * Request to the API to post message to a group
   *
   * @static
-
   * @param {Number} groupId The id of the group to post message to
   * @param {String} content The content of the message to be posted
   * @param {String} priority The content of the message to be posted

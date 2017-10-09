@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import UserActions from '../../actions/UserActions';
-import displayError from '../../utils/errorDisplay';
+import toastMessage from '../../utils/toastMessage';
 
 /**
   * @class SideNav
@@ -132,7 +132,7 @@ export class SideNav extends Component {
     event.preventDefault();
     const selectedMembers = $('#getChips').val().split(' ');
     if (selectedMembers[0] === '') {
-      return displayError('Kindly select members to add');
+      return toastMessage('Kindly select members to add');
     }
     this.props.addGroupMembers(this.props.groupId, selectedMembers,
       JSON.parse(localStorage.user).token)

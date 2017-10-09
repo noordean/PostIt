@@ -6,7 +6,7 @@ import GoogleLogin from 'react-google-login';
 import PropTypes from 'prop-types';
 
 import UserActions from '../../actions/UserActions';
-import authorization from '../../utils/authorization';
+import Auth from '../../utils/Auth';
 
 /**
   * @class LoginWithGoogle
@@ -35,7 +35,7 @@ export class LoginWithGoogle extends Component {
       .then(() => {
         localStorage.setItem('user',
           JSON.stringify(this.props.userFromGoogle.response.user));
-        authorization(this.props.userFromGoogle.response.user.token);
+        Auth.setToken(this.props.userFromGoogle.response.user.token);
         browserHistory.push('/dashboard');
       });
   }

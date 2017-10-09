@@ -103,22 +103,23 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-    it('should respond with an error message if password is undefined', (done) => {
-      chai.request(app)
-        .post('/api/v1/user/signup')
-        .send({
-          username: 'undefPass',
-          email: 'undefPass@gmail.com',
-          phoneNumber: '07098765432'
-        })
-        .end((err, res) => {
-          res.should.have.status(400);
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.message.should.be.eql('Password must be supplied');
-          done();
-        });
-    });
+    it('should respond with an error message if password is undefined',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/signup')
+          .send({
+            username: 'undefPass',
+            email: 'undefPass@gmail.com',
+            phoneNumber: '07098765432'
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('Password must be supplied');
+            done();
+          });
+      });
     it('should respond with an error message if user is already registered',
       (done) => {
         chai.request(app)
@@ -179,34 +180,36 @@ describe('PostIt Endpoints', () => {
   });
 
   describe('POST api/v1/user/signin', () => {
-    it('should respond with an error message if username is undefined', (done) => {
-      chai.request(app)
-        .post('/api/v1/user/signin')
-        .send({
-          password: 'undefUser1'
-        })
-        .end((err, res) => {
-          res.should.have.status(400);
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.message.should.be.eql('username must be supplied');
-          done();
-        });
-    });
-    it('should respond with an error message if password is undefined', (done) => {
-      chai.request(app)
-        .post('/api/v1/user/signin')
-        .send({
-          username: 'undefUser'
-        })
-        .end((err, res) => {
-          res.should.have.status(400);
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.message.should.be.eql('password must be supplied');
-          done();
-        });
-    });
+    it('should respond with an error message if username is undefined',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/signin')
+          .send({
+            password: 'undefUser1'
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('username must be supplied');
+            done();
+          });
+      });
+    it('should respond with an error message if password is undefined',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/signin')
+          .send({
+            username: 'undefUser'
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('password must be supplied');
+            done();
+          });
+      });
     it('should respond with an error message if invalid username is supplied',
       (done) => {
         chai.request(app)
@@ -219,7 +222,7 @@ describe('PostIt Endpoints', () => {
             res.should.have.status(404);
             res.body.should.be.a('object');
             res.body.should.have.property('message');
-            res.body.message.should.be.eql('Invalid user!');
+            res.body.message.should.be.eql('User not found');
             done();
           });
       });
@@ -261,12 +264,14 @@ describe('PostIt Endpoints', () => {
       });
   });
 
-  describe('GET api/v1/users', () => {
+  describe('POST api/v1/users', () => {
     it('should produce all available users', (done) => {
       chai.request(app)
-        .get('/api/v1/users')
-        .set('token', sentToken)
-        .set('currentmembers', 'nouser')
+        .post('/api/v1/users')
+        .send({
+          token: sentToken,
+          currentMembers: ''
+        })
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
@@ -280,8 +285,10 @@ describe('PostIt Endpoints', () => {
     it('should respond with an error message if the login token is undefined',
       (done) => {
         chai.request(app)
-          .get('/api/v1/users')
-          .set('userrs', 'nouser')
+          .post('/api/v1/users')
+          .send({
+            currentMembers: 'noMember'
+          })
           .end((err, res) => {
             res.should.have.status(401);
             res.body.should.be.a('object');
@@ -293,9 +300,11 @@ describe('PostIt Endpoints', () => {
     it('should respond with an error message if the login token is invalid',
       (done) => {
         chai.request(app)
-          .get('/api/v1/users')
-          .set('token', 'invalidToken')
-          .set('userrs', 'nouser')
+          .post('/api/v1/users')
+          .send({
+            token: 'invalidToken',
+            currentMembers: 'noMember'
+          })
           .end((err, res) => {
             res.should.have.status(401);
             res.body.should.be.a('object');
@@ -304,50 +313,11 @@ describe('PostIt Endpoints', () => {
             done();
           });
       });
-  });
-
-  describe('POST api/v1/group/:groupId/user', () => {
-    it('should respond with a success message if correct details are supplied',
+    it('should respond with an error message if currentMembers is not supplied',
       (done) => {
         chai.request(app)
-          .post('/api/v1/group/1/user')
+          .post('/api/v1/users')
           .send({
-            userId: [1],
-            token: sentToken
-          })
-          .end((err, res) => {
-            res.should.have.status(201);
-            res.body.should.be.a('object');
-            res.body.should.have.property('message');
-            res.body.message.should.be.eql('User successfully added');
-            res.body.should.have.property('user');
-            res.body.user.groupId.should.be.eql(1);
-            res.body.user.userId.should.be.eql(1);
-            done();
-          });
-      });
-    it('should respond with an error message if incorrect group id is used',
-      (done) => {
-        chai.request(app)
-          .post('/api/v1/group/1464878/user')
-          .send({
-            userId: [1],
-            token: sentToken
-          })
-          .end((err, res) => {
-            res.should.have.status(404);
-            res.body.should.be.a('object');
-            res.body.should.have.property('message');
-            res.body.message.should.be.eql('Invalid group id supplied');
-            done();
-          });
-      });
-    it('should respond with an error message if invalid group id is used',
-      (done) => {
-        chai.request(app)
-          .post('/api/v1/group/14hjgjdkskb/user')
-          .send({
-            userId: [1],
             token: sentToken
           })
           .end((err, res) => {
@@ -355,152 +325,7 @@ describe('PostIt Endpoints', () => {
             res.body.should.be.a('object');
             res.body.should.have.property('message');
             res.body.message.should.be.eql(
-              'The supplied id\'s must be integers');
-            done();
-          });
-      });
-    it('should respond with an error message if userId is not defined', (done) => {
-      chai.request(app)
-        .post('/api/v1/group/1/user')
-        .send({
-          token: sentToken
-        })
-        .end((err, res) => {
-          res.should.have.status(400);
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.message.should.be.eql('userId\'s must be supplied');
-          done();
-        });
-    });
-    it('should respond with an error message if token is not defined', (done) => {
-      chai.request(app)
-        .post('/api/v1/group/1/user')
-        .send({
-          userId: [1]
-        })
-        .end((err, res) => {
-          res.should.have.status(401);
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.message.should.be.eql('Your login token must be provided');
-          done();
-        });
-    });
-    it('should respond with an error message if invalid token is supplied',
-      (done) => {
-        chai.request(app)
-          .post('/api/v1/group/1/user')
-          .send({
-            userId: [1],
-            token: 'invalid'
-          })
-          .end((err, res) => {
-            res.should.have.status(401);
-            res.body.should.be.a('object');
-            res.body.should.have.property('message');
-            res.body.message.should.be.eql('Access denied!. Kindly login');
-            done();
-          });
-      });
-    it('should respond with an error message if userId is empty', (done) => {
-      chai.request(app)
-        .post('/api/v1/group/1/user')
-        .send({
-          userId: [],
-          token: sentToken
-        })
-        .end((err, res) => {
-          res.should.have.status(400);
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.message.should.be.eql('userId\'s cannot be empty');
-          done();
-        });
-    });
-    it('should respond with an error message if groupId is empty', (done) => {
-      chai.request(app)
-        .post('/api/v1/group/ /user')
-        .send({
-          userId: [1],
-          token: sentToken
-        })
-        .end((err, res) => {
-          res.should.have.status(400);
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.message.should.be.eql('groupId cannot be empty');
-          done();
-        });
-    });
-    it('should respond with an error message if user is already in the group',
-      (done) => {
-        chai.request(app)
-          .post('/api/v1/group/1/user')
-          .send({
-            userId: [1],
-            token: sentToken
-          })
-          .end((err, res) => {
-            res.should.have.status(409);
-            res.body.should.be.a('object');
-            res.body.should.have.property('message');
-            res.body.message.should.be.eql('User already in the group');
-            done();
-          });
-      });
-  });
-
-  describe('GET api/group/:groupId/user', () => {
-    it('should respond with a success message if correct details are supplied',
-      (done) => {
-        chai.request(app)
-          .get('/api/v1/group/1/users')
-          .set('token', sentToken)
-          .end((err, res) => {
-            res.should.have.status(200);
-            res.body.should.be.a('object');
-            res.body.should.have.property('users');
-            res.body.users[0].username.should.be.eql('existing');
-            res.body.users[0].email.should.be.eql('existing@gmail.com');
-            done();
-          });
-      });
-    it('should respond with an error message if incorrect groupId is supplied',
-      (done) => {
-        chai.request(app)
-          .get('/api/v1/group/1537625/users')
-          .set('token', sentToken)
-          .end((err, res) => {
-            res.should.have.status(404);
-            res.body.should.be.a('object');
-            res.body.should.have.property('message');
-            res.body.message.should.be.eql('Group does not exist');
-            done();
-          });
-      });
-    it('should respond with an error message if login token is not defined',
-      (done) => {
-        chai.request(app)
-          .get('/api/v1/group/1/users')
-          .end((err, res) => {
-            res.should.have.status(401);
-            res.body.should.be.a('object');
-            res.body.should.have.property('message');
-            res.body.message.should.be.eql('Your login token must be provided');
-            done();
-          });
-      });
-    it('should respond with an error message if incorrect login token is supplied',
-      (done) => {
-        chai.request(app)
-          .get('/api/v1/group/1/users')
-          .set('token', 'incorrectToken')
-          .end((err, res) => {
-            res.should.have.status(401);
-            res.body.should.be.a('object');
-            res.body.should.have.property('message');
-            res.body.message.should.be.eql('Access denied!. Kindly login');
+              'Current members should be supplied');
             done();
           });
       });
@@ -518,36 +343,6 @@ describe('PostIt Endpoints', () => {
             res.body.should.have.property('message');
             res.body.message.should.be.eql(
               'Access denied!. Invalid url detected');
-            done();
-          });
-      });
-  });
-
-  describe('GET api/v1/users', () => {
-    it('should respond with an error message if invalid token is provided',
-      (done) => {
-        chai.request(app)
-          .get('/api/v1/users')
-          .set('token', 'invalidToken')
-          .end((err, res) => {
-            res.should.have.status(401);
-            res.body.should.be.a('object');
-            res.body.should.have.property('message');
-            res.body.message.should.be.eql('Access denied!. Kindly login');
-            done();
-          });
-      });
-    it('should respond with an error message if userrs is not provided',
-      (done) => {
-        chai.request(app)
-          .get('/api/v1/users')
-          .set('token', sentToken)
-          .end((err, res) => {
-            res.should.have.status(400);
-            res.body.should.be.a('object');
-            res.body.should.have.property('message');
-            res.body.message.should.be.eql(
-              'users to ignore should be supplied');
             done();
           });
       });
@@ -631,6 +426,335 @@ describe('PostIt Endpoints', () => {
             res.body.should.be.a('object');
             res.body.should.have.property('message');
             res.body.message.should.be.eql('Email not found');
+            done();
+          });
+      });
+  });
+
+  describe('GET api/v1/user/groups', () => {
+    it('should respond with an error message if invalid token is supplied',
+      (done) => {
+        chai.request(app)
+          .get('/api/v1/user/groups?limit=6&offset=0')
+          .set('token', 'invalidToken')
+          .end((err, res) => {
+            res.should.have.status(401);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('Access denied!. Kindly login');
+            done();
+          });
+      });
+    it('should respond with a success message if correct detail is supplied',
+      (done) => {
+        chai.request(app)
+          .get('/api/v1/user/groups?limit=6&offset=0')
+          .set('token', sentToken)
+          .end((err, res) => {
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+            res.body.should.have.property('groups');
+            res.body.groups.count.should.be.eql(2);
+            res.body.groups.rows[0].createdby.should.be.eql('existing');
+            res.body.groups.rows[0].groupname.should.be.eql('Correct Group');
+            res.body.groups.rows[0].description.should.be.eql('for testing...');
+            done();
+          });
+      });
+  });
+
+  describe('POST api/v1/user/notification', () => {
+    it('should return an error message if array is not supplied as userId',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/notification')
+          .send({
+            userId: 3,
+            groupName: 'test',
+            message: 'hello here',
+            postedby: 'noordean',
+            token: sentToken
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql(
+              'userId must be an array');
+            done();
+          });
+      });
+    it('should save notification into database if correct details are supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/notification')
+          .send({
+            userId: [3, 4],
+            groupName: 'test',
+            message: 'hello here',
+            postedby: 'noordean',
+            token: sentToken
+          })
+          .end((err, res) => {
+            res.should.have.status(201);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('notification saved');
+            done();
+          });
+      });
+  });
+
+  describe('GET api/v1/user/:userId/notification', () => {
+    it('should return notifications if correct details are supplied',
+      (done) => {
+        chai.request(app)
+          .get('/api/v1/user/1/notification')
+          .set('token', sentToken)
+          .end((err, res) => {
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+            res.body.should.have.property('notifications');
+            res.body.notifications[0].groupName.should.be.eql('from Seeders');
+            res.body.notifications[0].message.should.be.eql('Hello guyz');
+            done();
+          });
+      });
+  });
+
+  describe('DELETE api/v1/user/:userId/notification', () => {
+    it('should return a success message if correct details are supplied',
+      (done) => {
+        chai.request(app)
+          .delete('/api/v1/user/1/notification')
+          .set('token', sentToken)
+          .end((err, res) => {
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('Deleted successfully');
+            done();
+          });
+      });
+  });
+
+  describe('POST api/v1/user/signup/google', () => {
+    it('should return a success message if email is not supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/signup/google')
+          .send({
+            token: sentToken,
+            username: 'googleUser',
+            password: null,
+            phoneNumber: null
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('email must be supplied');
+            done();
+          });
+      });
+    it('should return a success message if an invalid email is supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/signup/google')
+          .send({
+            token: sentToken,
+            password: null,
+            email: 'googleUser@.com',
+            phoneNumber: null
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('username must be supplied');
+            done();
+          });
+      });
+    it('should return a success message if correct details are supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/signup/google')
+          .send({
+            token: sentToken,
+            username: 'googleUser',
+            password: null,
+            email: 'googleUser@gmail.com',
+            phoneNumber: null
+          })
+          .end((err, res) => {
+            res.should.have.status(201);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.should.have.property('user');
+            res.body.message.should.be.eql('User registered successfully');
+            done();
+          });
+      });
+    it('should return a success message if an invalid email is supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/signup/google')
+          .send({
+            token: sentToken,
+            username: 'googleUser',
+            password: null,
+            email: 'googleUser@.com',
+            phoneNumber: null
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('a valid email is required');
+            done();
+          });
+      });
+    it('should return a success message if an invalid username is supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/signup/google')
+          .send({
+            token: sentToken,
+            username: 'googleUser123',
+            password: null,
+            email: 'googleUser@gmail.com',
+            phoneNumber: null
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql(
+              'username must contain only letters');
+            done();
+          });
+      });
+  });
+
+  describe('POST api/v1/user/email', () => {
+    it('should return an error message if recepients is not supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/email')
+          .send({
+            token: sentToken,
+            groupName: 'fakeGroup',
+            message: 'fakeMessage'
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('recepients must be supplied');
+            done();
+          });
+      });
+    it('should return an error message if groupName is not supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/email')
+          .send({
+            token: sentToken,
+            recepients: 'fakeMessage@gmail.com, anodaFake@gmail.com',
+            message: 'fakeMessage'
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('groupName must be supplied');
+            done();
+          });
+      });
+    it('should return an error message if an invalid email is supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/email')
+          .send({
+            token: sentToken,
+            groupName: 'fakeGroup',
+            recepients: 'fakeMessage@gmail.com, invalidEmail@.com',
+            message: 'fakeMessage'
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql(`invalid email detected. Kindly check the supplied emails.
+                    Multiple emails must be separated with ", "`);
+            done();
+          });
+      });
+    it('should return an error message if an invalid token is supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/email')
+          .send({
+            token: 'invalidToken',
+            groupName: 'fakeGroup',
+            recepients: 'fakeMessage@gmail.com, invalidEmail@.com',
+            message: 'fakeMessage'
+          })
+          .end((err, res) => {
+            res.should.have.status(401);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('Access denied!. Kindly login');
+            done();
+          });
+      });
+  });
+
+  describe('POST /api/v1/user/sms', () => {
+    it('should return an error message if phoneNumbers are not supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/sms')
+          .send({
+            token: sentToken
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('phoneNumbers must be supplied');
+            done();
+          });
+      });
+    it('should return an error message if the supplied phoneNumbers is not an array',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/sms')
+          .send({
+            token: sentToken,
+            phoneNumbers: '07065765431'
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('phoneNumbers must be an array');
+            done();
+          });
+      });
+    it('should return an error message if the an invalid phoneNumber is supplied',
+      (done) => {
+        chai.request(app)
+          .post('/api/v1/user/sms')
+          .send({
+            token: sentToken,
+            phoneNumbers: ['07065rfhfahd', '08097654323']
+          })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message');
+            res.body.message.should.be.eql('Invalid phone-number detected');
             done();
           });
       });

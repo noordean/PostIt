@@ -9,10 +9,10 @@ export default class Notify {
   /**
  * @description: saves notification to database
  * 
- * @param {Integer} userId the id of user to add
- * @param {Integer} groupName name of the group
- * @param {string} message the posted message
- * @param {Integer} postedby the poster
+ * @param {Number} userId the id of user to add
+ * @param {Number} groupName name of the group
+ * @param {Number} message the posted message
+ * @param {Number} postedby the poster
  * @param {Function} done callback
  * 
  * @return {Object} insertedData
@@ -33,7 +33,7 @@ export default class Notify {
   /**
  * @description: gets notification from database
  * 
- * @param {Integer} userId the id of user to to get notification for
+ * @param {Number} userId the id of user to to get notification for
  * @param {Function} done callback
  * 
  * @return {Object} retrieved Data
@@ -53,7 +53,7 @@ export default class Notify {
   /**
  * @description: gets notification from database
  * 
- * @param {Integer} userId the id of user to to get notification for
+ * @param {Number} userId the id of user to to get notification for
  * @param {Function} done callback
  * 
  * @return {Object} retrieved Data

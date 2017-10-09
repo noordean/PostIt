@@ -185,10 +185,9 @@ export class MessageBoard extends Component {
       member => member !== JSON.parse(localStorage.user).email);
     const recepientsInStr = recepients.join(', ');
     const groupName = this.props.params.groupName;
-    const poster = JSON.parse(localStorage.user).username;
     if (allMembers.length > 1) {
       this.props.mailNotification(
-        recepientsInStr, groupName, message, poster);
+        recepientsInStr, groupName, message);
     }
   }
 

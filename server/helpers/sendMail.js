@@ -2,8 +2,8 @@ import nodemailer from 'nodemailer';
 
 const sendMail = (message, recepient, subject) => {
   const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
+    host: process.env.MAIL_HOST,
+    port: process.env.MAIL_PORT,
     secure: true,
     auth: {
       user: process.env.MAIL_USERNAME,
@@ -11,7 +11,7 @@ const sendMail = (message, recepient, subject) => {
     }
   });
   const mailOptions = {
-    from: '"PostIt" <noreply@postit.com>',
+    from: process.env.MAIL_SENDER,
     to: recepient,
     subject,
     text: '',

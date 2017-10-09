@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 import ResetPassword from '../presentation/ResetPasswod.jsx';
 import UserActions from '../../actions/UserActions';
-import displayError from '../../utils/errorDisplay';
+import toastMessage from '../../utils/toastMessage';
 
 /**
   * @class GuestHeader
@@ -53,7 +53,7 @@ export class GuestHeader extends Component {
   submitResetPassword(event) {
     event.preventDefault();
     if (this.state.password !== this.state.confirmPassword) {
-      return displayError('The two passwords did not match!');
+      return toastMessage('The two passwords did not match!');
     }
     this.props.mailPassword(this.state.email, this.state.password)
       .then(() => {
